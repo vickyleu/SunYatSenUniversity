@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="firstName" type="id"/>
+    <item name="mirrorText"
+          type="id"/>
+    <item name="onOff"
+          type="id"/>
+    <item name="tag_position" type="id"/>
+</resources>

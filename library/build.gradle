@@ -1,0 +1,105 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+def build='26.1.0'
+ext.anko_version='0.10.4'
+android {
+    compileSdkVersion 26
+    compileOptions.encoding = "UTF-8"
+    dataBinding {
+        enabled = true
+    }
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    api "com.android.support:appcompat-v7:${build}"
+    api "com.android.support:support-v4:${build}"
+    api "com.android.support:recyclerview-v7:${build}"
+    api "com.android.support.constraint:constraint-layout:1.0.2"
+
+    api "com.scwang.smartrefresh:SmartRefreshLayout:1.0.4-7"
+    api "com.scwang.smartrefresh:SmartRefreshHeader:1.0.4-7"//没有使用特殊Header，可以不加这行
+
+    api "com.github.nekocode:Emojix:1.2"//emoji表情插件
+
+
+    api "org.jetbrains.anko:anko:$anko_version"
+// Anko Commons
+    api "org.jetbrains.anko:anko-commons:$anko_version"
+
+
+    // Coroutine listeners for Anko Layouts
+    api "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
+    api "org.jetbrains.anko:anko-appcompat-v7-coroutines:$anko_version"
+
+    // Anko SQLite
+    api "org.jetbrains.anko:anko-sqlite:$anko_version"
+
+
+    // Appcompat-v7 (only Anko Commons)
+    api "org.jetbrains.anko:anko-appcompat-v7-commons:$anko_version"
+    // Appcompat-v7 (Anko Layouts)
+    api "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
+    api "org.jetbrains.anko:anko-coroutines:$anko_version"
+    // Anko Layouts
+    api "org.jetbrains.anko:anko-sdk25:$anko_version" // sdk15, sdk19, sdk21, sdk23 are also available
+    api "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
+    // Support-v4 (only Anko Commons)
+    api "org.jetbrains.anko:anko-support-v4-commons:$anko_version"
+    // Support-v4 (Anko Layouts)
+    api "org.jetbrains.anko:anko-support-v4:$anko_version"
+
+
+
+    // CardView-v7
+    api "org.jetbrains.anko:anko-cardview-v7:$anko_version"
+    // Design
+    api "org.jetbrains.anko:anko-design:$anko_version"
+    api "org.jetbrains.anko:anko-design-coroutines:$anko_version"
+    // GridLayout-v7
+    api "org.jetbrains.anko:anko-gridlayout-v7:$anko_version"
+    // Percent
+    api "org.jetbrains.anko:anko-percent:$anko_version"
+    // RecyclerView-v7
+    api "org.jetbrains.anko:anko-recyclerview-v7:$anko_version"
+    api "org.jetbrains.anko:anko-recyclerview-v7-coroutines:$anko_version"
+    // ConstraintLayout
+    api "org.jetbrains.anko:anko-constraint-layout:$anko_version"
+
+//    compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    api "com.tencent.bugly:crashreport:2.6.6"
+    api "com.tencent.bugly:nativecrashreport:3.3.1"
+
+
+    kapt "com.android.databinding:compiler:3.0.1"
+
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
