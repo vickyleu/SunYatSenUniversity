@@ -19,8 +19,8 @@ import org.jetbrains.anko.AnkoContextImpl
  * @ClassName 这里输入你的类名(或用途)
  */
 abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), BaseAnko<V, A> {
-    protected var toolbar: BaseToolBar<A, V>? = null
-    protected var toobarAnko: View? = null
+    protected  var toolbar: BaseToolBar<A, V>? = null
+    protected var toolbarAnko: View? = null
     private var layout: BindingComponent<A, V>? = null
 
     protected var showToolBar: Boolean = false
@@ -38,7 +38,7 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
                 val tc = newToolBarComponent(this)
                 if (tc != null) {
                     toolbar = tc.apply {
-                        toobarAnko = createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, false))
+                        toolbarAnko = createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, false))
                         // 经测试在代码里直接声明透明状态栏更有效
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
                             val localLayoutParams = window.attributes
@@ -50,15 +50,15 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
             }
 
             layout = newComponent(this).apply {
-                if (toobarAnko != null) {
+                if (toolbarAnko != null) {
                     createView(
                             AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, true),
-                            toobarAnko,
+                            toolbarAnko,
                             this@BaseActivity,
                             this@BaseActivity
                     )
-                    if (toobarAnko is Toolbar&&toolbar!=null) {
-                        toolbar!!.initToolbar(this@BaseActivity, toobarAnko!! as Toolbar)
+                    if (toolbarAnko is Toolbar&&toolbar!=null) {
+                        toolbar!!.initToolbar(this@BaseActivity, toolbarAnko!! as Toolbar)
                     }
                 } else {
                     createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, true))

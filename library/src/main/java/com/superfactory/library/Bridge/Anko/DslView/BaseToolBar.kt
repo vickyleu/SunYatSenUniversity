@@ -1,10 +1,12 @@
 package com.superfactory.library.Bridge.Anko.DslView
 
-import android.content.Context
 import android.os.Build
 import android.support.v7.widget.Toolbar
 import android.view.View
 import com.superfactory.library.Bridge.Anko.BindingComponent
+import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarColor
+import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarSize
+import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Context.BaseActivity
 import com.superfactory.library.Context.BaseFragment
 import com.superfactory.library.R
@@ -30,8 +32,12 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                 width = matchParent
                 height = wrapContent
                 topPadding = StatusBarUtil.getStatusBarHeight(ctx)
-                backgroundColorResource = R.color.colorPrimary
+                backgroundColor = getActionBarColor(ctx)
                 minimumHeight = getActionBarSize(ctx)
+            }
+
+            if (viewModel!=null&&viewModel is ToolbarBindingModel){
+//                bindSelf()
             }
         }
     }
@@ -44,14 +50,22 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
         (owner.activity as BaseActivity<*, *>).setSupportActionBar(toolbar);
     }
 
+    fun setToolbarTitle(title: String, toolbar: Toolbar): Unit {
+        toolbar.title = title
+//
+//
+//        // App Logo
+//        toolbar.setLogo(R.drawable.ic_launcher);
+//// Title
+//        toolbar.setTitle("My Title");
+//// Sub Title
+//        toolbar.setSubtitle("Sub title");
 
-    protected fun getActionBarSize(context: Context): Int {
-        val attrs = intArrayOf(android.R.attr.actionBarSize)
-        val values = context.getTheme().obtainStyledAttributes(attrs)
-        try {
-            return values.getDimensionPixelSize(0, 0)//第一个参数数组索引，第二个参数 默认值
-        } finally {
-            values.recycle()
-        }
+//        // Navigation Icon 要設定在 setSupoortActionBar 才有作用
+//        //否則會出現 back button
+//        toolbar.setNavigationIcon(R.drawable.ab_android)
+
     }
+
+
 }

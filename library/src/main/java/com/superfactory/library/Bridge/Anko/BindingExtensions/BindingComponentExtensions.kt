@@ -2,6 +2,9 @@ package com.superfactory.library.Bridge.Anko.BindingExtensions
 
 import android.app.Application
 import android.content.Context
+import android.content.res.TypedArray
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.support.v4.app.FragmentManager
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.ScreenSizeExtension
@@ -46,6 +49,62 @@ fun BindingComponent<*, *>.getAppOverSize(ctx: Context?): ScreenSizeExtension {
     return appCtx.mScreenSizeExtension;
 }
 
+
+fun BindingComponent<*, *>.getAttrSizeValue(context: Context, attr: Int): Int {
+    val values = getAttrValue(context, attr)
+    try {
+        return values.getDimensionPixelSize(0, 0)//第一个参数数组索引，第二个参数 默认值
+    } finally {
+        values.recycle()
+    }
+}
+
+fun BindingComponent<*, *>.getAttrColorValue(context: Context, attr: Int): Int {
+    val values = getAttrValue(context, attr)
+    try {
+        return values.getColor(0, 0)//第一个参数数组索引，第二个参数 默认值
+    } finally {
+        values.recycle()
+    }
+}
+
+fun BindingComponent<*, *>.getAttrIntValue(context: Context, attr: Int): Int {
+    val values = getAttrValue(context, attr)
+    try {
+        return values.getInteger(0, 0)//第一个参数数组索引，第二个参数 默认值
+    } finally {
+        values.recycle()
+    }
+}
+
+
+fun BindingComponent<*, *>.getAttrDrawablValue(context: Context, attr: Int): Drawable {
+    val values = getAttrValue(context, attr)
+    try {
+        return values.getDrawable(0)//第一个参数数组索引，第二个参数 默认值
+    } finally {
+        values.recycle()
+    }
+}
+
+
+fun BindingComponent<*, *>.getAttrValue(context: Context, attr: Int): TypedArray {
+    val attrs = intArrayOf(attr)
+    val values = context.getTheme().obtainStyledAttributes(attrs)
+    return values
+}
+
+fun BindingComponent<*, *>.getActionBarSize(context: Context): Int {
+    return getAttrSizeValue(context, android.R.attr.actionBarSize)
+}
+
+fun BindingComponent<*, *>.getActionBarColor(context: Context): Int {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        getAttrColorValue(context, android.R.attr.colorPrimary)
+    } else {
+        return 0
+    }
+}
 
 inline fun <V> BindingComponent<*, V>.getModel(): V = this.viewModel!! as V
 
