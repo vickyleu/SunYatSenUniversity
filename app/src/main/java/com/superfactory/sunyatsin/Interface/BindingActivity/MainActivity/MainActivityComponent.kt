@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.BindingExtensions.dipValue
+import com.superfactory.library.Bridge.Anko.BindingExtensions.getAppNoStatusBarSize
 import com.superfactory.library.Bridge.Anko.DslView.horizontalLayout
 import com.superfactory.library.Bridge.Anko.bindSelf
 import com.superfactory.library.Bridge.Anko.bindings.notifyOnClickObservable

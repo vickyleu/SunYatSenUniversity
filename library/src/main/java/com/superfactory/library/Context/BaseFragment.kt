@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
+import com.superfactory.library.Debuger
 import org.jetbrains.anko.AnkoContextImpl
 
 /**
@@ -20,7 +21,7 @@ import org.jetbrains.anko.AnkoContextImpl
  */
 abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V, A> {
     protected var toolbar: BaseToolBar<A, V>? = null
-    protected var tooBarAnko: View? = null
+    protected var toobarAnko: View? = null
 
     private var layout: BindingComponent<A, V>? = null
     var viewModel: V? = null
@@ -46,24 +47,25 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
                 val tc = newToolBarComponent(this)
                 if (tc != null) {
                     toolbar = tc.apply {
-                        tooBarAnko = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
+                        toobarAnko = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
                         notifyChanges()
                     } as BaseToolBar<A, V>
                 }
             }
             layout = newComponent(this).apply {
-                if (tooBarAnko != null) {
+                if (toobarAnko != null) {
+                    Debuger.printMsg(this,"妈卖批")
                     view = createView(
-                            AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, true),
-                            tooBarAnko,
+                            AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false),
+                            toobarAnko,
                             this@BaseFragment.context,
-                            this@BaseFragment as A
+                            this@BaseFragment
                     )
-                    if (tooBarAnko is Toolbar && toolbar != null) {
-                        toolbar!!.initToolbar(this@BaseFragment, tooBarAnko!! as Toolbar)
+                    if (toobarAnko is Toolbar && toolbar != null) {
+                        toolbar!!.initToolbar(this@BaseFragment, toobarAnko!! as Toolbar)
                     }
                 } else {
-                    view = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, true))
+                    view = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
                 }
                 notifyChanges()
             }

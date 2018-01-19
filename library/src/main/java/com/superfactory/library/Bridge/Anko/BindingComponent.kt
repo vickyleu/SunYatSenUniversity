@@ -1,16 +1,14 @@
 package com.superfactory.library.Bridge.Anko
 
-import android.app.Application
 import android.content.Context
-import android.support.v4.app.FragmentManager
 import android.view.View
 import android.widget.*
 import com.superfactory.library.Bridge.Anko.bindings.bind
 import com.superfactory.library.Bridge.Anko.bindings.onSelf
-import com.superfactory.library.Context.BaseActivity
-import com.superfactory.library.Context.BaseApp
-import com.superfactory.library.Utils.StatusBarUtil
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoComponent
+import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.AnkoContextImpl
+import org.jetbrains.anko.verticalLayout
 import java.util.*
 
 fun <T, Data> BindingComponent<T, Data>.bind(v: View, any: View.OnClickListener?) = register.bind(v, any)
@@ -55,12 +53,16 @@ abstract class BindingComponent<in T, V>
     override final fun createView(ui: AnkoContext<T>) = createViewWithBindings(ui).apply { register.bindAll() }
 
     final fun createView(ui: AnkoContext<T>, toolbar: View?, ctx: Context, owner: T): View {
-        return if (toolbar == null) createView(ui) else with(ui) {
-            verticalLayout {
-                addView(toolbar)
-                addView(createViewWithBindings(AnkoContextImpl(ctx, owner, false)))
-            }
-        }.apply { register.bindAll() }
+        return if (toolbar == null) {
+            createView(ui)
+        } else {
+            with(ui) {
+                verticalLayout {
+                    addView(toolbar)
+                    addView(createViewWithBindings(AnkoContextImpl(ctx, owner, false)))
+                }
+            }.apply { register.bindAll() }
+        }
     }
 
 
@@ -68,30 +70,5 @@ abstract class BindingComponent<in T, V>
 
     fun destroyView() = register.unbindAll()
 
-    open fun getAppNoStatusBarSize(ctx: Context): ScreenSizeExtension {
-        val noStatusSize = ScreenSizeExtension()
-        val height = StatusBarUtil.getStatusBarHeight(ctx)
-        val screenSizeExtension = getAppOverSize(ctx)
-        noStatusSize.width = screenSizeExtension.width
-        noStatusSize.height = screenSizeExtension.height - height
-        noStatusSize.density = screenSizeExtension.density
-        noStatusSize.densityDpi = screenSizeExtension.densityDpi
-        return noStatusSize;
-    }
 
-    open fun getAppOverSize(ctx: Context?): ScreenSizeExtension {
-        if (ctx == null) {
-            return ScreenSizeExtension()
-        }
-        var appCtx: BaseApp? = null
-        if (ctx is Application) {
-            appCtx = ctx as BaseApp?
-        } else {
-            appCtx = ctx.applicationContext as BaseApp?
-        }
-        if (appCtx == null) {
-            return ScreenSizeExtension()
-        }
-        return appCtx.mScreenSizeExtension;
-    }
 }
