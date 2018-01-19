@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.superfactory.library.Bridge.Anko.BindingComponent
+import com.superfactory.library.Bridge.Anko.BindingExtensions.dipValue
 import com.superfactory.library.Bridge.Anko.DslView.horizontalLayout
 import com.superfactory.library.Bridge.Anko.bindSelf
 import com.superfactory.library.Bridge.Anko.bindings.notifyOnClickObservable
@@ -34,6 +35,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
     override fun createViewWithBindings(ui: AnkoContext<MainActivity>): View = with(ui) {
         val screenSizeHeight = getAppNoStatusBarSize(ctx).height.toFloat()
         val screenSizeWidth = getAppNoStatusBarSize(ctx).width.toFloat()
+
         verticalLayout {
             backgroundColor = Color.TRANSPARENT
             weightSum = 1f
@@ -60,12 +62,12 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
 
                 frameLayout {
                     id = R.id.ctrl_shadow
-                    backgroundDrawable = getDrawable(ctx,R.drawable.gradient_shape)//getGradientDrawable(ctx)
+                    backgroundDrawable = getDrawable(ctx, R.drawable.gradient_shape)//getGradientDrawable(ctx)
                 }.lparams {
                     topMargin = -(buttonHeight * dividerPercent).toInt()
                     setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
                     alignParentTop()
-                    width= matchParent
+                    width = matchParent
                     height = matchParent
                 }
 
@@ -110,9 +112,9 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                         setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
                     }
                 }.lparams {
-//                    topMargin = -(buttonHeight * dividerPercent).toInt()
+                    //                    topMargin = -(buttonHeight * dividerPercent).toInt()
 //                    alignParentTop()
-                    addRule(RelativeLayout.ALIGN_TOP,R.id.ctrl_shadow)
+                    addRule(RelativeLayout.ALIGN_TOP, R.id.ctrl_shadow)
                     setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
                     centerHorizontally()
                 }
@@ -240,7 +242,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
 //        <corners android:radius="8dp" />
 //        </shape>
 
-        val shape=ShapeDrawable(RectShape())
+        val shape = ShapeDrawable(RectShape())
         // 创建渐变的shape drawable
         val colors = intArrayOf(
                 Color.parseColor("#828b8787"),

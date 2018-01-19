@@ -94,10 +94,4 @@ abstract class BindingComponent<in T, V>
         }
         return appCtx.mScreenSizeExtension;
     }
-
-    inline fun dipValue(value: Int, ctx: Context): Int = ctx.dip(value)
-    inline fun getModel(): V = viewModel!!
-    inline fun supportFragmentManager(ui: AnkoContext<T>): FragmentManager = (ui.owner as BaseActivity<*, *>).getSupportFragmentManager()
-    inline fun fragmentManager(ui: AnkoContext<T>): android.app.FragmentManager = (ui.owner as BaseActivity<*, *>).getFragmentManager()
-
 }
