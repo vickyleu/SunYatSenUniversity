@@ -2,10 +2,13 @@ package com.superfactory.library.Context
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.BindingComponent
+import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
 import org.jetbrains.anko.AnkoContextImpl
 
 /**
@@ -15,16 +18,53 @@ import org.jetbrains.anko.AnkoContextImpl
  * @Date 2018年01月18日  11:11:39
  * @ClassName 这里输入你的类名(或用途)
  */
-abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment() {
+abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V, A> {
+    protected var toolbar: BaseToolBar<A, V>? = null
+    protected var tooBarAnko: View? = null
+
     private var layout: BindingComponent<A, V>? = null
     var viewModel: V? = null
 
+    protected var showToolBar: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+//        var view: View? = null
+//        viewModel = newViewModel().apply {
+//            layout = newComponent(this).apply {
+//                view = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
+//                notifyChanges()
+//            }
+//        }
+//        if (view == null) {
+//            throw RuntimeException(javaClass.simpleName + "创建view为空")
+//        }
+
+
         var view: View? = null
         viewModel = newViewModel().apply {
+            if (showToolBar) {
+                val tc = newToolBarComponent(this)
+                if (tc != null) {
+                    toolbar = tc.apply {
+                        tooBarAnko = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
+                        notifyChanges()
+                    } as BaseToolBar<A, V>
+                }
+            }
             layout = newComponent(this).apply {
-                view = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
+                if (tooBarAnko != null) {
+                    view = createView(
+                            AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, true),
+                            tooBarAnko,
+                            this@BaseFragment.context,
+                            this@BaseFragment as A
+                    )
+                    if (tooBarAnko is Toolbar && toolbar != null) {
+                        toolbar!!.initToolbar(this@BaseFragment, tooBarAnko!! as Toolbar)
+                    }
+                } else {
+                    view = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, true))
+                }
                 notifyChanges()
             }
         }
@@ -32,6 +72,14 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment() {
             throw RuntimeException(javaClass.simpleName + "创建view为空")
         }
         return view;
+    }
+
+    open fun newToolBarComponent(v: V): BindingComponent<A, V>? {
+        return null
+    }
+
+    override fun ankoToolBar(viewModel: V): BaseToolBar<V, A>? {
+        return null
     }
 
     abstract fun newViewModel(): V

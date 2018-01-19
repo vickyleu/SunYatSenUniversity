@@ -61,14 +61,14 @@ object Debuger {
                     val s = anything as String?
                     if (TextUtils.isEmpty(s)) return
                     if (throwable != null) {
-                        Log.wtf(tag, s, throwable)
+                        Log.e(tag, s, throwable)
                     } else
-                        Log.wtf(tag, s)
+                        Log.e(tag, s)
                 } else {
                     if (throwable != null) {
-                        Log.wtf(tag, anything.toString(), throwable)
+                        Log.e(tag, anything.toString(), throwable)
                     } else
-                        Log.wtf(tag, anything.toString())
+                        Log.e(tag, anything.toString())
                 }
             }
         }

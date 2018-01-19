@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.DslView.refresh
+import com.superfactory.library.Debuger
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.matchParent
@@ -20,10 +21,12 @@ import org.jetbrains.anko.verticalLayout
 class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent<NoteFragment, NoteFragmentViewModel>(viewModel) {
     override fun createViewWithBindings(ui: AnkoContext<NoteFragment>): View = with(ui) {
         refresh {
+            backgroundColor = Color.WHITE
             setEnableRefresh(true)
             setEnableLoadmore(false)
+            Debuger.printMsg(this, "生成view没有")
             verticalLayout {
-                backgroundColor = Color.WHITE
+                backgroundColor = Color.RED
                 lparams {
                     width = matchParent
                     height = matchParent

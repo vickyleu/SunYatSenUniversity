@@ -7,4 +7,5 @@
     <item name="alt_display" type="id" />
     <item name="ctrl_left_id" type="id" />
     <item name="ctrl_right_id" type="id" />
+    <item name="ctrl_shadow" type="id" />
 </resources>

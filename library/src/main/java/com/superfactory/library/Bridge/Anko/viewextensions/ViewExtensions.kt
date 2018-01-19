@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
 import android.view.View.OnClickListener
+import com.superfactory.library.Debuger
 
 fun View.setVisibilityIfNeeded(visibility: Int?) {
     if (visibility != null && this.visibility != visibility) {
@@ -44,7 +45,7 @@ fun View.color(colorRes: Int): Int {
 }
 
 fun View.setInlineOnClickListener(click: OnClickListener?) {
-    this.onClickListener = click
+   onClickListener = click
     this.setOnClickListener(click)
 }
 
@@ -60,3 +61,11 @@ fun View.drawable(drawableRes: Int): Drawable {
         resources.getDrawable(drawableRes)
     }
 }
+
+
+fun View.setClickedIfNecessary(clickListener: OnClickListener?) {
+    Debuger.printMsg(this ,"setClickedIfNecessary="+clickListener)
+    if (clickListener != null)
+        clickListener.onClick(this)
+}
+

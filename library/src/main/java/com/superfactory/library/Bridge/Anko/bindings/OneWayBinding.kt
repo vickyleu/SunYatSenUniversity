@@ -144,7 +144,7 @@ infix fun <Input, TBinding : BindingConverter<*, Input>>
 /**
  * Immediately binds the [FrameLayout] to the value of this binding. have no idea to handle what......
  */
-infix fun <Data, Input, Output : ObservableFieldImpl<FragmentContainer>?, TBinding : BindingConverter<Data, Input>>
+infix fun <Data, Input, TBinding : BindingConverter<Data, Input>, Output : FragmentContainer?>
         OneWayExpression<Data, Input, Output, TBinding>.toFragment(view: FrameLayout) = toView(view, FrameLayout::setFragmentPosition)
 
 /**
@@ -167,6 +167,13 @@ infix fun <Input, TBinding : BindingConverter<*, Input>>
  */
 infix fun <Data, Input, TBinding : BindingConverter<Data, Input>>
         OneWayExpression<Data, Input, Boolean, TBinding>.toOnCheckedChange(compoundButton: CompoundButton) = toView(compoundButton, CompoundButton::setCheckedIfNecessary)
+
+
+///**
+// * Binds the output of the initial expression to [View.isClickable] method.
+// */
+//infix fun <Data, Input, TBinding : BindingConverter<Data, Input>>
+//        OneWayExpression<Data, Input, View.OnClickListener, TBinding>.toOnClickChange(view: View) = toView(view, View::setClickedIfNecessary)
 
 /**
  * Binds the output of the initial expression to [DatePicker.updateDate] method.

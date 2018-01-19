@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.drawable.*
 import android.graphics.drawable.shapes.OvalShape
 import android.graphics.drawable.shapes.RectShape
+import android.support.v4.content.ContextCompat.getDrawable
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -13,12 +14,12 @@ import android.widget.RelativeLayout
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.DslView.horizontalLayout
 import com.superfactory.library.Bridge.Anko.bindSelf
+import com.superfactory.library.Bridge.Anko.bindings.notifyOnClickObservable
 import com.superfactory.library.Bridge.Anko.bindings.toFragment
-import com.superfactory.library.Bridge.Anko.bindings.toObservable
-import com.superfactory.sunyatsin.Interface.BindingFragment.Note.NoteFragment
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.R.color.ctrl_text_selector
 import org.jetbrains.anko.*
+
 
 /**
  * Created by vicky on 2018.01.17.
@@ -28,6 +29,8 @@ import org.jetbrains.anko.*
  * @ClassName 这里输入你的类名(或用途)
  */
 class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent<MainActivity, MainActivityViewModel>(viewModel) {
+
+
     override fun createViewWithBindings(ui: AnkoContext<MainActivity>): View = with(ui) {
         val screenSizeHeight = getAppNoStatusBarSize(ctx).height.toFloat()
         val screenSizeWidth = getAppNoStatusBarSize(ctx).width.toFloat()
@@ -37,7 +40,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
             frameLayout {
                 id = R.id.alt_display
                 backgroundColor = Color.YELLOW
-                bindSelf(MainActivityViewModel::fragments) {
+                bindSelf {
                     it.fragments
                 }.toFragment(this)
             }.lparams {
@@ -49,6 +52,23 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
             relativeLayout {
                 backgroundColor = Color.TRANSPARENT
 
+
+                val buttonHeight = ctx.resources.getDimension(R.dimen.size_button_height)
+                val btw = ctx.resources.getDimension(R.dimen.size_button_btw).toInt()
+                val dividerPercent = (0.4).toFloat()
+                val screenGap = (screenSizeWidth * 0.1).toInt()
+
+                frameLayout {
+                    id = R.id.ctrl_shadow
+                    backgroundDrawable = getDrawable(ctx,R.drawable.gradient_shape)//getGradientDrawable(ctx)
+                }.lparams {
+                    topMargin = -(buttonHeight * dividerPercent).toInt()
+                    setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
+                    alignParentTop()
+                    width= matchParent
+                    height = matchParent
+                }
+
                 horizontalLayout {
                     backgroundResource = R.drawable.top_stoke_selector
                 }.lparams {
@@ -56,14 +76,13 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                     height = matchParent
                     alignParentBottom()
                 }
-                val buttonHeight = ctx.resources.getDimension(R.dimen.size_button_height)
-                val btw = ctx.resources.getDimension(R.dimen.size_button_btw).toInt()
-                val dividerPercent = (0.4).toFloat()
+
 
                 relativeLayout {
                     id = R.id.ctrl_button
                     isClickable = true
-                    bindSelf(this).toObservable { it.clickListener }
+                    bindSelf(this, viewModelSafe.clickListener.value)
+                            .notifyOnClickObservable { it.clickListener }
                     imageView() {
                         isDuplicateParentStateEnabled = true
                         backgroundDrawable = getLayerDrawable(buttonHeight.toInt(), dividerPercent, btw, ctx)
@@ -91,20 +110,18 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                         setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
                     }
                 }.lparams {
-                    topMargin = -(buttonHeight * dividerPercent).toInt()
+//                    topMargin = -(buttonHeight * dividerPercent).toInt()
+//                    alignParentTop()
+                    addRule(RelativeLayout.ALIGN_TOP,R.id.ctrl_shadow)
                     setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
                     centerHorizontally()
                 }
-
-
-                val screenGap = (screenSizeWidth * 0.1).toInt()
-
                 relativeLayout {
                     id = R.id.ctrl_text_left
                     isClickable = true
-                    bindSelf(this).toObservable { it.clickListener }
                     backgroundColor = Color.TRANSPARENT
-
+                    bindSelf(this, viewModelSafe.clickListener.value)
+                            .notifyOnClickObservable { it.clickListener }
                     val tv = textView {
                         id = R.id.ctrl_left_id
                         backgroundColor = Color.TRANSPARENT
@@ -145,12 +162,11 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                     width = wrapContent
                     height = wrapContent
                 }
-
-
                 relativeLayout {
                     id = R.id.ctrl_text_right
                     isClickable = true
-                    bindSelf(this).toObservable { it.clickListener }
+                    bindSelf(this, viewModelSafe.clickListener.value)
+                            .notifyOnClickObservable { it.clickListener }
                     backgroundColor = Color.TRANSPARENT
                     val tv = textView {
                         id = R.id.ctrl_right_id
@@ -195,8 +211,6 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                     width = wrapContent
                     height = wrapContent
                 }
-
-
             }.lparams {
                 width = matchParent
                 clipChildren = false
@@ -209,6 +223,33 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                 height = matchParent
             }
         }
+    }
+
+    private fun getGradientDrawable(ctx: Context): Drawable? {
+//        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+//        android:shape="rectangle">
+//        <gradient
+//        android:angle="90"
+//        android:endColor="#46cccbcc"
+//        android:startColor="#828b8787" />
+//        <padding
+//        android:bottom="7dp"
+//        android:left="7dp"
+//        android:right="7dp"
+//        android:top="7dp" />
+//        <corners android:radius="8dp" />
+//        </shape>
+
+        val shape=ShapeDrawable(RectShape())
+        // 创建渐变的shape drawable
+        val colors = intArrayOf(
+                Color.parseColor("#828b8787"),
+//                Color.parseColor("#FF00FF00"),
+                Color.parseColor("#46cccbcc")
+        )//分别为开始颜色，中间夜色，结束颜色
+        val gd = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors)//创建drawable
+        gd.gradientType = GradientDrawable.LINEAR_GRADIENT
+        return gd
     }
 
     private fun getLayerDrawable(height: Int, percent: Float, btw: Int, ctx: Context): LayerDrawable {

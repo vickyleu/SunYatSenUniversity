@@ -40,34 +40,19 @@ abstract class ViewRegister<in V : View, Output> {
     }
 }
 
-class OnViewClickListener : ViewRegister<View, View.OnClickListener>(), View.OnClickListener {
+class OnViewClickListener(private val clickListener: View.OnClickListener?) : ViewRegister<View, View.OnClickListener>() {
     override fun registerView(view: View) {
-        view.setInlineOnClickListener(this)
+        view.setInlineOnClickListener(clickListener)
     }
-
     override fun deregisterFromView(view: View) {
         view.setInlineOnClickListener(null)
     }
-
     override fun getValue(view: View): View.OnClickListener {
+        if (view.onClickListener() == null) {
+            return View.OnClickListener { }
+        }
         return view.onClickListener()!!
     }
-
-    /**
-     * Called when a view has been clicked.
-     *
-     * @param v The view that was clicked.
-     */
-    override fun onClick(v: View?) {
-        if (v != null) {
-            if (v.onClickListener()  != null) {
-                v.onClickListener()!!.onClick(v)
-                notifyChange(v.onClickListener()!!)
-            }
-        }
-    }
-
-
 }
 
 

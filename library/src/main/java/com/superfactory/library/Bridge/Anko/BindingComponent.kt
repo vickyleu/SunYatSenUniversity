@@ -13,8 +13,7 @@ import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.*
 import java.util.*
 
-fun <T, Data> BindingComponent<T, Data>.bind(v: FrameLayout) = register.bind(v)
-fun <T, Data> BindingComponent<T, Data>.bind(v: View) = register.bind(v)
+fun <T, Data> BindingComponent<T, Data>.bind(v: View, any: View.OnClickListener?) = register.bind(v, any)
 
 
 fun <T, Data> BindingComponent<T, Data>.bind(v: TextView) = register.bind(v)
@@ -24,9 +23,8 @@ fun <T, Data> BindingComponent<T, Data>.bind(v: TimePicker) = register.bind(v)
 fun <T, Data> BindingComponent<T, Data>.bind(v: RatingBar) = register.bind(v)
 fun <T, Data> BindingComponent<T, Data>.bind(v: SeekBar) = register.bind(v)
 
-fun <T, Data> BindingComponent<T, Data>.bindSelf(v: FrameLayout) = bind(v).onSelf()
-fun <T, Data> BindingComponent<T, Data>.bindSelf(v: View) = bind(v).onSelf()
 
+fun <T, Data> BindingComponent<T, Data>.bindSelf(v: View, any: View.OnClickListener?) = bind(v, any).onSelf()
 
 fun <T, Data> BindingComponent<T, Data>.bindSelf(v: TextView) = bind(v).onSelf()
 fun <T, Data> BindingComponent<T, Data>.bindSelf(v: CompoundButton) = bind(v).onSelf()
@@ -55,6 +53,16 @@ abstract class BindingComponent<in T, V>
         }
 
     override final fun createView(ui: AnkoContext<T>) = createViewWithBindings(ui).apply { register.bindAll() }
+
+    final fun createView(ui: AnkoContext<T>, toolbar: View?, ctx: Context, owner: T): View {
+        return if (toolbar == null) createView(ui) else with(ui) {
+            verticalLayout {
+                addView(toolbar)
+                addView(createViewWithBindings(AnkoContextImpl(ctx, owner, false)))
+            }
+        }.apply { register.bindAll() }
+    }
+
 
     abstract fun createViewWithBindings(ui: AnkoContext<T>): View
 

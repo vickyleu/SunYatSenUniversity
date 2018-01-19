@@ -6,4 +6,5 @@
     <item name="onOff"
           type="id"/>
     <item name="tag_position" type="id"/>
+    <item name="toolbar" type="id" />
 </resources>

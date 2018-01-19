@@ -2,8 +2,12 @@ package com.superfactory.library.Context
 
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import android.view.View
 import cn.nekocode.emojix.Emojix
+import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.BindingComponent
+import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
 import org.jetbrains.anko.AnkoContextImpl
 
 
@@ -14,21 +18,62 @@ import org.jetbrains.anko.AnkoContextImpl
  * @Date 2018年01月17日  11:35:47
  * @ClassName 这里输入你的类名(或用途)
  */
-abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity() {
-
+abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), BaseAnko<V, A> {
+    protected var toolbar: BaseToolBar<A, V>? = null
+    protected var tooBarAnko: View? = null
     private var layout: BindingComponent<A, V>? = null
 
+    protected var showToolBar: Boolean = false
+
     var viewModel: V? = null
+
+    override fun ankoToolBar(viewModel: V): BaseToolBar<V, A>? {
+        return null
+    }
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = newViewModel().apply {
+            if (showToolBar) {
+                val tc = newToolBarComponent(this)
+                if (tc != null) {
+                    toolbar = tc.apply {
+                        tooBarAnko = createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, false))
+                        // 经测试在代码里直接声明透明状态栏更有效
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                            val localLayoutParams = window.attributes
+                            localLayoutParams.flags = android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or localLayoutParams.flags
+                        }
+                        notifyChanges()
+                    } as BaseToolBar<A, V>
+                }
+            }
+
             layout = newComponent(this).apply {
-                createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, true))
+                if (tooBarAnko != null) {
+                    createView(
+                            AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, false),
+                            tooBarAnko ,
+                            this@BaseActivity,
+                            this@BaseActivity as A
+                    )
+                    if (tooBarAnko is Toolbar&&toolbar!=null) {
+                        toolbar!!.initToolbar(this@BaseActivity,tooBarAnko!! as Toolbar)
+                    }
+                } else {
+                    createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, true))
+                }
+                // 经测试在代码里直接声明透明状态栏更有效
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                    val localLayoutParams = window.attributes
+                    localLayoutParams.flags = android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or localLayoutParams.flags
+                }
                 notifyChanges()
             }
+
         }
     }
+
 
     abstract fun newViewModel(): V
 
@@ -40,15 +85,20 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity() {
         layout = null
     }
 
+
+    open fun newToolBarComponent(v: V): BindingComponent<A, V>? {
+        return null
+    }
+
     override fun attachBaseContext(newBase: Context) {
-        if (newBase.applicationContext!=null){
+        if (newBase.applicationContext != null) {
             val app = newBase.applicationContext as BaseApp
             if (app.injectEmojix()) {
                 super.attachBaseContext(Emojix.wrap(newBase))
             } else {
                 super.attachBaseContext(newBase)
             }
-        }else{
+        } else {
             super.attachBaseContext(newBase)
         }
     }

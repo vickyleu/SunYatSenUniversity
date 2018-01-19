@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.*
 import com.superfactory.library.Bridge.Anko.BindingRegister
 import com.superfactory.library.Bridge.Anko.ObservableField
+import com.superfactory.library.Debuger
 import org.jetbrains.anko.doAsync
 import java.util.*
 
@@ -16,13 +17,12 @@ import java.util.*
  */
 
 
-
 /**
  * 函数映射 bindSelf(this:View).toObservable { onClickListener }
  * 将内部点击事件映射到传入的点击属性中,在传入的点击属性中判断触发view的id或类型做内部存取值,将view和model层解耦
  */
-fun <Data> BindingRegister<Data>.bind(v: View) = bind(v, OnViewClickListener())
 
+fun <Data> BindingRegister<Data>.bind(v: View, any: View.OnClickListener?) = bind(v, OnViewClickListener(any))
 
 fun <Data> BindingRegister<Data>.bind(v: TextView) = bind(v, OnTextChangedRegister())
 fun <Data> BindingRegister<Data>.bind(v: CompoundButton) = bind(v, OnCheckedChangeRegister())
@@ -55,6 +55,16 @@ inline fun <Data, Input, Output, V : View>
                 field.value = input ?: field.defaultValue
             }
         }
+
+inline fun <Data, Input : View.OnClickListener?, Output : View.OnClickListener?, V : View>
+        OneWayToSourceExpression<Data, Input, Output, V>.notifyOnClickObservable(
+        crossinline function: (Data) -> ObservableField<Input>) =
+        to { viewModel, input, output ->
+            if (viewModel != null) {
+                Debuger.printMsg(this, "注册监听器成功")
+            }
+        }
+
 
 class OneWayToSource<Data, Input, Output, V : View>
 internal constructor(
