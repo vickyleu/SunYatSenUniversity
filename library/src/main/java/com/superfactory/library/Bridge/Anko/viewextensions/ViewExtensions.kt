@@ -12,13 +12,16 @@ fun View.setVisibilityIfNeeded(visibility: Int?) {
 }
 
 // 使用扩展属性(extension property)
-var View.click: OnClickListener?
+var View.onClickListener: OnClickListener?
+    get() = privateClickExtensions
     set(value) {
-        click = value
+        privateClickExtensions = value
     }
 
-    get() {
-        return click
+private var privateClickExtensions: OnClickListener? = null
+    get() = field
+    set(value) {
+        field = value
     }
 
 fun View.string(resId: Int, vararg args: Any?) = context.getString(resId, *args)!!
@@ -39,12 +42,14 @@ fun View.color(colorRes: Int): Int {
         resources.getColor(colorRes)
     }
 }
+
 fun View.setInlineOnClickListener(click: OnClickListener?) {
+    this.onClickListener = click
     this.setOnClickListener(click)
-    this.click=click
 }
+
 fun View.onClickListener(): OnClickListener? {
-    return this.click
+    return this.onClickListener
 }
 
 @Suppress("DEPRECATION")

@@ -13,7 +13,7 @@ import android.view.View
  * Created by AllenCoder on 2016/8/03.
  *
  *
- * This can be useful for applications that wish to implement various forms of click and longclick and childView click
+ * This can be useful for applications that wish to implement various forms of onClickListener and longclick and childView onClickListener
  * manipulation of item views within the RecyclerView. SimpleClickListener may intercept
  * a touch interaction already in progress even if the SimpleClickListener is already handling that
  * gesture stream itself for the purposes of scrolling.
@@ -201,11 +201,11 @@ abstract class SimpleClickListener : RecyclerView.OnItemTouchListener {
 
     /**
      * callback method to be invoked when an item in this view has been
-     * click and held
+     * onClickListener and held
      *
      * @param view     The view whihin the AbsListView that was clicked
      * @param position The position of the view int the adapter
-     * @return true if the callback consumed the long click ,false otherwise
+     * @return true if the callback consumed the long onClickListener ,false otherwise
      */
     abstract fun onItemLongClick(adapter: BaseAdapter<*, *>, view: View, position: Int)
 

@@ -6,7 +6,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import android.widget.DatePicker.OnDateChangedListener
-import com.superfactory.library.Bridge.Anko.viewextensions.click
+import com.superfactory.library.Bridge.Anko.viewextensions.onClickListener
 import com.superfactory.library.Bridge.Anko.viewextensions.setInlineOnClickListener
 import java.lang.ref.WeakReference
 import java.util.*
@@ -50,7 +50,7 @@ class OnViewClickListener : ViewRegister<View, View.OnClickListener>(), View.OnC
     }
 
     override fun getValue(view: View): View.OnClickListener {
-        return view.click!!
+        return view.onClickListener()!!
     }
 
     /**
@@ -60,9 +60,9 @@ class OnViewClickListener : ViewRegister<View, View.OnClickListener>(), View.OnC
      */
     override fun onClick(v: View?) {
         if (v != null) {
-            if (v.click != null) {
-                v.click!!.onClick(v)
-                notifyChange(v.click!!)
+            if (v.onClickListener()  != null) {
+                v.onClickListener()!!.onClick(v)
+                notifyChange(v.onClickListener()!!)
             }
         }
     }
