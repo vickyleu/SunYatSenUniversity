@@ -9,6 +9,7 @@ import com.superfactory.library.Debuger
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.verticalLayout
 
 /**
@@ -30,6 +31,9 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                 lparams {
                     width = matchParent
                     height = matchParent
+                }
+                onClick {
+                    ui.owner.setTitle("1122111")
                 }
             }
             lparams {

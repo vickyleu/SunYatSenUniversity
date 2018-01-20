@@ -19,7 +19,6 @@ import kotlin.reflect.KProperty
  * @Date 2018年01月19日  16:53:52
  * @ClassName 这里输入你的类名(或用途)
  */
-@Suppress("UNREACHABLE_CODE")
 abstract class BaseToolBarActivity<V : ToolbarBindingModel, A : BaseToolBarActivity<V, A>> : BaseActivity<V, A>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +46,11 @@ abstract class BaseToolBarActivity<V : ToolbarBindingModel, A : BaseToolBarActiv
 
     override fun ankoToolBar(viewModel: V): BaseToolBar<V, A>? {
         return BaseToolBar(viewModel)
+    }
+
+    fun setTitle(str: String?) {
+        if (str == null) return
+        this.setToolbarProperty(ToolbarBindingModel::title, str)
     }
 
     fun setBackIcon(@DrawableRes res: Int) {

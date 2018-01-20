@@ -50,6 +50,11 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
         return BaseToolBar(viewModel)
     }
 
+    fun setTitle(str: String?) {
+        if (str == null) return
+        this.setToolbarProperty(ToolbarBindingModel::title, str)
+    }
+
     fun setBackIcon(@DrawableRes res: Int) {
         if (res == 0) return
         this.setToolbarProperty(ToolbarBindingModel::navigationIcon, res)
@@ -59,6 +64,7 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
         if (drawable == null) return
         this.setToolbarProperty(ToolbarBindingModel::navigationIcon, drawable)
     }
+
 
     fun <Input : KProperty<Value>, Value : Any> setToolbarProperty(input: Input, any: Value) {
         val v = ToolbarBindingModel.toModel(any, input, viewModel as ToolbarBindingModel);

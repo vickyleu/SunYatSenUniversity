@@ -3,6 +3,10 @@ package com.superfactory.library.Bridge.Model
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.observable
+import com.superfactory.library.Debuger
+import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty0
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
 /**
@@ -32,50 +36,11 @@ abstract class ToolbarBindingModel : BaseObservable() {
     companion object {
         fun <Value, Input> toModel(any: Value, input: Input, model: ToolbarBindingModel): ObservableFieldImpl<Value>? {
             var field: ObservableFieldImpl<Value>? = null
-
-//            val memberProperties = ToolbarBindingModel::class.memberProperties
-//            memberProperties.forEach {
-//                if ( it.isFinal&&it.){
-//                   val p= it as ObservableFieldImpl<Value>
-//                    if (p.){
-//                        field=it as ObservableFieldImpl<Value>
-//                    }
-//                }
-//            }
-
-            when (input) {
-                ToolbarBindingModel::title -> {
-                    field = model.title as ObservableFieldImpl<Value>
-                }
-                ToolbarBindingModel::navigationIcon -> {
-                    field = model.navigationIcon as ObservableFieldImpl<Value>
-                }
-                ToolbarBindingModel::backgroundColor -> {
-                    field = model.backgroundColor as ObservableFieldImpl<Value>
-                }
-                ToolbarBindingModel::titleColor -> {
-                    field = model.titleColor as ObservableFieldImpl<Value>
-                }
-                ToolbarBindingModel::titleSize -> {
-                    field = model.titleSize as ObservableFieldImpl<Value>
-                }
-                ToolbarBindingModel::navigationText -> {
-                    field = model.navigationText as ObservableFieldImpl<Value>
-                }
-                ToolbarBindingModel::navigationTextSize -> {
-                    field = model.navigationTextSize as ObservableFieldImpl<Value>
-                }
-                ToolbarBindingModel::navigationTextColor -> {
-                    field = model.navigationTextColor as ObservableFieldImpl<Value>
-                }
-                ToolbarBindingModel::leftPadding -> {
-                    field = model.leftPadding as ObservableFieldImpl<Value>
-                }
-                ToolbarBindingModel::rightPadding -> {
-                    field = model.rightPadding as ObservableFieldImpl<Value>
-                }
-                else -> {
-                    return null
+            val memberProperties = ToolbarBindingModel::class.memberProperties
+            memberProperties.forEach {
+                if (it.equals(input)){
+                        field=it.get(model)  as ObservableFieldImpl<Value>
+                        return field
                 }
             }
             return field
