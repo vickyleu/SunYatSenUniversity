@@ -1,8 +1,6 @@
 package com.superfactory.library.Bridge.Model
 
-import android.graphics.drawable.Drawable
 import com.superfactory.library.Bridge.Anko.BaseObservable
-import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.observable
 
 /**
@@ -10,7 +8,7 @@ import com.superfactory.library.Bridge.Anko.observable
  */
 class ToolbarBindingModel : BaseObservable() {
     val title = observable("")
-    var navigationIcon=observable(Any())
+    var navigationIcon = observable(Any())
     val backgroundColor = observable(0)
     val titleColor = observable(0)
     val titleSize = observable(0)

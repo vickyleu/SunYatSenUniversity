@@ -61,7 +61,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
 //// Sub Title
 //        toolbar.setSubtitle("Sub title");
 
-//        // Navigation Icon 要設定在 setSupoortActionBar 才有作用
+//        // Navigation Icon 要設定在 setSupoortActionBar 后才有作用
 //        //否則會出現 back button
 //        toolbar.setNavigationIcon(R.drawable.ab_android)
 
