@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBar
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
@@ -96,6 +97,7 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
 
     var behavior: CoordinatorLayout.Behavior<*>? = null
 
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (behavior != null)
@@ -121,6 +123,9 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
 
     override fun onDetach() {
         super.onDetach()
+//        if (showToolBar){
+//            (activity as AppCompatActivity).setSupportActionBar(null)
+//        }
         if (behavior == null)
             return
         val layout = this.view
