@@ -8,7 +8,7 @@ import android.view.View
 import cn.nekocode.emojix.Emojix
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.BindingComponent
-import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
+import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import org.jetbrains.anko.AnkoContextImpl
 
 

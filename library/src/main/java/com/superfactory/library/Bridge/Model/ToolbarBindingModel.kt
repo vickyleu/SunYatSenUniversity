@@ -3,6 +3,7 @@ package com.superfactory.library.Bridge.Model
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.observable
+import kotlin.reflect.full.memberProperties
 
 /**
  * Created by vicky on 2018/1/19.
@@ -30,7 +31,18 @@ abstract class ToolbarBindingModel : BaseObservable() {
 
     companion object {
         fun <Value, Input> toModel(any: Value, input: Input, model: ToolbarBindingModel): ObservableFieldImpl<Value>? {
-            val field: ObservableFieldImpl<Value>
+            var field: ObservableFieldImpl<Value>? = null
+
+//            val memberProperties = ToolbarBindingModel::class.memberProperties
+//            memberProperties.forEach {
+//                if ( it.isFinal&&it.){
+//                   val p= it as ObservableFieldImpl<Value>
+//                    if (p.){
+//                        field=it as ObservableFieldImpl<Value>
+//                    }
+//                }
+//            }
+
             when (input) {
                 ToolbarBindingModel::title -> {
                     field = model.title as ObservableFieldImpl<Value>

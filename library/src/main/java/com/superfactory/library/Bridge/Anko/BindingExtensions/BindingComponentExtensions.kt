@@ -6,6 +6,7 @@ import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v4.app.FragmentManager
+import android.util.AttributeSet
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.ScreenSizeExtension
 import com.superfactory.library.Context.BaseActivity
@@ -59,6 +60,14 @@ fun BindingComponent<*, *>.getAttrSizeValue(context: Context, attr: Int): Int {
     }
 }
 
+fun BindingComponent<*, *>.getAttrStringValue(context: Context, attr: Int): String? {
+    val values = getAttrValue(context, attr)
+    try {
+        return values.getString(0)//第一个参数数组索引，第二个参数 默认值
+    } finally {
+        values.recycle()
+    }
+}
 fun BindingComponent<*, *>.getAttrColorValue(context: Context, attr: Int): Int {
     val values = getAttrValue(context, attr)
     try {

@@ -3,7 +3,7 @@ package com.superfactory.sunyatsin.Interface.BindingActivity.MainActivity
 
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
-import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
+import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Context.BaseActivity
 class MainActivity : BaseActivity<MainActivityViewModel, MainActivity>() {
 

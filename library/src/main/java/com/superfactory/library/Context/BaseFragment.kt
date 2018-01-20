@@ -1,6 +1,8 @@
 package com.superfactory.library.Context
 
+import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
@@ -8,10 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
+import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Bridge.Anko.BindingComponent
-import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
 import com.superfactory.library.Debuger
 import org.jetbrains.anko.AnkoContextImpl
+
 
 /**
  * Created by vicky on 2018.01.18.
@@ -89,6 +92,46 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
         super.onDestroy()
         layout?.destroyView()
         layout = null
+    }
+
+    var behavior: CoordinatorLayout.Behavior<*>? = null
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (behavior != null)
+            return
+        val layout = this.view
+        if (layout == null||!(layout is ViewGroup)) return
+        if (layout.layoutParams != null && layout.layoutParams is CoordinatorLayout.LayoutParams) {
+            val params = layout.layoutParams as CoordinatorLayout.LayoutParams
+            behavior = params.behavior
+            params.behavior = null
+        }
+    }
+    /* override fun onAttach(activity: Activity?) {
+         super.onAttach(activity)
+         if (behavior != null)
+             return
+         val layout = this.view
+         if (layout==null)return
+         val params = layout.layoutParams as CoordinatorLayout.LayoutParams
+         behavior = params.behavior
+         params.behavior = null
+     }*/
+
+    override fun onDetach() {
+        super.onDetach()
+        if (behavior == null)
+            return
+        val layout = this.view
+        if (layout == null||!(layout is ViewGroup)) return
+        if (layout.layoutParams != null && layout.layoutParams is CoordinatorLayout.LayoutParams) {
+            val params = layout.layoutParams as CoordinatorLayout.LayoutParams
+            params.behavior = behavior
+            layout.layoutParams = params
+            behavior = null
+//            layout.removeView()
+        }
     }
 
 }

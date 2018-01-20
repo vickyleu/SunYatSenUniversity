@@ -1,7 +1,5 @@
 package com.superfactory.library.Bridge.Anko.Adapt
 
-import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
-
 /**
  * Created by vicky on 2018.01.19.
  *

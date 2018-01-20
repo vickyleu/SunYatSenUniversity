@@ -1,4 +1,4 @@
-package com.superfactory.library.Bridge.Anko.DslView
+package com.superfactory.library.Bridge.Anko.Adapt
 
 import android.os.Build
 import android.support.v7.app.ActionBar
@@ -41,16 +41,8 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                 minimumHeight = getActionBarSize(ctx)
             }
 
-//            <TextView
-//            android:layout_width="wrap_content"
-//            android:layout_height="wrap_content"
-//            android:layout_centerInParent="true"
-//            android:layout_gravity="center"
-//            android:text="文字居中"
-//            android:textColor="@android:color/white"
-//            android:textSize="20sp" />
             val tv = textView {
-                //            val tv=themedTextView(R.style.TextAppearance_AppCompat_Widget_ActionBar_Title){
+//            val tv = themedTextView(R.style.AppTheme_AppBarOverlay_TitleTextStyle) {
                 text = ""
             }.lparams {
                 width = wrapContent

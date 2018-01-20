@@ -7,4 +7,6 @@
           type="id"/>
     <item name="tag_position" type="id"/>
     <item name="toolbar" type="id" />
+    <item name="collapsing_toolbar" type="id" />
+    <item name="appbar" type="id" />
 </resources>

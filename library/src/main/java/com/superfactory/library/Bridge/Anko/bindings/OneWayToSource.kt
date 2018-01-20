@@ -3,7 +3,6 @@ package com.superfactory.library.Bridge.Anko.bindings
 import android.view.View
 import android.widget.*
 import com.superfactory.library.Bridge.Anko.BindingRegister
-import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
 import com.superfactory.library.Bridge.Anko.ObservableField
 import com.superfactory.library.Debuger
 import org.jetbrains.anko.doAsync

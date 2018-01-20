@@ -5,8 +5,6 @@ import android.os.Looper
 import android.view.View
 import android.widget.*
 import com.superfactory.library.Bridge.Anko.Adapt.FragmentContainer
-import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
-import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.viewextensions.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI

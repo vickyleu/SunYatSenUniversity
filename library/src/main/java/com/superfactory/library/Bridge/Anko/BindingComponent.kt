@@ -1,12 +1,23 @@
 package com.superfactory.library.Bridge.Anko
 
+import android.app.Activity
 import android.content.Context
+import android.support.design.widget.AppBarLayout
+import android.support.design.widget.CollapsingToolbarLayout
+import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
+import android.support.design.widget.CoordinatorLayout
 import android.view.View
 import android.widget.*
+import com.superfactory.library.Bridge.Anko.BindingExtensions.getAttrDrawablValue
 import com.superfactory.library.Bridge.Anko.bindings.bind
 import com.superfactory.library.Bridge.Anko.bindings.onSelf
+import com.superfactory.library.R
 import org.jetbrains.anko.*
+import org.jetbrains.anko.design.collapsingToolbarLayout
+import org.jetbrains.anko.design.coordinatorLayout
+import org.jetbrains.anko.design.themedAppBarLayout
 import java.util.*
+
 
 fun <T, Data> BindingComponent<T, Data>.bind(v: View, any: View.OnClickListener?) = register.bind(v, any)
 
@@ -50,34 +61,57 @@ abstract class BindingComponent<in T, V>
     override final fun createView(ui: AnkoContext<T>) = createViewWithBindings(ui).apply { register.bindAll() }
 
     final fun createView(ui: AnkoContext<T>, toolbar: View?, ctx: Context, owner: T): View {
+        val attach = createViewWithBindings(AnkoContextImpl(ctx, owner, false))
         return if (toolbar == null) {
             createView(ui)
         } else {
             with(ui) {
-                verticalLayout {
-                    toolbar.lparams {
-
+                var useCoordinatorLayout = false
+                if (owner is Activity) {
+                    useCoordinatorLayout = true
+                }
+                if (!useCoordinatorLayout) {
+                    verticalLayout {
+                        addView(toolbar)
+                        addView(attach)
+                        lparams {
+                            width = matchParent
+                            height = matchParent
+                        }
                     }
-                    val attach = createViewWithBindings(AnkoContextImpl(ctx, owner, false)).lparams {
-
-                    }
-                    addView(toolbar)
-                    addView(attach)
-                    lparams {
-                        width = matchParent
-                        height = matchParent
+                } else {
+                    coordinatorLayout {
+                        fitsSystemWindows = true
+                        themedAppBarLayout(R.style.AppTheme_AppBarOverlay) {
+                            id = R.id.appbar
+                            collapsingToolbarLayout {
+                                id = R.id.collapsing_toolbar
+                                contentScrim = getAttrDrawablValue(ctx, R.attr.colorPrimary)
+                                expandedTitleMarginEnd = dip(64)
+                                expandedTitleMarginStart = dip(48)
+                                addView(toolbar)
+                                ((toolbar.layoutParams) as CollapsingToolbarLayout.LayoutParams).collapseMode = COLLAPSE_MODE_PIN
+                            }.lparams {
+                                scrollFlags = 0//SCROLL_FLAG_SCROLL and SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+                                width = matchParent
+                                height = wrapContent
+                                fitsSystemWindows = true
+                            }
+                        }.lparams {
+                            width = matchParent
+                            height = wrapContent
+                        }
+                        addView(attach)
+                        val attachLp = attach.layoutParams as CoordinatorLayout.LayoutParams
+                        (attachLp).apply {
+                            behavior = AppBarLayout.ScrollingViewBehavior()
+                        }
+                        lparams {
+                            width = matchParent
+                            height = matchParent
+                        }
                     }
                 }
-
-//                constraintLayout {
-//                    // app:layout_constraintBottom_toBottomOf="parent"
-//                    // app:layout_constraintLeft_toLeftOf="parent"
-//                    // app:layout_constraintRight_toRightOf="parent"
-//                    constraintSet {
-//
-//                    }
-//
-//                }
             }.apply { register.bindAll() }
         }
     }
