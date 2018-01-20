@@ -3,6 +3,7 @@ package com.superfactory.library
 
 import android.text.TextUtils
 import android.util.Log
+import com.superfactory.library.Bridge.Anko.PropertyExtensions.unicodeToUtf8
 
 /**
  * Created by VickyLeu on 2016/7/14.
@@ -29,7 +30,7 @@ object Debuger {
      * Excetipn type
      * @return String type
      */
-    fun getExceptionDetail(e: Exception?): String {
+    fun getExceptionDetail(e: Exception?): String? {
         var msg = StringBuffer("null")
         if (e != null) {
             msg = StringBuffer("")
@@ -44,12 +45,13 @@ object Debuger {
                 msg.append(message)
             }
         }
-        return msg.toString()
+        return msg.toString().unicodeToUtf8()
     }
 
     fun printMsg(anything: Any, throwable: Throwable?) {
         printMsg(TAG, anything, throwable)
     }
+
     fun printMsg(anything: String, throwable: Throwable?) {
         printMsg(anything, anything, throwable)
     }
@@ -61,14 +63,14 @@ object Debuger {
                     val s = anything as String?
                     if (TextUtils.isEmpty(s)) return
                     if (throwable != null) {
-                        Log.e(tag, s, throwable)
+                        Log.e(tag.unicodeToUtf8(), s!!.unicodeToUtf8(), throwable)
                     } else
-                        Log.e(tag, s)
+                        Log.e(tag.unicodeToUtf8(), s!!.unicodeToUtf8())
                 } else {
                     if (throwable != null) {
-                        Log.e(tag, anything.toString(), throwable)
+                        Log.e(tag.unicodeToUtf8(), anything.toString().unicodeToUtf8(), throwable)
                     } else
-                        Log.e(tag, anything.toString())
+                        Log.e(tag.unicodeToUtf8(), anything.toString().unicodeToUtf8())
                 }
             }
         }

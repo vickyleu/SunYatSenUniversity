@@ -5,10 +5,7 @@ import android.view.View
 import android.widget.*
 import com.superfactory.library.Bridge.Anko.bindings.bind
 import com.superfactory.library.Bridge.Anko.bindings.onSelf
-import org.jetbrains.anko.AnkoComponent
-import org.jetbrains.anko.AnkoContext
-import org.jetbrains.anko.AnkoContextImpl
-import org.jetbrains.anko.verticalLayout
+import org.jetbrains.anko.*
 import java.util.*
 
 fun <T, Data> BindingComponent<T, Data>.bind(v: View, any: View.OnClickListener?) = register.bind(v, any)
@@ -58,9 +55,29 @@ abstract class BindingComponent<in T, V>
         } else {
             with(ui) {
                 verticalLayout {
+                    toolbar.lparams {
+
+                    }
+                    val attach = createViewWithBindings(AnkoContextImpl(ctx, owner, false)).lparams {
+
+                    }
                     addView(toolbar)
-                    addView(createViewWithBindings(AnkoContextImpl(ctx, owner, false)))
+                    addView(attach)
+                    lparams {
+                        width = matchParent
+                        height = matchParent
+                    }
                 }
+
+//                constraintLayout {
+//                    // app:layout_constraintBottom_toBottomOf="parent"
+//                    // app:layout_constraintLeft_toLeftOf="parent"
+//                    // app:layout_constraintRight_toRightOf="parent"
+//                    constraintSet {
+//
+//                    }
+//
+//                }
             }.apply { register.bindAll() }
         }
     }

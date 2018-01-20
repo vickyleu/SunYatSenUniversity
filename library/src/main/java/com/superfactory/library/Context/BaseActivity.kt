@@ -1,6 +1,7 @@
 package com.superfactory.library.Context
 
 import android.content.Context
+import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
@@ -19,7 +20,7 @@ import org.jetbrains.anko.AnkoContextImpl
  * @ClassName 这里输入你的类名(或用途)
  */
 abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), BaseAnko<V, A> {
-    protected  var toolbar: BaseToolBar<A, V>? = null
+    protected var toolbar: BaseToolBar<A, V>? = null
     protected var toolbarAnko: View? = null
     private var layout: BindingComponent<A, V>? = null
 
@@ -57,8 +58,12 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
                             this@BaseActivity,
                             this@BaseActivity
                     )
-                    if (toolbarAnko is Toolbar&&toolbar!=null) {
+                    if (toolbarAnko is Toolbar && toolbar != null) {
                         toolbar!!.initToolbar(this@BaseActivity, toolbarAnko!! as Toolbar)
+                        setToolbarAttribution(
+                                toolbar!!,
+                                toolbar!!.getActionBar(this@BaseActivity),
+                                toolbarAnko!! as Toolbar)
                     }
                 } else {
                     createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, true))
@@ -74,6 +79,9 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
         }
     }
 
+    protected open fun setToolbarAttribution(toolbarBinder: BaseToolBar<A, V>, actionBar: ActionBar?, toolbarView: Toolbar) {
+
+    }
 
     abstract fun newViewModel(): V
 

@@ -5,27 +5,28 @@ import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.DslView.BaseToolBar
 import com.superfactory.library.Bridge.Anko.ObservableField
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
-import com.superfactory.library.Bridge.Model.ToolbarBindingModel.Companion.toModel
 import kotlin.reflect.KProperty
 
 /**
- * Created by vicky on 2018.01.19.
+ * Created by vicky on 2018.01.20.
  *
  * @Author vicky
- * @Date 2018年01月19日  16:53:52
+ * @Date 2018年01月20日  15:13:15
  * @ClassName 这里输入你的类名(或用途)
  */
-@Suppress("UNREACHABLE_CODE")
-abstract class BaseToolBarActivity<V : ToolbarBindingModel, A : BaseToolBarActivity<V, A>> : BaseActivity<V, A>() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragment<V, A>> : BaseFragment<V, A>() {
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         showToolBar = true
-        super.onCreate(savedInstanceState)
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
+
 
     override fun setToolbarAttribution(toolbarBinder: BaseToolBar<A, V>, actionBar: ActionBar?, toolbarView: Toolbar) {
         if (actionBar != null) {
@@ -60,7 +61,7 @@ abstract class BaseToolBarActivity<V : ToolbarBindingModel, A : BaseToolBarActiv
     }
 
     fun <Input : KProperty<Value>, Value : Any> setToolbarProperty(input: Input, any: Value) {
-        val v = toModel(any, input, viewModel as ToolbarBindingModel);
+        val v = ToolbarBindingModel.toModel(any, input, viewModel as ToolbarBindingModel);
         this.setToolbarPropertyBase(v, any)
     }
 
@@ -71,4 +72,5 @@ abstract class BaseToolBarActivity<V : ToolbarBindingModel, A : BaseToolBarActiv
                 field.value = any
         }
     }
+
 }

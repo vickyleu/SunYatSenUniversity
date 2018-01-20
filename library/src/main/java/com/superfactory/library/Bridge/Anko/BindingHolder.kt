@@ -14,6 +14,7 @@ import com.superfactory.library.Bridge.Anko.bindings.TwoWayBinding
 import com.superfactory.library.Bridge.Anko.bindings.ViewBinder
 import com.superfactory.library.Bridge.Anko.bindings.ViewRegister
 import com.superfactory.library.Bridge.Anko.bindings.onSelf
+import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import kotlin.reflect.KProperty
 
 /**

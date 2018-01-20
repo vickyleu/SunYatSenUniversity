@@ -1,6 +1,7 @@
 package com.superfactory.sunyatsin.Interface.BindingActivity.MainActivity
 
 import android.content.Intent
+import android.graphics.Color
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.view.View
@@ -8,6 +9,7 @@ import com.superfactory.library.Bridge.Anko.Adapt.FragmentContainer
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.observable
+import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.Interface.BindingFragment.Note.NoteFragment
 import com.superfactory.sunyatsin.Interface.BindingFragment.Profile.ProfileFragment
@@ -21,7 +23,12 @@ import java.util.*
  * @Date 2018年01月17日  14:43:59
  * @ClassName 这里输入你的类名(或用途)
  */
-class MainActivityViewModel(intent: Intent?, manager: FragmentManager?) : BaseObservable() {
+class MainActivityViewModel(intent: Intent?, manager: FragmentManager?) : ToolbarBindingModel() {
+    override fun setToolbar(toolbarBindingModel: ToolbarBindingModel) {
+        toolbarBindingModel.backgroundColor.value=Color.BLUE
+        toolbarBindingModel.title.value="妈卖批"
+    }
+
     private var selected = 0
     private val fragmentList = observable(ArrayList<Fragment>())
 
@@ -73,6 +80,8 @@ class MainActivityViewModel(intent: Intent?, manager: FragmentManager?) : BaseOb
             selectFragment(fragments, fragmentList, selected)
         }
     }
+
+
 
     fun update() {
         val list = ArrayList<Fragment>()
