@@ -2,16 +2,21 @@ package com.superfactory.library.Context
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.support.annotation.ColorInt
 import android.support.annotation.DrawableRes
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
+import android.text.Layout
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
+import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.ObservableField
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
+import com.superfactory.library.Graphics.TextDrawable
+import org.jetbrains.anko.support.v4.dip
 import kotlin.reflect.KProperty
 
 /**
@@ -31,7 +36,7 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
     override fun setToolbarAttribution(toolbarBinder: BaseToolBar<A, V>, actionBar: ActionBar?, toolbarView: Toolbar) {
         if (actionBar != null) {
             if (toolbarBinder.viewModelSafe is ToolbarBindingModel) {
-                toolbarBinder.setAttribution(actionBar,toolbarView)
+                toolbarBinder.setAttribution(actionBar, toolbarView)
             }
         }
     }
@@ -49,14 +54,108 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
         this.setToolbarProperty(ToolbarBindingModel::title, str)
     }
 
-    fun setBackIcon(@DrawableRes res: Int) {
-        if (res == 0) return
+    fun setBackIcon(@DrawableRes res: Int?) {
+        if (res == null) return
         this.setToolbarProperty(ToolbarBindingModel::navigationIcon, res)
+        this.setToolbarProperty(ToolbarBindingModel::navigationText, "")
+    }
+
+    fun setBackTextSize(size: Int?) {
+        if (size == null) return
+        this.setToolbarProperty(ToolbarBindingModel::navigationTextSize, size)
+        if (viewModel!=null&&!TextUtils.isEmpty(viewModel!!.navigationText.value)){
+            setBackIcon(viewModel!!.navigationText.value)
+        }
+    }
+
+    fun setBackTextColor(@ColorInt color: Int?) {
+        if (color == null) return
+        this.setToolbarProperty(ToolbarBindingModel::navigationTextColor, color)
+        if (viewModel!=null&&!TextUtils.isEmpty(viewModel!!.navigationText.value)){
+            setBackIcon(viewModel!!.navigationText.value)
+        }
+    }
+
+    /**
+     * 设置文字会转化成图形,所以必须在转换之前设置好文字大小和颜色,否则将使用默认颜色和字体大小
+     */
+    fun setBackIcon(res: String?) {
+        if (TextUtils.isEmpty(res)) return
+        this.setToolbarProperty(ToolbarBindingModel::navigationText, res!!)
+        val td = TextDrawable(context)
+        td.text = res
+        val vm = (viewModel as ToolbarBindingModel)
+        val color = vm.navigationTextColor.value
+        if (color > 0)
+            td.setTextColor(color)
+        val size = vm.navigationTextSize.value.toFloat()
+        if (size > 0)
+            td.textSize = size
+        td.textAlign = Layout.Alignment.ALIGN_CENTER
+        this.setToolbarProperty(ToolbarBindingModel::navigationIcon, td)
     }
 
     fun setBackIcon(drawable: Drawable?) {
         if (drawable == null) return
         this.setToolbarProperty(ToolbarBindingModel::navigationIcon, drawable)
+        this.setToolbarProperty(ToolbarBindingModel::navigationText, "")
+    }
+
+
+
+
+    fun setRightIcon(@DrawableRes res: Int?) {
+        if (res == null) return
+        this.setToolbarProperty(ToolbarBindingModel::rightIcon, res)
+        this.setToolbarProperty(ToolbarBindingModel::rightText, "")
+    }
+
+    fun setRightTextSize(size: Int?) {
+        if (size == null) return
+        this.setToolbarProperty(ToolbarBindingModel::rightTextSize, size)
+        if (viewModel!=null&&!TextUtils.isEmpty(viewModel!!.rightText.value)){
+            setBackIcon(viewModel!!.rightText.value)
+        }
+    }
+
+    fun setRightTextColor(@ColorInt color: Int?) {
+        if (color == null) return
+        this.setToolbarProperty(ToolbarBindingModel::rightTextColor, color)
+        if (viewModel!=null&&!TextUtils.isEmpty(viewModel!!.rightText.value)){
+            setBackIcon(viewModel!!.rightText.value)
+        }
+    }
+
+    /**
+     * 设置文字会转化成图形,所以必须在转换之前设置好文字大小和颜色,否则将使用默认颜色和字体大小
+     */
+    fun setRightIcon(res: String?) {
+        if (TextUtils.isEmpty(res)) return
+        this.setToolbarProperty(ToolbarBindingModel::rightText, res!!)
+        val td = TextDrawable(context)
+        td.text = res
+        val vm = (viewModel as ToolbarBindingModel)
+        val color = vm.rightTextColor.value
+        if (color > 0)
+            td.setTextColor(color)
+        val size = vm.rightTextSize.value.toFloat()
+        if (size > 0)
+            td.textSize = size
+        td.textAlign = Layout.Alignment.ALIGN_CENTER
+        this.setToolbarProperty(ToolbarBindingModel::rightIcon, td)
+    }
+
+    fun setRightIcon(drawable: Drawable?) {
+        if (drawable == null) return
+        this.setToolbarProperty(ToolbarBindingModel::rightIcon, drawable)
+        this.setToolbarProperty(ToolbarBindingModel::rightText, "")
+    }
+
+
+
+    fun setBackgroundColor(@ColorInt color: Int?) {
+        if (color == null) return
+        this.setToolbarProperty(ToolbarBindingModel::backgroundColor, color)
     }
 
 

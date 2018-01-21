@@ -1,6 +1,7 @@
 package com.superfactory.library.Context
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -34,6 +35,8 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
+        requestedOrientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         viewModel = newViewModel().apply {
             if (showToolBar) {
                 val tc = newToolBarComponent(this)

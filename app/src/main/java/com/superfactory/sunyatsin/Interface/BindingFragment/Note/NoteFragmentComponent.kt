@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Debuger
+import com.superfactory.sunyatsin.R
+import kotlinx.android.synthetic.main.activity_main.view.*
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.matchParent
@@ -34,6 +36,13 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                 }
                 onClick {
                     ui.owner.setTitle("1122111")
+//                    ui.owner.setBackIcon(R.mipmap.ic_launcher)
+                    ui.owner.setBackTextSize(16)
+                    ui.owner.setBackTextColor(Color.WHITE)
+                    ui.owner.setBackIcon("返回")
+                    ui.owner.setRightIcon("返回")
+
+                    ui.owner.setBackgroundColor(Color.parseColor("#222222"))
                 }
             }
             lparams {

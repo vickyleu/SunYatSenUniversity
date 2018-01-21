@@ -1,12 +1,10 @@
 package com.superfactory.library.Bridge.Model
 
+import android.view.View
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.observable
-import com.superfactory.library.Debuger
-import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty0
-import kotlin.reflect.KProperty1
+import com.superfactory.library.Bridge.Anko.observableNullable
 import kotlin.reflect.full.memberProperties
 
 /**
@@ -24,6 +22,11 @@ abstract class ToolbarBindingModel : BaseObservable() {
     val navigationTextColor = observable(0)
     val leftPadding = observable(0)
     val rightPadding = observable(0)
+    val rightIcon = observable(Any())
+    val rightText = observable("")
+    val rightTextSize = observable(0)
+    val rightTextColor = observable(0)
+    val rightView = observableNullable<View?>(null)
 
     init {
         apply {
@@ -38,9 +41,9 @@ abstract class ToolbarBindingModel : BaseObservable() {
             var field: ObservableFieldImpl<Value>? = null
             val memberProperties = ToolbarBindingModel::class.memberProperties
             memberProperties.forEach {
-                if (it.equals(input)){
-                        field=it.get(model)  as ObservableFieldImpl<Value>
-                        return field
+                if (it.equals(input)) {
+                    field = it.get(model) as ObservableFieldImpl<Value>
+                    return field
                 }
             }
             return field

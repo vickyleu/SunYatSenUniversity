@@ -118,3 +118,5 @@ fun <T> observable(initialValue: T, change: PropertyChangedCallback? = null)
 fun <T> BaseObservable.observable(initialValue: T)
         = ObservableFieldImpl(initialValue) { _, kProperty -> notifyChange(kProperty) }
 
+fun <T> BaseObservable.observableNullable(initialValue: T?)
+        = ObservableFieldImpl<T?>(initialValue) { _, kProperty -> notifyChange(kProperty) }
