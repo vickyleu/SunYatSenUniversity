@@ -13,4 +13,10 @@
     <style name="AppTheme_AppBarOverlay_TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/white</item>
     </style>
+
+
+    <style name="mToolbarStyle" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingLeft">16dp</item>
+    </style>
 </resources>

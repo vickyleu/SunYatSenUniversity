@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarColor
@@ -31,7 +32,7 @@ import kotlin.reflect.full.declaredMemberFunctions
  */
 open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
     override fun createViewWithBindings(ui: AnkoContext<A>): View = with(ui) {
-        themedToolbar_v7(R.style.ThemeOverlay_AppCompat_Dark_ActionBar) {
+        themedToolbar_v7(R.style.mToolbarStyle) {
             id = R.id.toolbar
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 popupTheme = R.style.ThemeOverlay_AppCompat_Light
@@ -54,14 +55,14 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
             }
 
 
-            val right = frameLayout {
-                backgroundColor=Color.TRANSPARENT
-                visibility=View.GONE
-            }.lparams {
-                width = wrapContent
-                height = wrapContent
-                gravity = Gravity.CENTER_VERTICAL and Gravity.RIGHT
-            }
+//            val right = frameLayout {
+//                backgroundColor=Color.TRANSPARENT
+//                visibility=View.GONE
+//            }.lparams {
+//                width = wrapContent
+//                height = wrapContent
+//                gravity = Gravity.CENTER_VERTICAL and Gravity.RIGHT
+//            }
 
 
             if (viewModel != null && viewModel is ToolbarBindingModel) {
@@ -90,7 +91,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
 
                 bindSelf {
                     (it as ToolbarBindingModel).rightView
-                }.toView(right) { view, value ->
+                }.toView(this) { view, value ->
                     if (value != null) {
                         try {
                             val old = view.find<View>(R.id.toolbar_right)
@@ -98,8 +99,10 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         } catch (ignored: Exception) {
                         }
                         value.id = R.id.toolbar_right
+
                         val lp = Toolbar.LayoutParams(wrapContent, wrapContent)
-                        lp.gravity=Gravity.CENTER
+                        lp.gravity=Gravity.END
+                        lp.rightMargin+=this.contentInsetEnd+this.paddingRight
                         view.addView(value,lp)
                         view.visibility=View.VISIBLE
                     }
@@ -107,22 +110,23 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
 
                 bindSelf {
                     (it as ToolbarBindingModel).rightIcon
-                }.toView(right) { view, value ->
+                }.toView(this) { view, value ->
                     if (value == null) return@toView
-                    val v: View?
+                    val v: ImageView?
                     if (value is Int) {
                         if (value > 0) {
-                            v = View(ctx)
+                            v = ImageView(ctx)
                             v.backgroundResource = value
                         } else return@toView
                     } else if (value is Drawable) {
-                        v = View(ctx)
+                        v = ImageView(ctx)
                         v.backgroundDrawable = value
                     } else {
                         return@toView
                     }
                     v.id = R.id.toolbar_right
                     if (viewModel == null) return@toView
+                    v.scaleType=ImageView.ScaleType.FIT_XY
                     (viewModel as ToolbarBindingModel).rightView.value = v
                     (viewModel as ToolbarBindingModel).rightView.notifyChange(ToolbarBindingModel::rightView)
                 }

@@ -1,6 +1,7 @@
 package com.superfactory.library.Bridge.Model
 
 import android.view.View
+import android.widget.ImageView
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.observable
@@ -26,7 +27,7 @@ abstract class ToolbarBindingModel : BaseObservable() {
     val rightText = observable("")
     val rightTextSize = observable(0)
     val rightTextColor = observable(0)
-    val rightView = observableNullable<View?>(null)
+    val rightView = observableNullable<ImageView?>(null)
 
     init {
         apply {
