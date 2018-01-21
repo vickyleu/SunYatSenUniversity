@@ -7,9 +7,9 @@ import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarColor
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarSize
@@ -20,7 +20,6 @@ import com.superfactory.library.Context.BaseFragment
 import com.superfactory.library.R
 import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.*
-import kotlin.reflect.full.declaredMemberFunctions
 
 
 /**
@@ -45,36 +44,41 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                 minimumHeight = getActionBarSize(ctx)
             }
 
-            val tv = textView {
-                //            val tv = themedTextView(R.style.AppTheme_AppBarOverlay_TitleTextStyle) {
-                text = ""
+            var tv: TextView? = null
+            val root = relativeLayout {
+                backgroundColor = Color.TRANSPARENT
+                tv = textView {
+                    //            val tv = themedTextView(R.style.AppTheme_AppBarOverlay_TitleTextStyle) {
+                    text = ""
+                }.lparams {
+                    width = wrapContent
+                    height = wrapContent
+                    centerInParent()
+//                    gravity = Gravity.CENTER
+                }
             }.lparams {
-                width = wrapContent
+                width = matchParent
                 height = wrapContent
                 gravity = Gravity.CENTER
+                bindSelf{
+                    (it as ToolbarBindingModel).leftPadding
+                }.toView(this@themedToolbar_v7){view,value->
+                    if (value==null)return@toView
+                    leftPadding = this@themedToolbar_v7.contentInsetStart + this@themedToolbar_v7.paddingLeft
+                    +dip(value)
+                }
+
+                 bindSelf{
+                    (it as ToolbarBindingModel).rightPadding
+                }.toView(this@themedToolbar_v7){view,value->
+                    if (value==null)return@toView
+                    leftPadding = this@themedToolbar_v7.contentInsetEnd + this@themedToolbar_v7.paddingRight
+                    +dip(value)
+                }
             }
 
 
-//            val right = frameLayout {
-//                backgroundColor=Color.TRANSPARENT
-//                visibility=View.GONE
-//            }.lparams {
-//                width = wrapContent
-//                height = wrapContent
-//                gravity = Gravity.CENTER_VERTICAL and Gravity.RIGHT
-//            }
-
-
             if (viewModel != null && viewModel is ToolbarBindingModel) {
-//                bindSelf {
-//                    (it as ToolbarBindingModel).backgroundColor
-//                }.toToolbarColor(this)
-
-//                bindSelf {
-//                    (it as ToolbarBindingModel).title
-//                }.toToolbarTitle(tv)
-
-
                 bindSelf {
                     (it as ToolbarBindingModel).backgroundColor
                 }.toView(this) { view, value ->
@@ -84,14 +88,14 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
 
                 bindSelf {
                     (it as ToolbarBindingModel).title
-                }.toView(tv) { view, value ->
+                }.toView(tv!!) { view, value ->
                     if (value == null) return@toView
                     view.setText(value)
                 }
 
                 bindSelf {
                     (it as ToolbarBindingModel).rightView
-                }.toView(this) { view, value ->
+                }.toView(root) { view, value ->
                     if (value != null) {
                         try {
                             val old = view.find<View>(R.id.toolbar_right)
@@ -100,17 +104,19 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         }
                         value.id = R.id.toolbar_right
 
-                        val lp = Toolbar.LayoutParams(wrapContent, wrapContent)
-                        lp.gravity=Gravity.END
-                        lp.rightMargin+=this.contentInsetEnd+this.paddingRight
-                        view.addView(value,lp)
-                        view.visibility=View.VISIBLE
+                        val lp = RelativeLayout.LayoutParams(wrapContent, wrapContent)
+//                        lp.gravity=Gravity.END
+                        lp.centerVertically()
+                        lp.alignParentEnd()
+
+//                        lp.rightMargin +=
+                        view.addView(value, lp)
                     }
                 }
 
                 bindSelf {
                     (it as ToolbarBindingModel).rightIcon
-                }.toView(this) { view, value ->
+                }.toView(root) { view, value ->
                     if (value == null) return@toView
                     val v: ImageView?
                     if (value is Int) {
@@ -126,31 +132,57 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                     }
                     v.id = R.id.toolbar_right
                     if (viewModel == null) return@toView
-                    v.scaleType=ImageView.ScaleType.FIT_XY
+                    v.scaleType = ImageView.ScaleType.FIT_XY
                     (viewModel as ToolbarBindingModel).rightView.value = v
                     (viewModel as ToolbarBindingModel).rightView.notifyChange(ToolbarBindingModel::rightView)
                 }
 
-                bindSelf {
-                    (it as ToolbarBindingModel).navigationIcon
-                }.toView(this) { view, value ->
-                    if (value == null) return@toView
-                    if (value is Int) {
-                        if (value > 0)
-                            view.setNavigationIcon(value)
-                    } else if (value is Drawable) {
-                        view.setNavigationIcon(value)
-                    } else {
 
+
+                bindSelf {
+                    (it as ToolbarBindingModel).leftView
+                }.toView(root) { view, value ->
+                    if (value != null) {
+                        try {
+                            val old = view.find<View>(R.id.toolbar_left)
+                            view.removeView(old)
+                        } catch (ignored: Exception) {
+                        }
+                        value.id = R.id.toolbar_left
+
+                        value.backgroundColor = Color.YELLOW
+                        val lp = RelativeLayout.LayoutParams(wrapContent, wrapContent)
+                        lp.centerVertically()
+                        lp.alignParentStart()
+
+//                        lp.gravity=Gravity.START
+//                        lp.leftMargin
+                        view.addView(value, lp)
                     }
                 }
 
-//                bindSelf {
-//                    (it as ToolbarBindingModel).navigationIcon
-//                }.toView(this) { view, value ->
-//                    if (value == null) return@toView
-//
-//                }
+                bindSelf {
+                    (it as ToolbarBindingModel).leftIcon
+                }.toView(root) { view, value ->
+                    if (value == null) return@toView
+                    val v: ImageView?
+                    if (value is Int) {
+                        if (value > 0) {
+                            v = ImageView(ctx)
+                            v.backgroundResource = value
+                        } else return@toView
+                    } else if (value is Drawable) {
+                        v = ImageView(ctx)
+                        v.backgroundDrawable = value
+                    } else {
+                        return@toView
+                    }
+                    v.id = R.id.toolbar_left
+                    if (viewModel == null) return@toView
+                    v.scaleType = ImageView.ScaleType.FIT_XY
+                    (viewModel as ToolbarBindingModel).leftView.value = v
+                    (viewModel as ToolbarBindingModel).leftView.notifyChange(ToolbarBindingModel::leftView)
+                }
 
             }
         }

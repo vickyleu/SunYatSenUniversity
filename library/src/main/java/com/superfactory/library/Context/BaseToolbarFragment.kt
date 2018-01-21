@@ -16,7 +16,6 @@ import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.ObservableField
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Graphics.TextDrawable
-import org.jetbrains.anko.support.v4.dip
 import kotlin.reflect.KProperty
 
 /**
@@ -56,23 +55,23 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
 
     fun setBackIcon(@DrawableRes res: Int?) {
         if (res == null) return
-        this.setToolbarProperty(ToolbarBindingModel::navigationIcon, res)
-        this.setToolbarProperty(ToolbarBindingModel::navigationText, "")
+        this.setToolbarProperty(ToolbarBindingModel::leftIcon, res)
+        this.setToolbarProperty(ToolbarBindingModel::leftText, "")
     }
 
     fun setBackTextSize(size: Int?) {
         if (size == null) return
-        this.setToolbarProperty(ToolbarBindingModel::navigationTextSize, size)
-        if (viewModel!=null&&!TextUtils.isEmpty(viewModel!!.navigationText.value)){
-            setBackIcon(viewModel!!.navigationText.value)
+        this.setToolbarProperty(ToolbarBindingModel::leftTextSize, size)
+        if (viewModel!=null&&!TextUtils.isEmpty(viewModel!!.leftText.value)){
+            setBackIcon(viewModel!!.leftText.value)
         }
     }
 
     fun setBackTextColor(@ColorInt color: Int?) {
         if (color == null) return
-        this.setToolbarProperty(ToolbarBindingModel::navigationTextColor, color)
-        if (viewModel!=null&&!TextUtils.isEmpty(viewModel!!.navigationText.value)){
-            setBackIcon(viewModel!!.navigationText.value)
+        this.setToolbarProperty(ToolbarBindingModel::leftTextColor, color)
+        if (viewModel!=null&&!TextUtils.isEmpty(viewModel!!.leftText.value)){
+            setBackIcon(viewModel!!.leftText.value)
         }
     }
 
@@ -81,24 +80,24 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
      */
     fun setBackIcon(res: String?) {
         if (TextUtils.isEmpty(res)) return
-        this.setToolbarProperty(ToolbarBindingModel::navigationText, res!!)
+        this.setToolbarProperty(ToolbarBindingModel::leftText, res!!)
         val td = TextDrawable(context)
         td.text = res
         val vm = (viewModel as ToolbarBindingModel)
-        val color = vm.navigationTextColor.value
+        val color = vm.leftTextColor.value
         if (color > 0)
             td.setTextColor(color)
-        val size = vm.navigationTextSize.value.toFloat()
+        val size = vm.leftTextSize.value.toFloat()
         if (size > 0)
             td.textSize = size
         td.textAlign = Layout.Alignment.ALIGN_CENTER
-        this.setToolbarProperty(ToolbarBindingModel::navigationIcon, td)
+        this.setToolbarProperty(ToolbarBindingModel::leftIcon, td)
     }
 
     fun setBackIcon(drawable: Drawable?) {
         if (drawable == null) return
-        this.setToolbarProperty(ToolbarBindingModel::navigationIcon, drawable)
-        this.setToolbarProperty(ToolbarBindingModel::navigationText, "")
+        this.setToolbarProperty(ToolbarBindingModel::leftIcon, drawable)
+        this.setToolbarProperty(ToolbarBindingModel::leftText, "")
     }
 
 

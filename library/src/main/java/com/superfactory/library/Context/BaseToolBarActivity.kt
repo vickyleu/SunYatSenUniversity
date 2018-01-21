@@ -49,12 +49,12 @@ abstract class BaseToolBarActivity<V : ToolbarBindingModel, A : BaseToolBarActiv
 
     fun setBackIcon(@DrawableRes res: Int) {
         if (res == 0) return
-        this.setToolbarProperty(ToolbarBindingModel::navigationIcon, res)
+        this.setToolbarProperty(ToolbarBindingModel::leftIcon, res)
     }
 
     fun setBackIcon(drawable: Drawable?) {
         if (drawable == null) return
-        this.setToolbarProperty(ToolbarBindingModel::navigationIcon, drawable)
+        this.setToolbarProperty(ToolbarBindingModel::leftIcon, drawable)
     }
 
     fun <Input : KProperty<Value>, Value : Any> setToolbarProperty(input: Input, any: Value) {

@@ -10,4 +10,5 @@
     <item name="collapsing_toolbar" type="id" />
     <item name="appbar" type="id" />
     <item name="toolbar_right" type="id" />
+    <item name="toolbar_left" type="id" />
 </resources>

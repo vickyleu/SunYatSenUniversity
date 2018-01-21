@@ -3,8 +3,7 @@
 
     <style name="mToolbarStyle" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:paddingRight">0dp</item>
-        <item name="android:contentInsetEnd">16dp</item>
-        <item name="android:contentInsetStart">16dp</item>
-        <item name="android:paddingLeft">16dp</item>
+        <item name="android:contentInsetEnd">0dp</item>
+        <item name="android:contentInsetStart">0dp</item>
     </style>
 </resources>

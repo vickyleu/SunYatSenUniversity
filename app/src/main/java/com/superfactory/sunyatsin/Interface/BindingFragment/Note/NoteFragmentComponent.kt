@@ -39,8 +39,8 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
 //                    ui.owner.setBackIcon(R.mipmap.ic_launcher)
                     ui.owner.setBackTextSize(16)
                     ui.owner.setBackTextColor(Color.WHITE)
-                    ui.owner.setBackIcon("返回")
-                    ui.owner.setRightIcon("返回")
+                    ui.owner.setBackIcon("jbok返回")
+                    ui.owner.setRightIcon("返回ojbk")
 
                     ui.owner.setBackgroundColor(Color.parseColor("#222222"))
                 }

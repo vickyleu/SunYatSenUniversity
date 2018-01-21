@@ -14,20 +14,21 @@ import kotlin.reflect.full.memberProperties
 abstract class ToolbarBindingModel : BaseObservable() {
     val displayNavigator = observable(false)
     val title = observable("")
-    val navigationIcon = observable(Any())
+    val leftIcon = observable(Any())
     val backgroundColor = observable(1)
     val titleColor = observable(0)
     val titleSize = observable(0)
-    val navigationText = observable("")
-    val navigationTextSize = observable(0)
-    val navigationTextColor = observable(0)
-    val leftPadding = observable(0)
-    val rightPadding = observable(0)
+    val leftText = observable("")
+    val leftTextSize = observable(0)
+    val leftTextColor = observable(0)
+    val leftPadding = observable(16)
+    val rightPadding = observable(16)
     val rightIcon = observable(Any())
     val rightText = observable("")
     val rightTextSize = observable(0)
     val rightTextColor = observable(0)
     val rightView = observableNullable<ImageView?>(null)
+    val leftView = observableNullable<ImageView?>(null)
 
     init {
         apply {
