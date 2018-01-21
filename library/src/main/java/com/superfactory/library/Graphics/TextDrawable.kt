@@ -10,6 +10,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.TypedValue
+import com.superfactory.library.Debuger
 
 /**
  * Created by vicky on 2018/1/21.
@@ -310,6 +311,7 @@ class TextDrawable(context: Context) : Drawable() {
         } else {
             //Measure text bounds
             val desired = Layout.getDesiredWidth(text, mTextPaint)
+            Debuger.printMsg(this,text.toString()+"text"+desired)
             mTextLayout = StaticLayout(text, mTextPaint, desired.toInt(),
                     textAlign, 1.0f, 0.0f, false)
             mTextBounds.set(0, 0, mTextLayout!!.width, mTextLayout!!.height)

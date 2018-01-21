@@ -3,16 +3,14 @@ package com.superfactory.sunyatsin.Interface.BindingFragment.Note
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.R
 import kotlinx.android.synthetic.main.activity_main.view.*
-import org.jetbrains.anko.AnkoContext
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
-import org.jetbrains.anko.verticalLayout
 
 /**
  * Created by vicky on 2018.01.18.
@@ -35,14 +33,26 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                     height = matchParent
                 }
                 onClick {
-                    ui.owner.setTitle("1122111")
+                    doAsync {
+                        ui.owner.setTitle("1122111")
 //                    ui.owner.setBackIcon(R.mipmap.ic_launcher)
-                    ui.owner.setBackTextSize(16)
-                    ui.owner.setBackTextColor(Color.WHITE)
-                    ui.owner.setBackIcon("jbok返回")
-                    ui.owner.setRightIcon("返回ojbk")
+                        ui.owner.setBackTextSize(16)
+                        ui.owner.setBackTextColor(Color.WHITE)
+                         ui.owner.setRightTextSize(16)
+                        ui.owner.setRightTextColor(Color.WHITE)
 
-                    ui.owner.setBackgroundColor(Color.parseColor("#222222"))
+
+                        ui.owner.setBackgroundColor(Color.parseColor("#222222"))
+
+//                        val left=TextView(ctx)
+//                        left.text="jbok返回"
+//                        left.textSize=14f
+//                        ui.owner.setBackView(left)
+                        ui.owner.setBackIcon("123")
+                        ui.owner.setRightIcon("返回ojbk")
+                    }
+//                    viewModelSafe.notifyChange()
+
                 }
             }
             lparams {

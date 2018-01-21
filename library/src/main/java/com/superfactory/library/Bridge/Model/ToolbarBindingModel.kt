@@ -6,6 +6,7 @@ import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.observableNullable
+import com.superfactory.library.R
 import kotlin.reflect.full.memberProperties
 
 /**
@@ -14,8 +15,8 @@ import kotlin.reflect.full.memberProperties
 abstract class ToolbarBindingModel : BaseObservable() {
     val displayNavigator = observable(false)
     val title = observable("")
-    val leftIcon = observable(Any())
-    val backgroundColor = observable(1)
+    val leftIcon = observableNullable<Any?>(null)
+    val backgroundColor = observable(0)
     val titleColor = observable(0)
     val titleSize = observable(0)
     val leftText = observable("")
@@ -23,12 +24,30 @@ abstract class ToolbarBindingModel : BaseObservable() {
     val leftTextColor = observable(0)
     val leftPadding = observable(16)
     val rightPadding = observable(16)
-    val rightIcon = observable(Any())
+    val rightIcon = observableNullable<Any?>(null)
     val rightText = observable("")
     val rightTextSize = observable(0)
     val rightTextColor = observable(0)
-    val rightView = observableNullable<ImageView?>(null)
-    val leftView = observableNullable<ImageView?>(null)
+    val rightView = observableNullable<View?>(null)
+    val leftView = observableNullable<View?>(null)
+
+    val toolbarClickEvent=observable(View.OnClickListener {
+        if (it!=null){
+            preformToolbarClickEvent(it)
+        }
+    })
+
+    fun preformToolbarClickEvent(view: View){
+        when(view.id){
+            R.id.toolbar_left->{
+
+            }
+            R.id.toolbar_right->{
+
+            }
+        }
+
+    }
 
     init {
         apply {

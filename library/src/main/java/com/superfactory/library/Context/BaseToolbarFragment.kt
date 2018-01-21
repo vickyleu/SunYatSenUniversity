@@ -16,6 +16,7 @@ import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.ObservableField
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Graphics.TextDrawable
+import org.jetbrains.anko.support.v4.dip
 import kotlin.reflect.KProperty
 
 /**
@@ -78,7 +79,8 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
     /**
      * 设置文字会转化成图形,所以必须在转换之前设置好文字大小和颜色,否则将使用默认颜色和字体大小
      */
-    fun setBackIcon(res: String?) {
+
+     fun setBackIcon(res: String?)  {
         if (TextUtils.isEmpty(res)) return
         this.setToolbarProperty(ToolbarBindingModel::leftText, res!!)
         val td = TextDrawable(context)
@@ -87,9 +89,9 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
         val color = vm.leftTextColor.value
         if (color > 0)
             td.setTextColor(color)
-        val size = vm.leftTextSize.value.toFloat()
+        val size = vm.leftTextSize.value
         if (size > 0)
-            td.textSize = size
+            td.textSize = size.toFloat()
         td.textAlign = Layout.Alignment.ALIGN_CENTER
         this.setToolbarProperty(ToolbarBindingModel::leftIcon, td)
     }
@@ -137,9 +139,9 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
         val color = vm.rightTextColor.value
         if (color > 0)
             td.setTextColor(color)
-        val size = vm.rightTextSize.value.toFloat()
+        val size = vm.rightTextSize.value
         if (size > 0)
-            td.textSize = size
+            td.textSize = size.toFloat()
         td.textAlign = Layout.Alignment.ALIGN_CENTER
         this.setToolbarProperty(ToolbarBindingModel::rightIcon, td)
     }
@@ -150,6 +152,16 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
         this.setToolbarProperty(ToolbarBindingModel::rightText, "")
     }
 
+
+    fun setBackView(view: View?) {
+        if (view == null) return
+        this.setToolbarProperty(ToolbarBindingModel::leftView, view)
+    }
+
+    fun setRightView(view: View?) {
+        if (view == null) return
+        this.setToolbarProperty(ToolbarBindingModel::rightView, view)
+    }
 
 
     fun setBackgroundColor(@ColorInt color: Int?) {
