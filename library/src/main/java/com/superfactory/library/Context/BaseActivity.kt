@@ -10,6 +10,8 @@ import cn.nekocode.emojix.Emojix
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
+import com.superfactory.library.Bridge.Anko.observable
+import com.superfactory.library.R
 import org.jetbrains.anko.AnkoContextImpl
 
 
@@ -24,6 +26,25 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
     protected var toolbar: BaseToolBar<A, V>? = null
     protected var toolbarAnko: View? = null
     private var layout: BindingComponent<A, V>? = null
+
+    private val toolbarClickEvent=observable(View.OnClickListener {
+        if (it!=null){
+            performToolbarClickEvent(it)
+        }
+    })
+
+    protected open fun performToolbarClickEvent(view: View){
+        when(view.id){
+            R.id.toolbar_left->{
+
+            }
+            R.id.toolbar_right->{
+
+            }
+        }
+
+    }
+
 
     protected var showToolBar: Boolean = false
 
@@ -41,6 +62,7 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
             if (showToolBar) {
                 val tc = newToolBarComponent(this)
                 if (tc != null) {
+
                     toolbar = tc.apply {
                         toolbarAnko = createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, false))
                         // 经测试在代码里直接声明透明状态栏更有效
@@ -50,6 +72,7 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
                         }
                         notifyChanges()
                     } as BaseToolBar<A, V>
+                    toolbar!!.eventDelegate=toolbarClickEvent
                 }
             }
 

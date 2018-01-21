@@ -1,13 +1,10 @@
 package com.superfactory.library.Context
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.support.annotation.DrawableRes
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +12,10 @@ import android.view.ViewGroup
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Bridge.Anko.BindingComponent
-import com.superfactory.library.Bridge.Anko.ObservableField
-import com.superfactory.library.Bridge.Model.ToolbarBindingModel
+import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Debuger
+import com.superfactory.library.R
 import org.jetbrains.anko.AnkoContextImpl
-import kotlin.reflect.KProperty
 
 
 /**
@@ -38,6 +34,24 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
 
     protected var showToolBar: Boolean = false
 
+
+    private val toolbarClickEvent= observable(View.OnClickListener {
+        if (it!=null){
+            performToolbarClickEvent(it)
+        }
+    })
+
+    protected open fun performToolbarClickEvent(view: View){
+        when(view.id){
+            R.id.toolbar_left->{
+
+            }
+            R.id.toolbar_right->{
+
+            }
+        }
+
+    }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view: View? = null
         viewModel = newViewModel().apply {
@@ -48,6 +62,7 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
                         toolbarAnko = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
                         notifyChanges()
                     } as BaseToolBar<A, V>
+                    toolbar!!.eventDelegate=toolbarClickEvent
                 }
             }
             layout = newComponent(this).apply {

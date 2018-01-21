@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
-import com.superfactory.library.Bridge.Anko.BindingComponent
+import android.view.View
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
+import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.ObservableField
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel.Companion.toModel
+import com.superfactory.library.R
 import kotlin.reflect.KProperty
 
 /**
@@ -29,7 +31,18 @@ abstract class BaseToolBarActivity<V : ToolbarBindingModel, A : BaseToolBarActiv
     override fun setToolbarAttribution(toolbarBinder: BaseToolBar<A, V>, actionBar: ActionBar?, toolbarView: Toolbar) {
         if (actionBar != null) {
             if (toolbarBinder.viewModelSafe is ToolbarBindingModel) {
-                toolbarBinder.setAttribution(actionBar,toolbarView)
+                toolbarBinder.setAttribution(actionBar, toolbarView)
+            }
+        }
+    }
+
+    override fun performToolbarClickEvent(view: View) {
+        when (view.id) {
+            R.id.toolbar_left -> {
+                finish()
+            }
+            R.id.toolbar_right -> {
+
             }
         }
     }

@@ -31,24 +31,6 @@ abstract class ToolbarBindingModel : BaseObservable() {
     val rightView = observableNullable<View?>(null)
     val leftView = observableNullable<View?>(null)
 
-    val toolbarClickEvent=observable(View.OnClickListener {
-        if (it!=null){
-            preformToolbarClickEvent(it)
-        }
-    })
-
-    fun preformToolbarClickEvent(view: View){
-        when(view.id){
-            R.id.toolbar_left->{
-
-            }
-            R.id.toolbar_right->{
-
-            }
-        }
-
-    }
-
     init {
         apply {
             setToolbar(this@ToolbarBindingModel)

@@ -16,7 +16,7 @@ import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.ObservableField
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Graphics.TextDrawable
-import org.jetbrains.anko.support.v4.dip
+import com.superfactory.library.R
 import kotlin.reflect.KProperty
 
 /**
@@ -29,6 +29,9 @@ import kotlin.reflect.KProperty
 abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragment<V, A>> : BaseFragment<V, A>() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         showToolBar = true
+        if (activity!=null&&activity is BaseToolBarActivity<*,*>){
+            throw ExceptionInInitializerError("nested toolbar controller error")
+        }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -37,6 +40,18 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
         if (actionBar != null) {
             if (toolbarBinder.viewModelSafe is ToolbarBindingModel) {
                 toolbarBinder.setAttribution(actionBar, toolbarView)
+            }
+        }
+    }
+
+
+    override fun performToolbarClickEvent(view: View) {
+        when(view.id){
+            R.id.toolbar_left->{
+                activity.finish()
+            }
+            R.id.toolbar_right->{
+
             }
         }
     }

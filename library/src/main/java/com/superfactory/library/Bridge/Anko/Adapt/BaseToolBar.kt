@@ -15,6 +15,7 @@ import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarColor
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarSize
 import com.superfactory.library.Bridge.Anko.DslView.horizontalLayout
+import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.viewextensions.themedToolbar_v7
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Context.BaseActivity
@@ -22,6 +23,7 @@ import com.superfactory.library.Context.BaseFragment
 import com.superfactory.library.R
 import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.*
+import org.jetbrains.anko.sdk25.coroutines.onClick
 
 
 /**
@@ -32,6 +34,7 @@ import org.jetbrains.anko.*
  * @ClassName 这里输入你的类名(或用途)
  */
 open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
+    var eventDelegate:ObservableFieldImpl<View.OnClickListener>?=null
     override fun createViewWithBindings(ui: AnkoContext<A>): View = with(ui) {
         themedToolbar_v7(R.style.mToolbarStyle) {
             id = R.id.toolbar
@@ -190,6 +193,11 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         value.id = R.id.toolbar_left
 
                         view.addView(value)
+                        value.onClick {
+                            if (eventDelegate!=null&&eventDelegate!!.value!=null){
+                                eventDelegate!!.value.onClick(view)
+                            }
+                        }
                     }
                 }
 
@@ -206,6 +214,11 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         value.id = R.id.toolbar_right
 
                         view.addView(value)
+                        value.onClick {
+                            if (eventDelegate!=null&&eventDelegate!!.value!=null){
+                                eventDelegate!!.value.onClick(view)
+                            }
+                        }
                     }
                 }
 
