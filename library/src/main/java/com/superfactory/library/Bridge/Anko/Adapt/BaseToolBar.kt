@@ -1,5 +1,6 @@
 package com.superfactory.library.Bridge.Anko.Adapt
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v7.app.ActionBar
@@ -52,6 +53,17 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                 gravity = Gravity.CENTER
             }
 
+
+            val right = frameLayout {
+                backgroundColor=Color.TRANSPARENT
+                visibility=View.GONE
+            }.lparams {
+                width = wrapContent
+                height = wrapContent
+                gravity = Gravity.CENTER_VERTICAL and Gravity.RIGHT
+            }
+
+
             if (viewModel != null && viewModel is ToolbarBindingModel) {
 //                bindSelf {
 //                    (it as ToolbarBindingModel).backgroundColor
@@ -78,7 +90,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
 
                 bindSelf {
                     (it as ToolbarBindingModel).rightView
-                }.toView(this) { view, value ->
+                }.toView(right) { view, value ->
                     if (value != null) {
                         try {
                             val old = view.find<View>(R.id.toolbar_right)
@@ -86,20 +98,16 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         } catch (ignored: Exception) {
                         }
                         value.id = R.id.toolbar_right
-                        val lp = Toolbar.LayoutParams(wrapContent, 40)
-                        lp.gravity=Gravity.END
-
-//                        Toolbar::class.declaredMemberFunctions.firstOrNull {
-//                            it.]-\\
-//                        }//.firstOrNull { it.name == "add" }?.call(a)
-
-                        view.addView(value, lp)
+                        val lp = Toolbar.LayoutParams(wrapContent, wrapContent)
+                        lp.gravity=Gravity.CENTER
+                        view.addView(value,lp)
+                        view.visibility=View.VISIBLE
                     }
                 }
 
                 bindSelf {
                     (it as ToolbarBindingModel).rightIcon
-                }.toView(this) { view, value ->
+                }.toView(right) { view, value ->
                     if (value == null) return@toView
                     val v: View?
                     if (value is Int) {
