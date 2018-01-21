@@ -9,11 +9,10 @@ import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarColor
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarSize
 import com.superfactory.library.Bridge.Anko.viewextensions.themedToolbar_v7
-import com.superfactory.library.Bridge.Anko.viewextensions.toToolbarColor
-import com.superfactory.library.Bridge.Anko.viewextensions.toToolbarTitle
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Context.BaseActivity
 import com.superfactory.library.Context.BaseFragment
+import com.superfactory.library.Debuger
 import com.superfactory.library.R
 import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.*
@@ -42,7 +41,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
             }
 
             val tv = textView {
-//            val tv = themedTextView(R.style.AppTheme_AppBarOverlay_TitleTextStyle) {
+                //            val tv = themedTextView(R.style.AppTheme_AppBarOverlay_TitleTextStyle) {
                 text = ""
             }.lparams {
                 width = wrapContent
@@ -51,17 +50,60 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
             }
 
             if (viewModel != null && viewModel is ToolbarBindingModel) {
-                bindSelf {
-                    (it as ToolbarBindingModel).backgroundColor
-                }.toToolbarColor(this)
+//                bindSelf {
+//                    (it as ToolbarBindingModel).backgroundColor
+//                }.toToolbarColor(this)
 
 //                bindSelf {
-//                    (it as ToolbarBindingModel).navigationIcon
-//                }.toToolbarNavigation(this)
+//                    (it as ToolbarBindingModel).title
+//                }.toToolbarTitle(tv)
+
+
+                bindSelf {
+                    (it as ToolbarBindingModel).backgroundColor
+                }.toView(this) { view, value ->
+                    if (value == null) return@toView
+                    view.setBackgroundColor(value)
+                }
 
                 bindSelf {
                     (it as ToolbarBindingModel).title
-                }.toToolbarTitle(tv)
+                }.toView(tv) { view, value ->
+                    if (value == null) return@toView
+                    view.setText(value)
+                }
+
+
+                bindSelf {
+                    (it as ToolbarBindingModel).navigationIcon
+                }.toView(this) { view, value ->
+                    if (value == null) return@toView
+//                    view.setNavigationIcon()
+                }
+
+//
+//                bindSelf {
+//                    (it as ToolbarBindingModel).navigationIcon
+//                }.toView(this) { view, value ->
+//                    if (value == null) return@toView
+//
+//                }
+//
+//
+//                bindSelf {
+//                    (it as ToolbarBindingModel).navigationIcon
+//                }.toView(this) { view, value ->
+//                    if (value == null) return@toView
+//
+//                }
+//
+//
+//                bindSelf {
+//                    (it as ToolbarBindingModel).navigationIcon
+//                }.toView(this) { view, value ->
+//                    if (value == null) return@toView
+//
+//                }
 
             }
         }
@@ -83,22 +125,22 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
         return (owner.activity as BaseActivity<*, *>).getSupportActionBar()
     }
 
-//    fun setToolbarTitle(title: String, toolbar: Toolbar): Unit {
-//        toolbar.title = title
-////
-////
-////        // App Logo
-////        toolbar.setLogo(R.drawable.ic_launcher);
-////// Title
-////        toolbar.setTitle("My Title");
-////// Sub Title
-////        toolbar.setSubtitle("Sub title");
-//
-////        // Navigation Icon 要設定在 setSupoortActionBar 后才有作用
-////        //否則會出現 back button
-////        toolbar.setNavigationIcon(R.drawable.ab_android)
-//
-//    }
+    fun setAttribution(actionBar: ActionBar, toolbarView: Toolbar){
+        bindSelf { (it as ToolbarBindingModel).displayNavigator }.toView(toolbarView) { view, value ->
+            if (value == null) return@toView
+            if (actionBar == null) return@toView
+            displayToolbar(actionBar, value)
+        }
+        displayToolbar(actionBar, (viewModel as ToolbarBindingModel).displayNavigator.value)
+    }
 
+    private fun displayToolbar(actionBar: ActionBar, value: Boolean) {
+        // 显示应用的Logo
+        actionBar.setDisplayShowHomeEnabled(value)
+        actionBar.setDisplayUseLogoEnabled(value)
+        //            actionBar.setLogo(R.mipmap.ic_launcher)
+        // 显示标题和子标题
+        actionBar.setDisplayShowTitleEnabled(value)
+    }
 
 }

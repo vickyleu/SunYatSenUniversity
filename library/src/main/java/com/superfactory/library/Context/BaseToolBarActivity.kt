@@ -29,13 +29,7 @@ abstract class BaseToolBarActivity<V : ToolbarBindingModel, A : BaseToolBarActiv
     override fun setToolbarAttribution(toolbarBinder: BaseToolBar<A, V>, actionBar: ActionBar?, toolbarView: Toolbar) {
         if (actionBar != null) {
             if (toolbarBinder.viewModelSafe is ToolbarBindingModel) {
-                val displayNavigator = (toolbarBinder.viewModelSafe as ToolbarBindingModel).displayNavigator
-                // 显示应用的Logo
-                actionBar.setDisplayShowHomeEnabled(displayNavigator);
-                actionBar.setDisplayUseLogoEnabled(displayNavigator);
-//            actionBar.setLogo(R.mipmap.ic_launcher);
-                // 显示标题和子标题
-                actionBar.setDisplayShowTitleEnabled(displayNavigator);
+                toolbarBinder.setAttribution(actionBar,toolbarView)
             }
         }
     }

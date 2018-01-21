@@ -14,6 +14,7 @@ interface BindingConverter<Data, out Input> {
 
     fun bind(binding: Binding) {}
     fun unbind(binding: Binding) {}
+
 }
 
 class ObservableBindingConverter<Data, Input>(val function: (Data) -> ObservableField<Input>,

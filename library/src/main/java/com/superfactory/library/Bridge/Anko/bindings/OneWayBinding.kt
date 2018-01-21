@@ -76,7 +76,10 @@ fun <Data, TChar : CharSequence?, TBinding : BindingConverter<Data, TChar>> TBin
 
 class OneWayExpression<Data, Input, Output, Converter : BindingConverter<Data, Input>>(
         val converter: Converter, val expression: BindingExpression<Input?, Output?>) {
+
+
     fun <V : View> toView(view: V, viewExpression: (V, Output?) -> Unit) = OneWayBinding<Data, Input, Output, Converter, V>(this).toView(view, viewExpression)
+
 
     //todo total
 }
@@ -97,6 +100,11 @@ internal constructor(val oneWayExpression: OneWayExpression<Data, Input, Output,
     fun toView(view: V, viewExpression: ((V, Output?) -> Unit)) = apply {
         this.viewExpression = viewExpression
         this.view = view
+        converter.component.registerBinding(this)
+    }
+
+    fun toAny(viewExpression: ((V, Output?) -> Unit)) = apply {
+        this.viewExpression = viewExpression
         converter.component.registerBinding(this)
     }
 

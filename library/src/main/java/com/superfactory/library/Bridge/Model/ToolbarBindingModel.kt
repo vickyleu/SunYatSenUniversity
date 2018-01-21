@@ -13,10 +13,10 @@ import kotlin.reflect.full.memberProperties
  * Created by vicky on 2018/1/19.
  */
 abstract class ToolbarBindingModel : BaseObservable() {
-    var displayNavigator = false
+    val displayNavigator = observable(false)
     val title = observable("")
-    var navigationIcon = observable(Any())
-    var backgroundColor = observable(1)
+    val navigationIcon = observable(Any())
+    val backgroundColor = observable(1)
     val titleColor = observable(0)
     val titleSize = observable(0)
     val navigationText = observable("")
