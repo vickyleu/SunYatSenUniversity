@@ -1,4 +1,4 @@
-package com.superfactory.library.Bridge.Anko.viewextensions
+package com.superfactory.library.Bridge.Anko.ViewExtensions
 
 import android.support.v4.app.Fragment
 

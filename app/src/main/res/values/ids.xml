@@ -8,4 +8,7 @@
     <item name="ctrl_left_id" type="id" />
     <item name="ctrl_right_id" type="id" />
     <item name="ctrl_shadow" type="id" />
+    <item name="avatar" type="id" />
+    <item name="left_icon" type="id" />
+    <item name="right_text" type="id" />
 </resources>

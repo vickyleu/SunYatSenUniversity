@@ -3,9 +3,11 @@ package com.superfactory.library.Bridge.Anko.bindings
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import com.superfactory.library.Bridge.Anko.Adapt.FragmentContainer
-import com.superfactory.library.Bridge.Anko.viewextensions.*
+import com.superfactory.library.Bridge.Anko.BindingComponent
+import com.superfactory.library.Bridge.Anko.ViewExtensions.*
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -79,7 +81,6 @@ class OneWayExpression<Data, Input, Output, Converter : BindingConverter<Data, I
 
 
     fun <V : View> toView(view: V, viewExpression: (V, Output?) -> Unit) = OneWayBinding<Data, Input, Output, Converter, V>(this).toView(view, viewExpression)
-
 
     //todo total
 }

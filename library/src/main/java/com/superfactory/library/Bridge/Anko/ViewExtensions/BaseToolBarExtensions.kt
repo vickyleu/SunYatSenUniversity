@@ -1,11 +1,4 @@
-package com.superfactory.library.Bridge.Anko.viewextensions
-
-import android.text.TextUtils
-import android.widget.TextView
-import com.superfactory.library.Bridge.Anko.DslView.Toolbar_v7
-import com.superfactory.library.Bridge.Anko.bindings.BindingConverter
-import com.superfactory.library.Bridge.Anko.bindings.OneWayExpression
-import org.jetbrains.anko.backgroundColor
+package com.superfactory.library.Bridge.Anko.ViewExtensions
 
 /**
  * Created by vicky on 2018.01.20.

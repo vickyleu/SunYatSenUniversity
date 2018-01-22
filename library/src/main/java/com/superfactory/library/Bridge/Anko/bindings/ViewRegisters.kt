@@ -6,8 +6,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import android.widget.DatePicker.OnDateChangedListener
-import com.superfactory.library.Bridge.Anko.viewextensions.onClickListener
-import com.superfactory.library.Bridge.Anko.viewextensions.setInlineOnClickListener
+import com.superfactory.library.Bridge.Anko.ViewExtensions.onClickListener
+import com.superfactory.library.Bridge.Anko.ViewExtensions.setInlineOnClickListener
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.Calendar.*

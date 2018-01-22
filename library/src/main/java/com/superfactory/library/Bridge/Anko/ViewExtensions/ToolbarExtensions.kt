@@ -1,4 +1,4 @@
-package com.superfactory.library.Bridge.Anko.viewextensions
+package com.superfactory.library.Bridge.Anko.ViewExtensions
 
 import android.app.Activity
 import android.content.Context

@@ -64,6 +64,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                 frameLayout {
                     id = R.id.ctrl_shadow
                     backgroundDrawable = getDrawable(ctx, R.drawable.gradient_shape)//getGradientDrawable(ctx)
+                    visibility=View.INVISIBLE
                 }.lparams {
                     topMargin = -(buttonHeight * dividerPercent).toInt()
                     setHorizontalGravity(Gravity.CENTER_HORIZONTAL)

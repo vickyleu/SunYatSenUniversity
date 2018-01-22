@@ -1,4 +1,4 @@
-package com.superfactory.library.Bridge.Anko.viewextensions
+package com.superfactory.library.Bridge.Anko.ViewExtensions
 
 import android.graphics.drawable.Drawable
 import android.os.Build

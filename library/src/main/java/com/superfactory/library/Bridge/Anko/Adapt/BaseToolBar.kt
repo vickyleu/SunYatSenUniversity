@@ -16,7 +16,7 @@ import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarColor
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarSize
 import com.superfactory.library.Bridge.Anko.DslView.horizontalLayout
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
-import com.superfactory.library.Bridge.Anko.viewextensions.themedToolbar_v7
+import com.superfactory.library.Bridge.Anko.ViewExtensions.themedToolbar_v7
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Context.BaseActivity
 import com.superfactory.library.Context.BaseFragment
@@ -49,6 +49,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
             lparams {
                 width = matchParent
                 height = getActionBarSize(ctx)//wrapContent
+//                topPadding = StatusBarUtil.getStatusBarHeightHigherSdk19(ctx)
                 topPadding = StatusBarUtil.getStatusBarHeight(ctx)
                 backgroundColor = getActionBarColor(ctx)
                 minimumHeight = getActionBarSize(ctx)
