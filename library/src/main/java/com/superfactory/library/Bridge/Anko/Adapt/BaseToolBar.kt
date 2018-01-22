@@ -48,7 +48,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
 
             lparams {
                 width = matchParent
-                height = wrapContent
+                height = getActionBarSize(ctx)//wrapContent
                 topPadding = StatusBarUtil.getStatusBarHeight(ctx)
                 backgroundColor = getActionBarColor(ctx)
                 minimumHeight = getActionBarSize(ctx)
@@ -195,7 +195,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         view.addView(value)
                         value.onClick {
                             if (eventDelegate!=null&&eventDelegate!!.value!=null){
-                                eventDelegate!!.value.onClick(view)
+                                eventDelegate!!.value.onClick(value)
                             }
                         }
                     }
@@ -216,7 +216,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         view.addView(value)
                         value.onClick {
                             if (eventDelegate!=null&&eventDelegate!!.value!=null){
-                                eventDelegate!!.value.onClick(view)
+                                eventDelegate!!.value.onClick(value)
                             }
                         }
                     }

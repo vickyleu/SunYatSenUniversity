@@ -2,6 +2,7 @@ package com.superfactory.library.Bridge.Anko
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PIN
@@ -67,11 +68,13 @@ abstract class BindingComponent<in T, V>
         } else {
             with(ui) {
                 var useCoordinatorLayout = false
+
                 if (owner is Activity) {
                     useCoordinatorLayout = true
                 }
                 if (!useCoordinatorLayout) {
                     verticalLayout {
+                        backgroundColor= Color.WHITE
                         addView(toolbar)
                         addView(attach)
                         lparams {
@@ -82,10 +85,13 @@ abstract class BindingComponent<in T, V>
                 } else {
                     coordinatorLayout {
                         fitsSystemWindows = true
+                        backgroundColor=Color.WHITE
                         themedAppBarLayout(R.style.AppTheme_AppBarOverlay) {
                             id = R.id.appbar
+                            backgroundColor=Color.TRANSPARENT
                             collapsingToolbarLayout {
                                 id = R.id.collapsing_toolbar
+                                backgroundColor=Color.TRANSPARENT
                                 contentScrim = getAttrDrawablValue(ctx, R.attr.colorPrimary)
                                 expandedTitleMarginEnd = dip(64)
                                 expandedTitleMarginStart = dip(48)

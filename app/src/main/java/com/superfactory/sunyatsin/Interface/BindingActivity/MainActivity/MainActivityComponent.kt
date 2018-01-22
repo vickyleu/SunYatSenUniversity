@@ -101,7 +101,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                         isDuplicateParentStateEnabled = true
                         backgroundColor = Color.TRANSPARENT
                         setTextColor(ctx.resources.getColorStateList(ctrl_text_selector))
-                        text = "12121212"
+                        text = ctx.getString(R.string.note_create)
                         textSize = 12f
                     }.lparams {
                         width = wrapContent
@@ -128,7 +128,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                     val tv = textView {
                         id = R.id.ctrl_left_id
                         backgroundColor = Color.TRANSPARENT
-                        text = "121"
+                        text = ctx.getString(R.string.note_controller)
                         textSize = 12f
                         isDuplicateParentStateEnabled = true
                         setTextColor(ctx.resources.getColorStateList(ctrl_text_selector))
@@ -173,7 +173,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                     backgroundColor = Color.TRANSPARENT
                     val tv = textView {
                         id = R.id.ctrl_right_id
-                        text = "212"
+                        text = ctx.getString(R.string.profile_controller)
                         backgroundColor = Color.TRANSPARENT
                         textSize = 12f
                         isDuplicateParentStateEnabled = true

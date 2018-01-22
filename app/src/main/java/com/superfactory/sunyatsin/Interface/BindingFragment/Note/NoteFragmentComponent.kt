@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.DslView.refresh
+import com.superfactory.library.Context.Extensions.*
 import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.R
 import kotlinx.android.synthetic.main.activity_main.view.*

@@ -6,6 +6,7 @@ import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.observableNullable
+import com.superfactory.library.Context.BaseApp
 import com.superfactory.library.R
 import kotlin.reflect.full.memberProperties
 
@@ -50,6 +51,9 @@ abstract class ToolbarBindingModel : BaseObservable() {
                 }
             }
             return field
+        }
+        fun getStaticsContextRef(): BaseApp{
+            return BaseApp.appDelegate!!
         }
     }
 

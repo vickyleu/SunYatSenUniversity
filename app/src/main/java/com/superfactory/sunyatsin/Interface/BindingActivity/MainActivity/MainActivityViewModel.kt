@@ -37,8 +37,8 @@ class MainActivityViewModel(intent: Intent?, manager: FragmentManager?) : Toolba
     val clickListener = observable(View.OnClickListener {
         when (it.id) {
             R.id.ctrl_button -> {
-                if (selected == 1) return@OnClickListener
-                selected = 1
+                if (selected == 2) return@OnClickListener
+                selected = 2
                 Debuger.printMsg(this, "点击了中间按钮")
             }
             R.id.ctrl_text_left -> {
@@ -47,8 +47,8 @@ class MainActivityViewModel(intent: Intent?, manager: FragmentManager?) : Toolba
                 Debuger.printMsg(this, "点击了左边按钮")
             }
             R.id.ctrl_text_right -> {
-                if (selected == 2) return@OnClickListener
-                selected = 2
+                if (selected == 1) return@OnClickListener
+                selected = 1
                 Debuger.printMsg(this, "点击了右边按钮")
             }
             else -> {
