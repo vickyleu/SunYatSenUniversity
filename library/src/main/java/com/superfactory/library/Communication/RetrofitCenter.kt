@@ -7,6 +7,11 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.ParameterizedType
+import kotlin.reflect.KClass
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 /**
  * Created by vicky on 2018.01.23.
@@ -15,27 +20,37 @@ import retrofit2.converter.gson.GsonConverterFactory
  * @Date 2018年01月23日  17:46:46
  * @ClassName 这里输入你的类名(或用途)
  */
-class RetrofitCenter<T:IRetrofit>(val vararg : T) {
+open class RetrofitCenter<T : IRetrofit>(val baseUrl:String) {
     companion object {
         private var retrofitCenter: RetrofitCenter<*>? = null
-        fun <T:IRetrofit> getRetrofiter(t:T): RetrofitCenter<T>? {
+        fun <T : IRetrofit> getRetrofiter(baseUrl:String): RetrofitCenter<T> {
             if (retrofitCenter == null) {
-                retrofitCenter = RetrofitCenter<T>(t)
-               if (retrofitCenter!=null){
-                   (retrofitCenter as RetrofitCenter<T>).getRetrofitAPI()
-               }
+                retrofitCenter = RetrofitCenter<T>(baseUrl)
             }
             return retrofitCenter as RetrofitCenter<T>
         }
     }
 
+    open fun buildingApiServer(): IRetrofit? {
+        if (IRETROFIT==null){
+            getRetrofitAPI()
+        }
+        return IRETROFIT
 
+//        if (retrofitCenter != null) {
+//            val client = (retrofitCenter as RetrofitCenter<T>)
+//            if (client.IRETROFIT == null)
+//                (retrofitCenter as RetrofitCenter<T>).getRetrofitAPI()
+//            return client.IRETROFIT
+//        }
+//        return null
+    }
 
     @Volatile
     private var IRETROFIT: IRetrofit? = null
 
     @Synchronized
-    fun getRetrofitAPI(): IRetrofit? {
+    private fun getRetrofitAPI(): IRetrofit? {
         val gsonBuilder = GsonBuilder()
         val gson = gsonBuilder.create()
 
@@ -47,12 +62,19 @@ class RetrofitCenter<T:IRetrofit>(val vararg : T) {
             httpClientBuilder.addInterceptor(loggingInterceptor)
         }
 
-        IRETROFIT = Retrofit.Builder().baseUrl("https://api.themoviedb.org/3/movie/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                .callFactory(httpClientBuilder.build())
-                .build()
-                .create(vararg.javaClass)
+        val typeArg= (javaClass.genericSuperclass as? ParameterizedType)?.actualTypeArguments
+        if (typeArg!=null&&typeArg.size>0){
+            val vararg = typeArg[0] as? Class<T> ?: throw ExceptionInInitializerError("类名无法加载")
+            IRETROFIT = Retrofit.Builder().baseUrl(baseUrl)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                    .callFactory(httpClientBuilder.build())
+                    .build()
+                    .create(vararg)
+        }else{
+            throw ExceptionInInitializerError("类名无法加载")
+        }
+
         return IRETROFIT
     }
 }

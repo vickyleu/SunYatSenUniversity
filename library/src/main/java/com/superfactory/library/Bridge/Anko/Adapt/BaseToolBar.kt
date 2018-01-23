@@ -34,18 +34,17 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
  * @ClassName 这里输入你的类名(或用途)
  */
 open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
-    var eventDelegate:ObservableFieldImpl<View.OnClickListener>?=null
+    var eventDelegate: ObservableFieldImpl<View.OnClickListener>? = null
     override fun createViewWithBindings(ui: AnkoContext<A>): View = with(ui) {
         themedToolbar_v7(R.style.mToolbarStyle) {
             id = R.id.toolbar
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 popupTheme = R.style.ThemeOverlay_AppCompat_Light
             }
-            setContentInsetsAbsolute(0,0)
-            setContentInsetsRelative(0,0)
-            contentInsetStartWithNavigation=0
-            contentInsetEndWithActions=0
-
+            setContentInsetsAbsolute(0, 0)
+            setContentInsetsRelative(0, 0)
+            contentInsetStartWithNavigation = 0
+            contentInsetEndWithActions = 0
             lparams {
                 width = matchParent
                 height = getActionBarSize(ctx)//wrapContent
@@ -76,7 +75,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                 }.lparams {
                     width = wrapContent
                     height = wrapContent
-                    addRule(RelativeLayout.RIGHT_OF,center!!.id)
+                    addRule(RelativeLayout.RIGHT_OF, center!!.id)
                     centerVertically()
                     alignParentRight()
                 }
@@ -89,7 +88,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                 }.lparams {
                     width = wrapContent
                     height = wrapContent
-                    addRule(RelativeLayout.LEFT_OF,center!!.id)
+                    addRule(RelativeLayout.LEFT_OF, center!!.id)
                     centerVertically()
                     alignParentLeft()
                 }
@@ -104,14 +103,14 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                 (it as ToolbarBindingModel).leftPadding
             }.toView(root) { view, value ->
                 if (value == null) return@toView
-                view.leftPadding = (this@themedToolbar_v7.contentInsetStart + this@themedToolbar_v7.paddingLeft+dip(value))
+                view.leftPadding = (this@themedToolbar_v7.contentInsetStart + this@themedToolbar_v7.paddingLeft + dip(value))
             }
 
             bindSelf {
                 (it as ToolbarBindingModel).rightPadding
             }.toView(root) { view, value ->
                 if (value == null) return@toView
-                view.rightPadding = (this@themedToolbar_v7.contentInsetEnd + this@themedToolbar_v7.paddingRight+dip(value))
+                view.rightPadding = (this@themedToolbar_v7.contentInsetEnd + this@themedToolbar_v7.paddingRight + dip(value))
             }
 
             if (viewModel != null && viewModel is ToolbarBindingModel) {
@@ -151,7 +150,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                     }
                     v.id = R.id.toolbar_left
                     if (viewModel == null) return@toView
-                    v.layoutParams=lp
+                    v.layoutParams = lp
                     v.scaleType = ImageView.ScaleType.FIT_XY
                     (viewModel as ToolbarBindingModel).leftView.value = v
                 }
@@ -175,7 +174,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                     }
                     v.id = R.id.toolbar_right
                     if (viewModel == null) return@toView
-                    v.layoutParams=lp
+                    v.layoutParams = lp
                     v.scaleType = ImageView.ScaleType.FIT_XY
                     (viewModel as ToolbarBindingModel).rightView.value = v
                 }
@@ -195,7 +194,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
 
                         view.addView(value)
                         value.onClick {
-                            if (eventDelegate!=null&&eventDelegate!!.value!=null){
+                            if (eventDelegate != null && eventDelegate!!.value != null) {
                                 eventDelegate!!.value.onClick(value)
                             }
                         }
@@ -216,7 +215,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
 
                         view.addView(value)
                         value.onClick {
-                            if (eventDelegate!=null&&eventDelegate!!.value!=null){
+                            if (eventDelegate != null && eventDelegate!!.value != null) {
                                 eventDelegate!!.value.onClick(value)
                             }
                         }

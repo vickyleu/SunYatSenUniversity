@@ -27,9 +27,10 @@ import com.tencent.bugly.crashreport.CrashReport
  * @ClassName 这里输入你的类名(或用途)
  */
 
-abstract class BaseApp : Application() {
+abstract class BaseApp<T : IRetrofit> : Application() {
     companion object {
-        var appDelegate: BaseApp? = null
+        var appDelegate: BaseApp<*>? = null
+
         //static 代码段可以防止内存泄露
         init {
             //设置全局的Header构建器
@@ -69,7 +70,23 @@ abstract class BaseApp : Application() {
     open fun loadBaseHeader(context: Context, layout: RefreshLayout): RefreshHeader {
         return ClassicsHeader(context)//.setTimeFormat(new DynamicTimeFormat("更新于 %s"));//指定为经典Header，默认是 贝塞尔雷达Header
     }
-    private  var retrofit: RetrofitCenter<*>?=null
+
+    private var retrofit: RetrofitCenter<*>? = null
+
+    open fun takeApi(): T? {
+        if (retrofit == null) {
+            val baseUrl = specifyBaseUrl()
+            if (baseUrl != null) {
+                retrofit = RetrofitCenter.getRetrofiter<T>(baseUrl)
+            }
+        }
+        return retrofit?.buildingApiServer() as T
+    }
+
+    open fun takeApiSafe(): T {
+        return takeApi()!!
+    }
+
     /**
      * Called when the application is starting, before any activity, service,
      * or receiver objects (excluding content providers) have been created.
@@ -82,15 +99,12 @@ abstract class BaseApp : Application() {
     override fun onCreate() {
         appDelegate = this
         super.onCreate()
-        val service=loadRetrofitService()
-        if (service!=null){
-            retrofit= RetrofitCenter.getRetrofiter(service)
-        }
+
         val dm = appDelegate!!.resources.displayMetrics
-        mScreenSizeExtension.width=dm.widthPixels;
-        mScreenSizeExtension.height=dm.heightPixels;
-        mScreenSizeExtension.density= dm.density;
-        mScreenSizeExtension.densityDpi=dm.densityDpi;
+        mScreenSizeExtension.width = dm.widthPixels;
+        mScreenSizeExtension.height = dm.heightPixels;
+        mScreenSizeExtension.density = dm.density;
+        mScreenSizeExtension.densityDpi = dm.densityDpi;
 
         val bugly = buglyID()
         if (!TextUtils.isEmpty(bugly))
@@ -99,7 +113,12 @@ abstract class BaseApp : Application() {
 
     abstract fun buglyID(): String
 
-    protected abstract fun loadRetrofitService():Class<in IRetrofit>?
+//    protected abstract fun loadRetrofitService(): KClass<IRetrofit>?
+
+    protected open fun specifyBaseUrl(): String? {
+        return null
+    }
+
     /**
      * This method is for use in emulated process environments.  It will
      * never be called on a production Android device, where processes are

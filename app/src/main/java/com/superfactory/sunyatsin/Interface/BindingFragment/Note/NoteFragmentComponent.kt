@@ -3,13 +3,10 @@ package com.superfactory.sunyatsin.Interface.BindingFragment.Note
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Context.Extensions.*
 import com.superfactory.library.Debuger
-import com.superfactory.sunyatsin.R
-import kotlinx.android.synthetic.main.activity_main.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -39,7 +36,7 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
 //                    ui.owner.setBackIcon(R.mipmap.ic_launcher)
                         ui.owner.setBackTextSize(16)
                         ui.owner.setBackTextColor(Color.WHITE)
-                         ui.owner.setRightTextSize(16)
+                        ui.owner.setRightTextSize(16)
                         ui.owner.setRightTextColor(Color.WHITE)
 
 

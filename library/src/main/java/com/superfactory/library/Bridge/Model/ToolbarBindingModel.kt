@@ -52,7 +52,7 @@ abstract class ToolbarBindingModel : BaseObservable() {
             }
             return field
         }
-        fun getStaticsContextRef(): BaseApp{
+        fun getStaticsContextRef(): BaseApp<*>{
             return BaseApp.appDelegate!!
         }
     }

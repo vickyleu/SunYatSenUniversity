@@ -7,6 +7,7 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.superfactory.library.Communication.IRetrofit
 import com.superfactory.library.Context.BaseApp
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
+import kotlin.reflect.KClass
 
 /**
  * Created by vicky on 2018.01.17.
@@ -15,10 +16,7 @@ import com.superfactory.sunyatsin.Communication.RetrofitImpl
  * @Date 2018年01月17日  11:02:05
  * @ClassName 这里输入你的类名(或用途)
  */
-class App : BaseApp() {
-    override fun loadRetrofitService(): Class<IRetrofit>? {
-        return RetrofitImpl.class
-    }
+class App : BaseApp<RetrofitImpl>() {
 
     override fun buglyID(): String {
         return "13686de2a3"
@@ -27,6 +25,11 @@ class App : BaseApp() {
     override fun onCreate() {
         super.onCreate()
     }
+
+    override fun specifyBaseUrl(): String? {
+        return "http://www.baidu.com"
+    }
+
 
     override fun loadBaseFooter(context: Context, layout: RefreshLayout): RefreshFooter {
         return super.loadBaseFooter(context, layout)

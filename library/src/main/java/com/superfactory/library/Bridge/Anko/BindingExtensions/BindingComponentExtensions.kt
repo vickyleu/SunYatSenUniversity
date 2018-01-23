@@ -6,11 +6,12 @@ import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.v4.app.FragmentManager
-import android.util.AttributeSet
+import android.support.v4.content.ContextCompat
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.ScreenSizeExtension
 import com.superfactory.library.Context.BaseActivity
 import com.superfactory.library.Context.BaseApp
+import com.superfactory.library.R
 import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.dip
@@ -38,11 +39,11 @@ fun BindingComponent<*, *>.getAppOverSize(ctx: Context?): ScreenSizeExtension {
     if (ctx == null) {
         return ScreenSizeExtension()
     }
-    var appCtx: BaseApp? = null
+    var appCtx: BaseApp<*>? = null
     if (ctx is Application) {
-        appCtx = ctx as BaseApp?
+        appCtx = ctx as BaseApp<*>?
     } else {
-        appCtx = ctx.applicationContext as BaseApp?
+        appCtx = ctx.applicationContext as BaseApp<*>?
     }
     if (appCtx == null) {
         return ScreenSizeExtension()
@@ -68,6 +69,7 @@ fun BindingComponent<*, *>.getAttrStringValue(context: Context, attr: Int): Stri
         values.recycle()
     }
 }
+
 fun BindingComponent<*, *>.getAttrColorValue(context: Context, attr: Int): Int {
     val values = getAttrValue(context, attr)
     try {
@@ -109,7 +111,10 @@ fun BindingComponent<*, *>.getActionBarSize(context: Context): Int {
 
 fun BindingComponent<*, *>.getActionBarColor(context: Context): Int {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        getAttrColorValue(context, android.R.attr.colorPrimary)
+        if (getAttrColorValue(context, android.R.attr.colorPrimary) == 0)
+            getAttrColorValue(context, android.R.attr.colorPrimary)
+        else
+            ContextCompat.getColor(context, R.color.colorPrimary)
     } else {
         return 0
     }
