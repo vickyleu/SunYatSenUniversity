@@ -2,11 +2,8 @@ package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
 import android.os.Bundle
 import com.superfactory.library.Context.BaseToolbarFragment
-import com.superfactory.sunyatsin.Anko.Sample.calendar.CalendarActivity
-import com.superfactory.sunyatsin.Anko.Sample.input.InputActivity
+import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.Interface.BindingActivity.MainActivity.MainActivity
-import com.superfactory.sunyatsin.R
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.support.v4.startActivity
 
 /**
@@ -18,34 +15,48 @@ import org.jetbrains.anko.support.v4.startActivity
  */
 class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFragment>() {
 
-    override fun newViewModel() = ProfileFragmentViewModel()
+    override fun newViewModel(): ProfileFragmentViewModel {
+        val model = ProfileFragmentViewModel()
+        return model
+    }
 
     override fun newComponent(v: ProfileFragmentViewModel) = ProfileFragmentComponent(v)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel?.onItemClicked = { _, (idx,_,_,_) ->
+
+
+    }
+
+    override fun onLoadedModel(viewModel: ProfileFragmentViewModel) {
+        viewModel.onItemClicked = { idx, model ->
+            Debuger.printMsg(this, "newComponent  ")
             when (idx) {
-                0/*"警号"*/->{
+                -1/*"头像"*/ -> {
                     startActivity<MainActivity>()
                 }
-                1/*"部门"*/->{
+                0/*"警号"*/ -> {
                     startActivity<MainActivity>()
                 }
-                2/*"岗位"*/->{
+                1/*"部门"*/ -> {
                     startActivity<MainActivity>()
                 }
-                3/*"职务"*/->{
+                2/*"岗位"*/ -> {
                     startActivity<MainActivity>()
                 }
-                4/*"问卷"*/->{
+                3/*"职务"*/ -> {
                     startActivity<MainActivity>()
                 }
-                5/*"设置"*/->{
+                4/*"问卷"*/ -> {
+                    startActivity<MainActivity>()
+                }
+                5/*"设置"*/ -> {
                     startActivity<MainActivity>()
                 }
             }
         }
+        Debuger.printMsg(this, "onCreate  1  " + viewModel)
+        Debuger.printMsg(this, "onCreate  2  " + viewModel.onItemClicked)
     }
 
 }

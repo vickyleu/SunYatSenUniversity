@@ -52,6 +52,12 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
         }
 
     }
+
+
+    override fun onLoadedModel(viewModel: V) {
+
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view: View? = null
         viewModel = newViewModel().apply {
@@ -86,6 +92,10 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
                 }
                 notifyChanges()
             }
+        }
+
+        if (viewModel!=null){
+            onLoadedModel(viewModel!!)
         }
         if (view == null) {
             throw RuntimeException(javaClass.simpleName + "创建view为空")

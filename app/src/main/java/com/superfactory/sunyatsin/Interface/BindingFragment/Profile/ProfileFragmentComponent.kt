@@ -18,11 +18,18 @@ import com.superfactory.library.Bridge.Anko.bindings.toText
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
 import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
 import com.superfactory.library.Debuger
+import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_CANCELED
+import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_DRAGGING
+import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_DRAGGING_OUT_OF_RANGE
+import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_START
+import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_SUCCEED
+import com.superfactory.library.Graphics.Badge.BadgeView
 import com.superfactory.sunyatsin.R
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.nestedScrollView
+
 
 /**
  * Created by vicky on 2018.01.19.
@@ -85,6 +92,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                 AnkoViewHolder(viewGroup, ProfileFragmentItemComponent())
                             }.apply {
                                 onItemClickListener = { i, viewModel, _ ->
+                                    Debuger.printMsg(this, "invoke  1  " + this@ProfileFragmentComponent.viewModelSafe.onItemClicked)
                                     this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
                                 }
                             }
@@ -104,29 +112,51 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                         }
                         verticalLayout {
                             backgroundColor = Color.TRANSPARENT
-                            for (i in 0 until viewModel!!.profileSettingsList.size) {
-                                val compnent = ProfileFragmentItemComponent()
-                                bindSelf(ProfileFragmentViewModel::profileSettingsList) { it.profileSettingsList }
-                                        .toView(this) { _, value ->
-                                            if (value == null) return@toView
-                                            compnent.viewModel = value[i]
-                                            Debuger.printMsg(this, "日你妹啊")
-//                                            value.profileSettingsList[i].notifyChange()
+                            id = R.id.settings_layout
+                            val that = this
+                            doAsync {
+                                for (i in 0 until viewModel?.profileSettingsList?.size!!) {
+                                    val compnent = ProfileFragmentItemComponent()
+                                    bindSelf(ProfileFragmentViewModel::profileSettingsList) { it.profileSettingsList }
+                                            .toView(that) { arg, value ->
+                                                if (value == null) return@toView
+                                                compnent.isBound = true //数据是否绑定,当手动设置databinding数据时需要修改为true,否则数据无法自动刷新
+                                                compnent.viewModel = value[i]
+//                                                viewModelSafe.notificationTotalObserva.value = 5
+//                                                viewModelSafe.notificationTotalObserva.notifyChange(ProfileFragmentViewModel::notificationTotalObserva)
+                                            }
+
+                                    compnent.bindSelf {
+                                        viewModelSafe.notificationTotalObserva
+                                    }.toView(that) { _, va ->
+                                                @Suppress("LABEL_NAME_CLASH")
+                                                if (va == null) return@toView
+                                                compnent.viewModel?.notificationTotal = va
+                                            }
+
+                                    val v = compnent.createViewWithBindings(AnkoContextImpl(that.context,
+                                            that, false))
+                                    v.backgroundResource = R.drawable.profile_recycle_shader
+                                    val lp = LinearLayout.LayoutParams(matchParent, wrapContent)
+                                    lp.topMargin = dip(10)
+                                    v.leftPadding = dip(10)
+                                    addView(v, lp)
+
+
+                                    v.apply {
+                                        register.bindAll()
+                                    }
+                                    v.apply {
+                                        onClick {
+                                            viewModel?.notificationTotalObserva?.value = 5
+                                            compnent.notifyChanges()
+                                            Debuger.printMsg(this, "invoke  2  ")
+                                            this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(compnent.viewModelSafe.index, compnent.viewModelSafe)
                                         }
-                                val v = compnent.createViewWithBindings(AnkoContextImpl(this.context,
-                                        this, false))
-                                v.backgroundResource = R.drawable.profile_recycle_shader
-                                val lp = LinearLayout.LayoutParams(matchParent, wrapContent)
-                                lp.topMargin = dip(10)
-                                v.leftPadding = dip(10)
-                                addView(v, lp)
-                                v.apply {
-                                    onClick {
-                                        this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(viewModel!!.profileItemsList.size + i - 1, compnent.viewModelSafe)
                                     }
                                 }
-//                        print("i => $i \t")
                             }
+
                         }.lparams {
                             width = matchParent
                             height = wrapContent
@@ -134,7 +164,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     }.lparams {
                         height = matchParent
                         width = matchParent
-                        bottomMargin=dip(30)
+                        bottomMargin = dip(30)
                     }
                 }.lparams {
                     height = matchParent
@@ -154,56 +184,116 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
 
     }
 
-}
 
-class ProfileFragmentItemComponent : BindingComponent<ViewGroup, ProfileFragmentItemViewModel>() {
+    class ProfileFragmentItemComponent : BindingComponent<ViewGroup, ProfileFragmentItemViewModel>() {
 
-    override fun createViewWithBindings(ui: AnkoContext<ViewGroup>) = with(ui) {
-        relativeLayout {
-            imageView {
-                id = R.id.left_icon
-                backgroundColor = Color.TRANSPARENT
-                imageResource = R.drawable.note_icon
-                scaleType = ImageView.ScaleType.FIT_XY
-            }.lparams {
-                //                width = wrapContent
-                //                height = wrapContent
-                width = dip(20)
-                height = dip(20)
-                centerVertically()
-                alignParentLeft()
-            }
-            textView {
-                bindSelf(ProfileFragmentItemViewModel::name) { it.name }.toText(this)
-                Debuger.printMsg(this, "viewModel" + (if (viewModel == null) "空" else viewModelSafe.name + viewModelSafe.type))
-                padding = dip(12)
-                leftPadding = 0
-                textSize = 16.0f
-                textColor = Color.BLACK
-            }.lparams {
-                width = wrapContent
-                height = wrapContent
-                leftMargin = dip(10)
-                centerVertically()
-                addRule(RelativeLayout.RIGHT_OF, R.id.left_icon)
-            }
+        override fun createViewWithBindings(ui: AnkoContext<ViewGroup>) = with(ui) {
+            val screenWidth = getAppNoStatusBarSize(ctx).width
+            relativeLayout {
+                val that = this
+                imageView {
+                    id = R.id.left_icon
+                    backgroundColor = Color.TRANSPARENT
+                    imageResource = R.drawable.note_icon
+                    scaleType = ImageView.ScaleType.FIT_XY
+                }.lparams {
+                    width = dip(20)
+                    height = dip(20)
+                    centerVertically()
+                    alignParentLeft()
+                }
+                textView {
+                    bindSelf(ProfileFragmentItemViewModel::name) { it.name }.toText(this)
+                    padding = dip(12)
+                    leftPadding = 0
+                    textSize = 16.0f
+                    textColor = Color.BLACK
+                }.lparams {
+                    width = wrapContent
+                    height = wrapContent
+                    leftMargin = dip(10)
+                    centerVertically()
+                    addRule(RelativeLayout.RIGHT_OF, R.id.left_icon)
+                }
 
-            textView {
-                id = R.id.right_text
-                bindSelf(ProfileFragmentItemViewModel::description) { it.description }.toText(this)
-            }.lparams {
-                width = wrapContent
-                height = wrapContent
-                centerVertically()
-                alignParentRight()
-            }
-            lparams {
-                width = matchParent
-                height = wrapContent
-                gravity = Gravity.CENTER_VERTICAL and Gravity.LEFT
-                rightPadding=dip(12)
+                textView {
+                    id = R.id.right_text
+                    bindSelf(ProfileFragmentItemViewModel::description) { it.description }.toText(this)
+                }.lparams {
+                    width = wrapContent
+                    height = wrapContent
+                    centerVertically()
+                    alignParentRight()
+                }
+                bindSelf(ProfileFragmentItemViewModel::type) { it.type }.toView(this) { view, value ->
+                    if (value == 1) {
+                        if (view.findViewById<View>(R.id.right_arrow) != null) return@toView
+                        val rightChild = ImageView(view.context)
+                        rightChild.id = R.id.right_arrow
+                        val lp = RelativeLayout.LayoutParams(wrapContent, wrapContent)
+                        rightChild.backgroundColor = Color.TRANSPARENT
+                        rightChild.imageResource = R.drawable.note_icon
+                        rightChild.scaleType = ImageView.ScaleType.FIT_XY
+                        lp.width = dip(20)
+                        lp.height = dip(20)
+                        lp.alignParentRight()
+                        lp.centerVertically()
+                        addView(rightChild, lp)
+                    }
+                }
+
+                bindSelf(ProfileFragmentItemViewModel::notificationTotal) {
+                    it/*.notificationTotal*/
+                }.toView(this) { view, model ->
+                    var arrow: View? = null
+                    if (model == null) return@toView
+                    val value = model.notificationTotal
+                    if (model.index > 4) return@toView
+                    arrow = view.findViewById(R.id.right_arrow)
+                    if (arrow == null) return@toView
+                    val attachValue = "  " + value.toString() + "  "
+                    if (viewModelSafe.badge != null) {
+                        viewModelSafe.badge!!.setBadgeText(attachValue)
+                        return@toView
+                    }
+                    viewModelSafe.badge = BadgeView(context)
+                            .bindTarget(view)
+                            .setBadgeGravity(Gravity.CENTER or Gravity.END)
+                            .setGravityOffset((screenWidth * 0.03).toFloat(), true)
+                            .setBadgeBackgroundColor(Color.parseColor("#ff03a9f4"))
+                            .setBadgeTextColor(Color.parseColor("#ffffff"))
+                            .setBadgeTextSize(10f, true)
+                            .setBadgeBackground(ContextCompat.getDrawable(context, R.drawable.badge_shape))
+                            .setBadgeText(attachValue)
+                            .setOnDragStateChangedListener({ dragState, badge, _ ->
+                                when (dragState) {
+                                    STATE_START/*拖拽开始*/ -> {
+                                    }
+                                    STATE_DRAGGING /*拖拽中*/ -> {
+                                    }
+                                    STATE_DRAGGING_OUT_OF_RANGE /*拖拽区域超出所属ViewParent*/ -> {
+                                    }
+                                    STATE_SUCCEED /*拖拽完成,气泡消失*/ -> {
+                                        badge.setBadgeNumber(0)
+                                    }
+                                    STATE_CANCELED/*拖拽取消*/ -> {
+                                    }
+                                }
+                            })
+                }
+
+                lparams {
+                    width = matchParent
+                    height = wrapContent
+                    gravity = Gravity.CENTER_VERTICAL and Gravity.START
+                    rightPadding = dip(12)
+                }
             }
         }
+
     }
 
 }
+
+
+//

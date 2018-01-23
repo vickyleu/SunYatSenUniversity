@@ -11,4 +11,6 @@
     <item name="avatar" type="id" />
     <item name="left_icon" type="id" />
     <item name="right_text" type="id" />
+    <item name="right_arrow" type="id" />
+    <item name="settings_layout" type="id" />
 </resources>

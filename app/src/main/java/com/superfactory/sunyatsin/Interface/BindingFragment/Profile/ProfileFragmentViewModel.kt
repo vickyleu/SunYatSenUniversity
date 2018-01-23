@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.support.v4.content.ContextCompat
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
+import com.superfactory.library.Graphics.Badge.Badge
 import com.superfactory.sunyatsin.R
 
 /**
@@ -27,7 +28,7 @@ class ProfileFragmentViewModel : ToolbarBindingModel() {
     val employ = observable("")//部门
     val station = observable("")//岗位
     val position = observable("")//职务
-    val notificationTotal = observable(0)
+    val notificationTotalObserva = observable(3)
 
     val profileItemsList = arrayListOf(
             ProfileFragmentItemViewModel(0, R.drawable.note_icon, "警号", ""),
@@ -37,14 +38,18 @@ class ProfileFragmentViewModel : ToolbarBindingModel() {
     )
 
     val profileSettingsList = arrayListOf(
-            ProfileFragmentItemViewModel(4, R.drawable.note_icon, "问卷", "", 1) ,
+            ProfileFragmentItemViewModel(4, R.drawable.note_icon, "问卷", "", 1),
             ProfileFragmentItemViewModel(5, R.drawable.note_icon, "设置", "", 1)
     )
 
-
-    var onItemClicked: ((Int, ProfileFragmentItemViewModel) -> Unit)? = null
-
+    var onItemClicked:((Int, ProfileFragmentItemViewModel) -> Unit)?  =null
+    //observableNullable<((Int, ProfileFragmentItemViewModel) -> Unit)>(null)
 
 }
 
-data class ProfileFragmentItemViewModel(val index: Int, val icon: Int, val name: String, val description: String, val type: Int = 0)
+data class ProfileFragmentItemViewModel(val index: Int, val icon: Int,
+                                        val name: String, val description: String,
+                                        val type: Int = 0,
+                                        var notificationTotal: Int = 0,
+                                        var badge: Badge? = null
+)

@@ -54,6 +54,10 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
         return null
     }
 
+    override fun onLoadedModel(viewModel: V) {
+
+    }
+
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -103,7 +107,12 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
             }
 
         }
+        if (viewModel!=null){
+            onLoadedModel(viewModel!!)
+        }
     }
+
+
 
     protected open fun setToolbarAttribution(toolbarBinder: BaseToolBar<A, V>, actionBar: ActionBar?, toolbarView: Toolbar) {
 
