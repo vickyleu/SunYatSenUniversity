@@ -25,7 +25,6 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
     }
 
     override fun onLoadedModel(viewModel: ProfileFragmentViewModel) {

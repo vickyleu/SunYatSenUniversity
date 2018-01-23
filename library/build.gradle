@@ -2,8 +2,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-def build='26.1.0'
-ext.anko_version='0.10.4'
+def build = '26.1.0'
+ext.anko_version = '0.10.4'
 android {
     compileSdkVersion 26
     compileOptions.encoding = "UTF-8"
@@ -31,48 +31,57 @@ android {
 }
 
 dependencies {
+    /***********************************************************************
+     todo ************************基础库****************************
+     ***********************************************************************/
     api fileTree(dir: 'libs', include: ['*.jar'])
     api "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     api "com.android.support:appcompat-v7:${build}"
     api "com.android.support:support-v4:${build}"
     api "com.android.support:recyclerview-v7:${build}"
+    api "com.android.support:preference-v7:${build}"
     api "com.android.support:design:${build}"
     api "com.android.support.constraint:constraint-layout:1.0.2"
 
+    /***********************************************************************
+     todo *****************仿iOS bounce 果冻效果******************
+     ***********************************************************************/
     api "com.scwang.smartrefresh:SmartRefreshLayout:1.0.4-7"
     api "com.scwang.smartrefresh:SmartRefreshHeader:1.0.4-7"//没有使用特殊Header，可以不加这行
 
+    /***********************************************************************
+     todo *******************Emoji全局插件*************************
+     ***********************************************************************/
     api "com.github.nekocode:Emojix:1.2"//emoji表情插件
 
-
+    /***********************************************************************
+     todo *****************Anko 基础包*********************
+     ***********************************************************************/
     api "org.jetbrains.anko:anko:$anko_version"
-// Anko Commons
+    // Anko Commons
     api "org.jetbrains.anko:anko-commons:$anko_version"
-
-
     // Coroutine listeners for Anko Layouts
     api "org.jetbrains.anko:anko-sdk25-coroutines:$anko_version"
     api "org.jetbrains.anko:anko-appcompat-v7-coroutines:$anko_version"
-
     // Anko SQLite
     api "org.jetbrains.anko:anko-sqlite:$anko_version"
-
-
     // Appcompat-v7 (only Anko Commons)
     api "org.jetbrains.anko:anko-appcompat-v7-commons:$anko_version"
     // Appcompat-v7 (Anko Layouts)
     api "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
     api "org.jetbrains.anko:anko-coroutines:$anko_version"
     // Anko Layouts
-    api "org.jetbrains.anko:anko-sdk25:$anko_version" // sdk15, sdk19, sdk21, sdk23 are also available
+    api "org.jetbrains.anko:anko-sdk25:$anko_version"
+    // sdk15, sdk19, sdk21, sdk23 are also available
     api "org.jetbrains.anko:anko-appcompat-v7:$anko_version"
     // Support-v4 (only Anko Commons)
     api "org.jetbrains.anko:anko-support-v4-commons:$anko_version"
     // Support-v4 (Anko Layouts)
     api "org.jetbrains.anko:anko-support-v4:$anko_version"
 
-
-
+    /***********************************************************************
+     todo *****************Anko DSL布局全家桶*********************
+     ***********************************************************************/
     // CardView-v7
     api "org.jetbrains.anko:anko-cardview-v7:$anko_version"
     // Design
@@ -88,13 +97,38 @@ dependencies {
     // ConstraintLayout
     api "org.jetbrains.anko:anko-constraint-layout:$anko_version"
 
-//    compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    /***********************************************************************
+     todo *****************Kotlin反射*********************
+     ***********************************************************************/
+    //    compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
+    /***********************************************************************
+     todo *****************腾讯异常采集*********************
+     ***********************************************************************/
     api "com.tencent.bugly:crashreport:2.6.6"
     api "com.tencent.bugly:nativecrashreport:3.3.1"
+    /***********************************************************************
+     todo *****************Retrofit网络库*********************
+     ***********************************************************************/
+    api 'com.squareup.retrofit2:retrofit:2.3.0'
+    api 'com.squareup.retrofit2:converter-gson:2.3.0'
+    api 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0'
+    api 'com.squareup.okhttp3:logging-interceptor:3.9.1'
 
+    /***********************************************************************
+     todo *****************Gson数据转模型*********************
+     ***********************************************************************/
+    api 'com.google.code.gson:gson:2.8.2'
 
+    /***********************************************************************
+     todo *****************Glide图片库*********************
+     ***********************************************************************/
+    api 'com.github.bumptech.glide:glide:3.7.0'
+
+    /***********************************************************************
+     todo ****************Databinding编译时辅助工具*****************
+     不加会死的很惨
+     ***********************************************************************/
     kapt "com.android.databinding:compiler:3.0.1"
 
 }

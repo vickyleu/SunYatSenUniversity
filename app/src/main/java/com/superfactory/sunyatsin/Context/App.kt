@@ -4,7 +4,9 @@ import android.content.Context
 import com.scwang.smartrefresh.layout.api.RefreshFooter
 import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.api.RefreshLayout
+import com.superfactory.library.Communication.IRetrofit
 import com.superfactory.library.Context.BaseApp
+import com.superfactory.sunyatsin.Communication.RetrofitImpl
 
 /**
  * Created by vicky on 2018.01.17.
@@ -14,6 +16,10 @@ import com.superfactory.library.Context.BaseApp
  * @ClassName 这里输入你的类名(或用途)
  */
 class App : BaseApp() {
+    override fun loadRetrofitService(): Class<IRetrofit>? {
+        return RetrofitImpl.class
+    }
+
     override fun buglyID(): String {
         return "13686de2a3"
     }

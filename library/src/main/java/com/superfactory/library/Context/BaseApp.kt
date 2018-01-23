@@ -13,6 +13,8 @@ import com.scwang.smartrefresh.layout.footer.ClassicsFooter
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
 import com.superfactory.library.Bridge.Anko.ScreenSizeExtension
 import com.superfactory.library.BuildConfig
+import com.superfactory.library.Communication.IRetrofit
+import com.superfactory.library.Communication.RetrofitCenter
 import com.superfactory.library.R
 import com.tencent.bugly.crashreport.CrashReport
 
@@ -28,7 +30,6 @@ import com.tencent.bugly.crashreport.CrashReport
 abstract class BaseApp : Application() {
     companion object {
         var appDelegate: BaseApp? = null
-
         //static 代码段可以防止内存泄露
         init {
             //设置全局的Header构建器
@@ -48,7 +49,10 @@ abstract class BaseApp : Application() {
                     return@setDefaultRefreshFooterCreater ClassicsFooter(context).setDrawableSize(20f)
                 }
             }
+
         }
+
+
     }
 
     val mScreenSizeExtension: ScreenSizeExtension = ScreenSizeExtension()
@@ -65,7 +69,7 @@ abstract class BaseApp : Application() {
     open fun loadBaseHeader(context: Context, layout: RefreshLayout): RefreshHeader {
         return ClassicsHeader(context)//.setTimeFormat(new DynamicTimeFormat("更新于 %s"));//指定为经典Header，默认是 贝塞尔雷达Header
     }
-
+    private  var retrofit: RetrofitCenter<*>?=null
     /**
      * Called when the application is starting, before any activity, service,
      * or receiver objects (excluding content providers) have been created.
@@ -78,6 +82,10 @@ abstract class BaseApp : Application() {
     override fun onCreate() {
         appDelegate = this
         super.onCreate()
+        val service=loadRetrofitService()
+        if (service!=null){
+            retrofit= RetrofitCenter.getRetrofiter(service)
+        }
         val dm = appDelegate!!.resources.displayMetrics
         mScreenSizeExtension.width=dm.widthPixels;
         mScreenSizeExtension.height=dm.heightPixels;
@@ -91,6 +99,7 @@ abstract class BaseApp : Application() {
 
     abstract fun buglyID(): String
 
+    protected abstract fun loadRetrofitService():Class<in IRetrofit>?
     /**
      * This method is for use in emulated process environments.  It will
      * never be called on a production Android device, where processes are
