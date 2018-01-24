@@ -8,9 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.ParameterizedType
-import kotlin.reflect.KClass
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
+import java.lang.reflect.Type
 
 
 /**
@@ -20,10 +18,10 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
  * @Date 2018年01月23日  17:46:46
  * @ClassName 这里输入你的类名(或用途)
  */
-open class RetrofitCenter<T : IRetrofit>(val baseUrl:String) {
+open class RetrofitCenter<T : IRetrofit>(val baseUrl: String) {
     companion object {
         private var retrofitCenter: RetrofitCenter<*>? = null
-        fun <T : IRetrofit> getRetrofiter(baseUrl:String): RetrofitCenter<T> {
+        fun <T : IRetrofit> getRetrofiter(baseUrl: String): RetrofitCenter<T> {
             if (retrofitCenter == null) {
                 retrofitCenter = RetrofitCenter<T>(baseUrl)
             }
@@ -32,18 +30,10 @@ open class RetrofitCenter<T : IRetrofit>(val baseUrl:String) {
     }
 
     open fun buildingApiServer(): IRetrofit? {
-        if (IRETROFIT==null){
+        if (IRETROFIT == null) {
             getRetrofitAPI()
         }
         return IRETROFIT
-
-//        if (retrofitCenter != null) {
-//            val client = (retrofitCenter as RetrofitCenter<T>)
-//            if (client.IRETROFIT == null)
-//                (retrofitCenter as RetrofitCenter<T>).getRetrofitAPI()
-//            return client.IRETROFIT
-//        }
-//        return null
     }
 
     @Volatile
@@ -62,18 +52,20 @@ open class RetrofitCenter<T : IRetrofit>(val baseUrl:String) {
             httpClientBuilder.addInterceptor(loggingInterceptor)
         }
 
-        val typeArg= (javaClass.genericSuperclass as? ParameterizedType)?.actualTypeArguments
-        if (typeArg!=null&&typeArg.size>0){
-            val vararg = typeArg[0] as? Class<T> ?: throw ExceptionInInitializerError("类名无法加载")
-            IRETROFIT = Retrofit.Builder().baseUrl(baseUrl)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                    .callFactory(httpClientBuilder.build())
-                    .build()
-                    .create(vararg)
-        }else{
+
+        //1得到该泛型类的子类对象的Class对象
+        val type:ParameterizedType? = this.javaClass.genericSuperclass as? ParameterizedType
+        val types:Array<Type?>? = type?.actualTypeArguments
+        if (types==null|| types.isEmpty()){
             throw ExceptionInInitializerError("类名无法加载")
         }
+        val cls = types[0] as Class<T>
+        IRETROFIT = Retrofit.Builder().baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .callFactory(httpClientBuilder.build())
+                .build()
+                .create(cls)
 
         return IRETROFIT
     }

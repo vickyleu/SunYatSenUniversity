@@ -1,8 +1,10 @@
 package com.superfactory.sunyatsin.Communication
 
 import com.superfactory.library.Communication.IRetrofit
+import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.GET
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 /**
@@ -12,14 +14,13 @@ import retrofit2.http.POST
  * @Date 2018年01月23日  18:28:13
  * @ClassName 这里输入你的类名(或用途)
  */
-class RetrofitImpl : IRetrofit() {
-    @GET
-    fun getMovieList(api_key: String): Call<Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+interface RetrofitImpl : IRetrofit {
+
+    @FormUrlEncoded
+    @POST("upcoming")
+    fun getList(@Field("value") value: String): Call<ResponseBody>
+
     @POST
-    fun getMovieDetails(path: String, filters: Map<String, String>): Call<Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    fun getMovieDetails(path: String, filters: Map<String, String>): Call<Any>
 
 }

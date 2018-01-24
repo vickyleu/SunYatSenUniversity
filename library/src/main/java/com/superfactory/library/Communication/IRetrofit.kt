@@ -13,19 +13,16 @@ import retrofit2.http.*
 /**
  * Created by amitacharya on 12/12/17.
  */
-abstract class IRetrofit {
+interface IRetrofit {
 
-//    @FormUrlEncoded
-//    @POST("upcoming")
-//    fun test(@Field("api_key") api_key: String): Call<Any>{
-//        return Call<Any>()
-//    }
+    @FormUrlEncoded
+    @POST("upcoming")
+    fun testPostForm(@Field("api_key") api_key: String): Call<Any>
 
+    @POST("upcoming")
+    fun testPostJson(@Field("api_key") api_key: String): Call<Any>
 
-
-//
-//    @GET("{path}")
-//    fun getMovieDetails(@Path("path") path: String, @QueryMap filters: Map<String, String>)
-//            : Call<Any>
+    @GET("{path}")
+    fun testGet(@Path("path") path: String, @QueryMap filters: Map<String, String>): Call<Any>
 
 }

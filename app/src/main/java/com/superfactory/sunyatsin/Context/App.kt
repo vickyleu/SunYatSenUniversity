@@ -4,10 +4,8 @@ import android.content.Context
 import com.scwang.smartrefresh.layout.api.RefreshFooter
 import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.api.RefreshLayout
-import com.superfactory.library.Communication.IRetrofit
 import com.superfactory.library.Context.BaseApp
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
-import kotlin.reflect.KClass
 
 /**
  * Created by vicky on 2018.01.17.

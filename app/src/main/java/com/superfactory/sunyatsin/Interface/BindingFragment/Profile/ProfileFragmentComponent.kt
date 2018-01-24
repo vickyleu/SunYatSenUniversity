@@ -275,6 +275,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                     }
                                     STATE_SUCCEED /*拖拽完成,气泡消失*/ -> {
                                         badge.setBadgeNumber(0)
+                                        this@ProfileFragmentItemComponent.viewModel?.notificationTotal=0
                                     }
                                     STATE_CANCELED/*拖拽取消*/ -> {
                                     }

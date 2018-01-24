@@ -1,15 +1,15 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
 import android.os.Bundle
+import com.superfactory.library.Communication.Sender.senderAsync
+import com.superfactory.library.Communication.Sender.senderAwait
 import com.superfactory.library.Context.BaseToolbarFragment
 import com.superfactory.library.Context.Extensions.takeApi
-import com.superfactory.library.Context.Extensions.takeApiSafe
 import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.Interface.BindingActivity.MainActivity.MainActivity
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.support.v4.startActivity
+
 
 /**
  * Created by vicky on 2018.01.19.
@@ -34,12 +34,17 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
 
     override fun onLoadedModel(viewModel: ProfileFragmentViewModel) {
         viewModel.onItemClicked = { idx, model ->
-            Debuger.printMsg(this, "newComponent  ")
-            doAsync {
-                val tp=takeApiSafe<RetrofitImpl>()
-                val resp=tp.getMovieList("").execute()
-//                resp.
-            }
+
+           takeApi<RetrofitImpl>()?.getList("")?.senderAsync<Any>()
+
+           var any2:String?= takeApi<RetrofitImpl>()?.getList("")?.senderAwait()
+
+
+
+
+
+
+
 
             when (idx) {
                 -1/*"头像"*/ -> {
@@ -70,3 +75,5 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
     }
 
 }
+
+

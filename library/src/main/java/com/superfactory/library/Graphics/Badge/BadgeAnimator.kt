@@ -61,10 +61,18 @@ class BadgeAnimator(badgeBitmap: Bitmap, center: PointF, badge: BadgeView) : Val
         val startX = center.x - badgeBitmap.width / 2f
         val startY = center.y - badgeBitmap.height / 2f
         val fragments = Array((width / fragmentSize).toInt()) { arrayOfNulls<BitmapFragment>((width / fragmentSize).toInt()) }
-        for (i in 0 until  fragments.count()) {
+        for (i in 0 until fragments.count()) {
             for (j in 0 until fragments[i].size) {
                 val bf = BitmapFragment()
-                bf.color = badgeBitmap.getPixel((j * fragmentSize).toInt(), (i * fragmentSize).toInt())
+                var x = (j * fragmentSize).toInt()
+                var y = (i * fragmentSize).toInt()
+                if (x >= width) {
+                    x = width-1
+                }
+                if (y >= height) {
+                    y = height-1
+                }
+                bf.color = badgeBitmap.getPixel(x, y)
                 bf.x = startX + j * fragmentSize
                 bf.y = startY + i * fragmentSize
                 bf.size = fragmentSize
