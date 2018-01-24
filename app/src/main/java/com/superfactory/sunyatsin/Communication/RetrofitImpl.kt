@@ -1,6 +1,5 @@
 package com.superfactory.sunyatsin.Communication
 
-import com.superfactory.library.Communication.IRetrofit
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Field
@@ -14,7 +13,7 @@ import retrofit2.http.POST
  * @Date 2018年01月23日  18:28:13
  * @ClassName 这里输入你的类名(或用途)
  */
-interface RetrofitImpl : IRetrofit {
+interface RetrofitImpl {
 
     @FormUrlEncoded
     @POST("upcoming")

@@ -7,8 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
+import kotlin.reflect.KClass
 
 
 /**
@@ -18,18 +17,24 @@ import java.lang.reflect.Type
  * @Date 2018年01月23日  17:46:46
  * @ClassName 这里输入你的类名(或用途)
  */
-open class RetrofitCenter<T : IRetrofit>(val baseUrl: String) {
+open class RetrofitCenter<T : Any>(val baseUrl: String, val clazz: KClass<T>) {
     companion object {
         private var retrofitCenter: RetrofitCenter<*>? = null
-        fun <T : IRetrofit> getRetrofiter(baseUrl: String): RetrofitCenter<T> {
+        fun <T : Any> getRetrofiter(baseUrl: String, type: KClass<T>): RetrofitCenter<T> {
+            if (retrofitCenter != null) {
+                if (retrofitCenter?.clazz != type) {
+                    retrofitCenter = null
+                }
+            }
             if (retrofitCenter == null) {
-                retrofitCenter = RetrofitCenter<T>(baseUrl)
+                retrofitCenter = RetrofitCenter<T>(baseUrl, type)
             }
             return retrofitCenter as RetrofitCenter<T>
         }
     }
 
-    open fun buildingApiServer(): IRetrofit? {
+
+    open fun buildingApiServer(): Any? {
         if (IRETROFIT == null) {
             getRetrofitAPI()
         }
@@ -37,10 +42,10 @@ open class RetrofitCenter<T : IRetrofit>(val baseUrl: String) {
     }
 
     @Volatile
-    private var IRETROFIT: IRetrofit? = null
+    private var IRETROFIT: Any? = null
 
     @Synchronized
-    private fun getRetrofitAPI(): IRetrofit? {
+    private fun getRetrofitAPI(): Any? {
         val gsonBuilder = GsonBuilder()
         val gson = gsonBuilder.create()
 
@@ -53,19 +58,12 @@ open class RetrofitCenter<T : IRetrofit>(val baseUrl: String) {
         }
 
 
-        //1得到该泛型类的子类对象的Class对象
-        val type:ParameterizedType? = this.javaClass.genericSuperclass as? ParameterizedType
-        val types:Array<Type?>? = type?.actualTypeArguments
-        if (types==null|| types.isEmpty()){
-            throw ExceptionInInitializerError("类名无法加载")
-        }
-        val cls = types[0] as Class<T>
         IRETROFIT = Retrofit.Builder().baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .callFactory(httpClientBuilder.build())
                 .build()
-                .create(cls)
+                .create(clazz.java)
 
         return IRETROFIT
     }

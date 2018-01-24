@@ -135,7 +135,7 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
 
     override fun attachBaseContext(newBase: Context) {
         if (newBase.applicationContext != null) {
-            val app = newBase.applicationContext as BaseApp<*>
+            val app = newBase.applicationContext as BaseApp
             if (app.injectEmojix()) {
                 super.attachBaseContext(Emojix.wrap(newBase))
             } else {

@@ -1,6 +1,9 @@
 package com.superfactory.library.Communication.Sender
 
 import com.google.gson.Gson
+import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
+import com.superfactory.library.Bridge.Anko.BaseObservable
+import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Communication.Responder.fromJson
 import com.superfactory.library.Debuger
 import okhttp3.ResponseBody
@@ -20,7 +23,7 @@ import java.io.IOException
 /**
  * 同步请求,会阻塞线程
  */
-inline fun <reified D : Any> Call<ResponseBody>.senderAwait(): D? {
+inline fun <reified D : Any,T,V> Call<ResponseBody>.senderAwait(component: BindingComponent<T,V>): D? {
     var body: ResponseBody? = null
     try {
         Debuger.printMsg(this, "开始同步")
@@ -42,7 +45,8 @@ inline fun <reified D : Any> Call<ResponseBody>.senderAwait(): D? {
 /**
  * 异步请求
  */
-inline fun <reified D : Any> Call<ResponseBody>.senderAsync() {
+inline fun <reified D : Any,T,V> Call<ResponseBody>.senderAsync(component: BindingComponent<T,V>) {
+    val viewModel=component.viewModel
     this.enqueue(object : Callback<ResponseBody> {
         /**
          * Invoked for a received HTTP response.

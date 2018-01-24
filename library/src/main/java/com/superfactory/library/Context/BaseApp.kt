@@ -13,10 +13,10 @@ import com.scwang.smartrefresh.layout.footer.ClassicsFooter
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
 import com.superfactory.library.Bridge.Anko.ScreenSizeExtension
 import com.superfactory.library.BuildConfig
-import com.superfactory.library.Communication.IRetrofit
 import com.superfactory.library.Communication.RetrofitCenter
 import com.superfactory.library.R
 import com.tencent.bugly.crashreport.CrashReport
+import kotlin.reflect.KClass
 
 
 /**
@@ -27,9 +27,9 @@ import com.tencent.bugly.crashreport.CrashReport
  * @ClassName 这里输入你的类名(或用途)
  */
 
-abstract class BaseApp<T : IRetrofit> : Application() {
+abstract class BaseApp : Application() {
     companion object {
-        var appDelegate: BaseApp<*>? = null
+        var appDelegate: BaseApp? = null
 
         //static 代码段可以防止内存泄露
         init {
@@ -73,18 +73,23 @@ abstract class BaseApp<T : IRetrofit> : Application() {
 
     private var retrofit: RetrofitCenter<*>? = null
 
-    open fun takeApi(): T? {
+     open fun <T:Any> takeApi(impl:KClass<T>): T? {
+        if (retrofit!=null){
+           if (retrofit?.clazz == impl){
+               retrofit=null
+           }
+        }
         if (retrofit == null) {
             val baseUrl = specifyBaseUrl()
             if (baseUrl != null) {
-                retrofit = RetrofitCenter.getRetrofiter<T>(baseUrl)
+                retrofit = RetrofitCenter.getRetrofiter(baseUrl,impl)
             }
         }
         return retrofit?.buildingApiServer() as T
     }
 
-    open fun takeApiSafe(): T {
-        return takeApi()!!
+    open fun <T:Any> takeApiSafe(impl:KClass<T>): T {
+        return takeApi(impl)!!
     }
 
     /**

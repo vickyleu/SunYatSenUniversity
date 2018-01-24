@@ -4,75 +4,75 @@ import android.app.Service
 import android.content.Context
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.BindingComponent
-import com.superfactory.library.Communication.IRetrofit
 import com.superfactory.library.Context.BaseActivity
 import com.superfactory.library.Context.BaseApp
 import com.superfactory.library.Context.BaseFragment
+import kotlin.reflect.KClass
 
 /**
  * Created by vicky on 2018/1/23.
  */
 
-fun BaseAnko<*, *>.takeApiInternal(): IRetrofit? {
+fun BaseAnko<*, *>.takeApiInternal(impl: KClass<Any>): Any? {
     val delegate = appDelegate()
-    return delegate?.takeApi()
+    return delegate?.takeApi(impl)
 }
 
-fun BaseAnko<*, *>.takeApiSafeInternal(): IRetrofit {
+fun BaseAnko<*, *>.takeApiSafeInternal(impl: KClass<Any>): Any {
     val delegate = appDelegate()
-    return delegate!!.takeApiSafe()
+    return delegate!!.takeApiSafe(impl)
 }
 
 
-fun BindingComponent<*, *>.takeApiInternal(ctx: Context?): IRetrofit? {
+fun BindingComponent<*, *>.takeApiInternal(ctx: Context?, impl: KClass<Any>): Any? {
     val delegate = appDelegate(ctx)
-    return delegate?.takeApi()
+    return delegate?.takeApi(impl)
 }
 
 
-fun BindingComponent<*, *>.takeApiSafeInternal(ctx: Context?): IRetrofit {
+fun BindingComponent<*, *>.takeApiSafeInternal(ctx: Context?, impl: KClass<Any>): Any {
     val delegate = appDelegate(ctx)
-    return delegate!!.takeApiSafe()
+    return delegate!!.takeApiSafe(impl)
 }
 
 
-fun <T: IRetrofit> BaseAnko<*, *>.takeApi(): T? {
+fun <T : Any> BaseAnko<*, *>.takeApi(impl: KClass<T>): T? {
     val delegate = appDelegate()
-    return delegate?.takeApi() as? T
+    return delegate?.takeApi(impl)
 }
 
-fun <T : IRetrofit> BaseAnko<*, *>.takeApiSafe(): T {
+fun <T : Any> BaseAnko<*, *>.takeApiSafe(impl: KClass<T>): T {
     val delegate = appDelegate()
-    return delegate!!.takeApiSafe() as T
+    return delegate!!.takeApiSafe(impl)
 }
 
-fun BaseAnko<*, *>.appDelegate(): BaseApp<*>? {
+fun BaseAnko<*, *>.appDelegate(): BaseApp? {
     if (this is BaseActivity) {
-        return (this.getApplication() as? BaseApp<*>)
+        return (this.getApplication() as? BaseApp)
     } else if (this is BaseFragment) {
-        return (this.getContext()?.applicationContext as? BaseApp<*>)
+        return (this.getContext()?.applicationContext as? BaseApp)
     } else {
         return BaseApp.appDelegate
     }
 }
 
-fun <T : IRetrofit> BindingComponent<*, *>.takeApi(ctx: Context?): T? {
+fun <T : Any> BindingComponent<*, *>.takeApi(ctx: Context?, impl: KClass<T>): T? {
     val delegate = appDelegate(ctx)
-    return delegate?.takeApi() as? T
+    return delegate?.takeApi(impl)
 }
 
 
-fun <T : IRetrofit> BindingComponent<*, *>.takeApiSafe(ctx: Context?): T {
+fun <T : Any> BindingComponent<*, *>.takeApiSafe(ctx: Context?, impl: KClass<T>): T {
     val delegate = appDelegate(ctx)
-    return delegate!!.takeApiSafe() as T
+    return delegate!!.takeApiSafe(impl)
 }
 
-fun BindingComponent<*, *>.appDelegate(ctx: Context?): BaseApp<*>? {
+fun BindingComponent<*, *>.appDelegate(ctx: Context?): BaseApp? {
     if (ctx == null) return null
     if (ctx is BaseActivity<*, *>) {
-        return (ctx.getApplication() as? BaseApp<*>)
+        return (ctx.getApplication() as? BaseApp)
     } else if (ctx is Service) {
-        return (ctx.application as? BaseApp<*>)
+        return (ctx.application as? BaseApp)
     } else {
         return BaseApp.appDelegate
     }

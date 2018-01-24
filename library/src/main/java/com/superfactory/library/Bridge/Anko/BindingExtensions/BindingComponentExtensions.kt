@@ -39,11 +39,11 @@ fun BindingComponent<*, *>.getAppOverSize(ctx: Context?): ScreenSizeExtension {
     if (ctx == null) {
         return ScreenSizeExtension()
     }
-    var appCtx: BaseApp<*>? = null
+    var appCtx: BaseApp ? = null
     if (ctx is Application) {
-        appCtx = ctx as BaseApp<*>?
+        appCtx = ctx as BaseApp ?
     } else {
-        appCtx = ctx.applicationContext as BaseApp<*>?
+        appCtx = ctx.applicationContext as BaseApp ?
     }
     if (appCtx == null) {
         return ScreenSizeExtension()
