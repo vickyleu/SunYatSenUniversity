@@ -23,7 +23,7 @@ import java.io.IOException
 /**
  * 同步请求,会阻塞线程
  */
-inline fun <reified D : Any,T,V> Call<ResponseBody>.senderAwait(component: BindingComponent<T,V>): D? {
+inline fun <reified D : Any> Call<ResponseBody>.senderAwait(component: BindingComponent<*,*>): D? {
     var body: ResponseBody? = null
     try {
         Debuger.printMsg(this, "开始同步")
@@ -37,15 +37,15 @@ inline fun <reified D : Any,T,V> Call<ResponseBody>.senderAwait(component: Bindi
         e.printStackTrace()
         Debuger.printMsg(this, e.message ?: "null")
     }
-    val any: D? = Gson().fromJson(body?.toString() ?: "")
-    Debuger.printMsg(this, any?.toString() ?: "null")
+    val any: D? = Gson().fromJson(body?.toString()?.trim() ?: "")
+    Debuger.printMsg(this, any?.toString()?.trim() ?: "null")
     return any
 }
 
 /**
  * 异步请求
  */
-inline fun <reified D : Any,T,V> Call<ResponseBody>.senderAsync(component: BindingComponent<T,V>) {
+inline fun <reified D : Any> Call<ResponseBody>.senderAsync(component: BindingComponent<*,*>) {
     val viewModel=component.viewModel
     this.enqueue(object : Callback<ResponseBody> {
         /**
@@ -57,7 +57,7 @@ inline fun <reified D : Any,T,V> Call<ResponseBody>.senderAsync(component: Bindi
          */
         override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
             try {
-                val model: D? = Gson().fromJson(json = response?.body()?.string() ?: "")
+                val model: D? = Gson().fromJson(json = response?.body()?.string()?.trim() ?: "")
                 Debuger.printMsg(this, model ?: "null")
             } catch (e: IOException) {
                 e.printStackTrace()

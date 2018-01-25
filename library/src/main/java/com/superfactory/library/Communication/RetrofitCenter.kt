@@ -47,7 +47,7 @@ open class RetrofitCenter<T : Any>(val baseUrl: String, val clazz: KClass<T>) {
     @Synchronized
     private fun getRetrofitAPI(): Any? {
         val gsonBuilder = GsonBuilder()
-        val gson = gsonBuilder.create()
+        val gson = gsonBuilder.setLenient().create()
 
         val httpClientBuilder = OkHttpClient.Builder()
 

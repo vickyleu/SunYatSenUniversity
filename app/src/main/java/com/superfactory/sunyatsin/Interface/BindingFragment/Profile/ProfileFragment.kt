@@ -35,17 +35,6 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
     override fun onLoadedModel(viewModel: ProfileFragmentViewModel) {
         viewModel.onItemClicked = { idx, model ->
 
-            takeApi(RetrofitImpl::class)?.getList("")?.senderAsync<Any>(this)
-
-            var any2: String? = takeApi(RetrofitImpl::class)?.getList("")?.senderAwait()
-
-
-
-
-
-
-
-
             when (idx) {
                 -1/*"头像"*/ -> {
                     startActivity<MainActivity>()

@@ -15,8 +15,12 @@ import com.superfactory.library.Bridge.Anko.DslView.circleImage
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Bridge.Anko.ViewExtensions.getLineDividerItemDecoration
 import com.superfactory.library.Bridge.Anko.bindings.toText
+import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
 import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
+import com.superfactory.library.Communication.Sender.senderAsync
+import com.superfactory.library.Communication.Sender.senderAwait
+import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Debuger
 import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_CANCELED
 import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_DRAGGING
@@ -24,6 +28,7 @@ import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_DRAGGING_OU
 import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_START
 import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_SUCCEED
 import com.superfactory.library.Graphics.Badge.BadgeView
+import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.R
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -256,6 +261,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                         viewModelSafe.badge!!.setBadgeText(attachValue)
                         return@toView
                     }
+                    val draging = observable(false)
                     viewModelSafe.badge = BadgeView(context)
                             .bindTarget(view)
                             .setBadgeGravity(Gravity.CENTER or Gravity.END)
@@ -275,12 +281,20 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                     }
                                     STATE_SUCCEED /*拖拽完成,气泡消失*/ -> {
                                         badge.setBadgeNumber(0)
-                                        this@ProfileFragmentItemComponent.viewModel?.notificationTotal=0
+                                        this@ProfileFragmentItemComponent.viewModel?.notificationTotal = 0
+                                        draging.value = true
+                                        draging.notifyChange(draging::value)
                                     }
                                     STATE_CANCELED/*拖拽取消*/ -> {
                                     }
                                 }
                             })
+                    bindSelf (draging::value){ draging }.toView(view) { a, drag ->
+                        if (drag == null || !drag.value) return@toView
+                        takeApi(RetrofitImpl::class)?.eraseBadge("eraseBadge/index.html")?.senderAsync<Any>(this@ProfileFragmentItemComponent)
+                        var any2: String? = takeApi(RetrofitImpl::class)?.eraseBadge("eraseBadge/index.html")?.senderAwait(this@ProfileFragmentItemComponent)
+                    }
+
                 }
 
                 lparams {

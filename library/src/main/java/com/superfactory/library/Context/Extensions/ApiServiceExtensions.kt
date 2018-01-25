@@ -2,6 +2,7 @@ package com.superfactory.library.Context.Extensions
 
 import android.app.Service
 import android.content.Context
+import android.view.View
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Context.BaseActivity
@@ -59,6 +60,21 @@ fun BaseAnko<*, *>.appDelegate(): BaseApp? {
 fun <T : Any> BindingComponent<*, *>.takeApi(ctx: Context?, impl: KClass<T>): T? {
     val delegate = appDelegate(ctx)
     return delegate?.takeApi(impl)
+}
+
+fun <T : Any> View.takeApi(impl: KClass<T>): T? {
+    val delegate = appDelegate()
+    return delegate?.takeApi(impl)
+}
+
+fun <T : Any> View.takeApiSafe(impl: KClass<T>): T {
+    val delegate = appDelegate()
+    return delegate!!.takeApiSafe(impl)
+}
+
+
+fun View.appDelegate(): BaseApp? {
+    return (this.context)?.applicationContext as? BaseApp
 }
 
 

@@ -25,7 +25,7 @@ class App : BaseApp() {
     }
 
     override fun specifyBaseUrl(): String? {
-        return "http://www.baidu.com"
+        return "http://www.baidu.com/"
     }
 
 
