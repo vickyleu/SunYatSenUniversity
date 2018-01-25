@@ -7,6 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import kotlin.reflect.KClass
 
 
@@ -47,8 +48,7 @@ open class RetrofitCenter<T : Any>(val baseUrl: String, val clazz: KClass<T>) {
     @Synchronized
     private fun getRetrofitAPI(): Any? {
         val gsonBuilder = GsonBuilder()
-        val gson = gsonBuilder.setLenient().create()
-
+        val gson = gsonBuilder.setLenient().setPrettyPrinting().create()
         val httpClientBuilder = OkHttpClient.Builder()
 
         if (BuildConfig.DEBUG) {
@@ -60,6 +60,7 @@ open class RetrofitCenter<T : Any>(val baseUrl: String, val clazz: KClass<T>) {
 
         IRETROFIT = Retrofit.Builder().baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))
+//                .addConverterFactory(ScalarsConverterFactory.create())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .callFactory(httpClientBuilder.build())
                 .build()

@@ -1,8 +1,6 @@
 package com.superfactory.library.Communication.Sender
 
-import com.google.gson.Gson
-import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
-import com.superfactory.library.Bridge.Anko.BaseObservable
+import com.google.gson.GsonBuilder
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Communication.Responder.fromJson
 import com.superfactory.library.Debuger
@@ -23,7 +21,7 @@ import java.io.IOException
 /**
  * 同步请求,会阻塞线程
  */
-inline fun <reified D : Any> Call<ResponseBody>.senderAwait(component: BindingComponent<*,*>): D? {
+inline fun <reified D : Any> Call<ResponseBody>.senderAwait(component: BindingComponent<*, *>): D? {
     var body: ResponseBody? = null
     try {
         Debuger.printMsg(this, "开始同步")
@@ -37,16 +35,20 @@ inline fun <reified D : Any> Call<ResponseBody>.senderAwait(component: BindingCo
         e.printStackTrace()
         Debuger.printMsg(this, e.message ?: "null")
     }
-    val any: D? = Gson().fromJson(body?.toString()?.trim() ?: "")
-    Debuger.printMsg(this, any?.toString()?.trim() ?: "null")
-    return any
+    try {
+        val any: D? = GsonBuilder().setLenient().create().fromJson(body?.toString()?.trim() ?: "")
+        Debuger.printMsg(this, any?.toString()?.trim() ?: "null")
+        return any
+    } catch (e: Exception) {
+    }
+    return null
 }
 
 /**
  * 异步请求
  */
-inline fun <reified D : Any> Call<ResponseBody>.senderAsync(component: BindingComponent<*,*>) {
-    val viewModel=component.viewModel
+inline fun <reified D : Any> Call<ResponseBody>.senderAsync(component: BindingComponent<*, *>) {
+    val viewModel = component.viewModel
     this.enqueue(object : Callback<ResponseBody> {
         /**
          * Invoked for a received HTTP response.
@@ -57,7 +59,8 @@ inline fun <reified D : Any> Call<ResponseBody>.senderAsync(component: BindingCo
          */
         override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
             try {
-                val model: D? = Gson().fromJson(json = response?.body()?.string()?.trim() ?: "")
+                val model: D? = GsonBuilder().setLenient().create().fromJson(json = response?.body()?.string()?.trim()
+                        ?: "")
                 Debuger.printMsg(this, model ?: "null")
             } catch (e: IOException) {
                 e.printStackTrace()
