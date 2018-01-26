@@ -2,7 +2,9 @@ package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
 import android.graphics.Color
 import android.support.v4.content.ContextCompat
+import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.observable
+import com.superfactory.library.Bridge.Anko.observableNullable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Graphics.Badge.Badge
 import com.superfactory.sunyatsin.R
@@ -42,14 +44,14 @@ class ProfileFragmentViewModel : ToolbarBindingModel() {
             ProfileFragmentItemViewModel(5, R.drawable.note_icon, "设置", "", 1)
     )
 
-    var onItemClicked:((Int, ProfileFragmentItemViewModel) -> Unit)?  =null
+    var onItemClicked: ((Int, ProfileFragmentItemViewModel) -> Unit)? = null
     //observableNullable<((Int, ProfileFragmentItemViewModel) -> Unit)>(null)
 
 }
 
-data class ProfileFragmentItemViewModel(val index: Int, val icon: Int,
-                                        val name: String, val description: String,
-                                        val type: Int = 0,
-                                        var notificationTotal: Int = 0,
-                                        var badge: Badge? = null
-)
+
+data class ProfileFragmentItemViewModel(val index: Int,val icon: Int,val  name: String,var description: String,val type: Int = 0):BaseObservable(){
+    var notificationTotal=observable(0)
+    var badge=observableNullable<Badge>(null)
+    var dragging =observable(false)
+}

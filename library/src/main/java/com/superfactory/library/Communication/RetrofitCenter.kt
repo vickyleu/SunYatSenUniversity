@@ -1,13 +1,16 @@
 package com.superfactory.library.Communication
 
 import com.google.gson.GsonBuilder
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.experimental.CoroutineCallAdapterFactory
 import com.superfactory.library.BuildConfig
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
+import okhttp3.internal.platform.Platform
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import java.io.IOException
 import kotlin.reflect.KClass
 
 
@@ -21,16 +24,20 @@ import kotlin.reflect.KClass
 open class RetrofitCenter<T : Any>(val baseUrl: String, val clazz: KClass<T>) {
     companion object {
         private var retrofitCenter: RetrofitCenter<*>? = null
-        fun <T : Any> getRetrofiter(baseUrl: String, type: KClass<T>): RetrofitCenter<T> {
-            if (retrofitCenter != null) {
-                if (retrofitCenter?.clazz != type) {
-                    retrofitCenter = null
+        fun <T : Any> getRetrofiter(baseUrl: String, type: KClass<T>, flags: Boolean): RetrofitCenter<T> {
+            if (flags) {
+                return RetrofitCenter<T>(baseUrl, type)
+            } else {
+                if (retrofitCenter != null) {
+                    if (retrofitCenter?.clazz != type) {
+                        retrofitCenter = null
+                    }
                 }
+                if (retrofitCenter == null) {
+                    retrofitCenter = RetrofitCenter<T>(baseUrl, type)
+                }
+                return retrofitCenter as RetrofitCenter<T>
             }
-            if (retrofitCenter == null) {
-                retrofitCenter = RetrofitCenter<T>(baseUrl, type)
-            }
-            return retrofitCenter as RetrofitCenter<T>
         }
     }
 
@@ -49,19 +56,30 @@ open class RetrofitCenter<T : Any>(val baseUrl: String, val clazz: KClass<T>) {
     private fun getRetrofitAPI(): Any? {
         val gsonBuilder = GsonBuilder()
         val gson = gsonBuilder.setLenient().setPrettyPrinting().create()
-        val httpClientBuilder = OkHttpClient.Builder()
 
+        val httpClientBuilder = OkHttpClient.Builder()
+                .addInterceptor { chain ->
+                    val request = chain.request().newBuilder()
+                            .addHeader("Accept", "Application/JSON").build()
+                    chain.proceed(request)
+                }
         if (BuildConfig.DEBUG) {
-            val loggingInterceptor = HttpLoggingInterceptor()
-            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            val logger = HttpLoggingInterceptor.Logger { message -> Platform.get().log(Platform.WARN, message, null) }
+            val loggingInterceptor = HttpLoggingInterceptor(logger)
+            loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
+//            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
             httpClientBuilder.addInterceptor(loggingInterceptor)
         }
-
+//每一个Call实例可以同步(call.excute())或者异步(call.enquene(CallBack<?> callBack))的被执行，
+        //每一个实例仅仅能够被使用一次，但是可以通过clone()函数创建一个新的可用的实例。
+        //默认情况下，Retrofit只能够反序列化Http体为OkHttp的ResponseBody类型
+        //并且只能够接受ResponseBody类型的参数作为@body
 
         IRETROFIT = Retrofit.Builder().baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(GsonConverterFactory.create(gson))// 使用Gson作为数据转换器
 //                .addConverterFactory(ScalarsConverterFactory.create())
-                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//使用RxJava作为回调适配器
+//                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .callFactory(httpClientBuilder.build())
                 .build()
                 .create(clazz.java)

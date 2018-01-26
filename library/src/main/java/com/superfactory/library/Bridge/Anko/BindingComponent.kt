@@ -12,6 +12,7 @@ import android.widget.*
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getAttrDrawablValue
 import com.superfactory.library.Bridge.Anko.bindings.bind
 import com.superfactory.library.Bridge.Anko.bindings.onSelf
+import com.superfactory.library.Bridge.Anko.widget.BaseViewHolder
 import com.superfactory.library.R
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.collapsingToolbarLayout
@@ -43,6 +44,7 @@ fun <T, Data> BindingComponent<T, Data>.bindSelf(v: SeekBar) = bind(v).onSelf()
 abstract class BindingComponent<in T, V>
 (viewModel: V? = null, val register: BindingRegister<V> = BindingHolder(viewModel)
 ) : AnkoComponent<T>, BindingRegister<V> by register {
+
 
 
     override var viewModel: V?
@@ -124,6 +126,9 @@ abstract class BindingComponent<in T, V>
 
 
     abstract fun createViewWithBindings(ui: AnkoContext<T>): View
+
+
+
 
     fun destroyView() = register.unbindAll()
 

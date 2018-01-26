@@ -14,7 +14,7 @@ import com.superfactory.library.Bridge.Anko.bindings.TwoWayBinding
 import com.superfactory.library.Bridge.Anko.bindings.ViewBinder
 import com.superfactory.library.Bridge.Anko.bindings.ViewRegister
 import com.superfactory.library.Bridge.Anko.bindings.onSelf
-import com.superfactory.library.Bridge.Model.ToolbarBindingModel
+import com.superfactory.library.Bridge.Anko.widget.BaseViewHolder
 import kotlin.reflect.KProperty
 
 /**
@@ -88,6 +88,12 @@ interface BindingRegister<V> {
      */
     var isBound: Boolean
 
+    var assignmentHolder:((holder: BaseViewHolder<V>, item: V, position: Int) -> Unit)?
+
+    fun assignmentHolder(assignment: (holder: BaseViewHolder<V>, item: V, position: Int) -> Unit) {
+        this.assignmentHolder =assignment
+    }
+
     /**
      * Internal helper method to register OneWay binding.
      */
@@ -141,6 +147,11 @@ interface BindingRegister<V> {
  * [viewModel] if it is an [Observable].
  */
 class BindingHolder<V>(viewModel: V? = null) : BindingRegister<V> {
+    override var assignmentHolder: ((holder: BaseViewHolder<V>, item: V, position: Int) -> Unit)?=null
+        get() = field
+        set(value) {
+            field=value
+        }
 
     private val observableBindings = mutableListOf<OneWayBinding<V, *, *, *, *>>()
     private val genericOneWayBindings = mutableListOf<OneWayBinding<V, *, *, *, *>>()

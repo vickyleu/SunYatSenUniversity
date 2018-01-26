@@ -1,12 +1,8 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
 import android.os.Bundle
-import com.superfactory.library.Communication.Sender.senderAsync
-import com.superfactory.library.Communication.Sender.senderAwait
 import com.superfactory.library.Context.BaseToolbarFragment
-import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Debuger
-import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.Interface.BindingActivity.MainActivity.MainActivity
 import org.jetbrains.anko.support.v4.startActivity
 

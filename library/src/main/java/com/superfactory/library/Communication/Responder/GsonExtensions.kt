@@ -18,6 +18,19 @@ import com.google.gson.reflect.TypeToken
 //    return Gson().fromJson(json, t)
 //}
 
-inline fun <reified T> Gson.fromJson(json: String): T? = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+//@Throws(Exception::class)
+inline fun <reified T> Gson.fromJson(json: String): T? = try {
+    this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+} catch (e: Exception) {
+    e.printStackTrace()
+    null
+}
+
+inline fun <reified T:Any> Gson.fromJsonList(json: String): List<T>? = try {
+    this.fromJson<List<T>>(json, object : TypeToken<List<T>>() {}.type)
+} catch (e: Exception) {
+    e.printStackTrace()
+    null
+}
 
 

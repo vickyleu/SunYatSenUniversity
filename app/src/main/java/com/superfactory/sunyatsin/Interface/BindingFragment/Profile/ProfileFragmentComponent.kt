@@ -1,7 +1,9 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Gravity
 import android.view.View
@@ -9,17 +11,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getAppNoStatusBarSize
 import com.superfactory.library.Bridge.Anko.DslView.circleImage
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Bridge.Anko.ViewExtensions.getLineDividerItemDecoration
 import com.superfactory.library.Bridge.Anko.bindings.toText
-import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
 import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
 import com.superfactory.library.Communication.Sender.senderAsync
-import com.superfactory.library.Communication.Sender.senderAwait
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Debuger
 import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_CANCELED
@@ -56,6 +58,20 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     borderColor = Color.WHITE
                     borderWidth = dip(2)
                     imageResource = R.drawable.note_icon
+                    bindSelf(ProfileFragmentViewModel::avatar) { viewModel?.avatar }.toView(this) { view, value ->
+                        //                        Glide.with(context).load(value).into(view)
+                        Glide.with(context).load(value)
+                                .asBitmap()
+                                .centerCrop()
+                                .into(object : BitmapImageViewTarget(view) {
+                                    override fun setResource(resource: Bitmap) {
+                                        val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, resource)
+                                        circularBitmapDrawable.isCircular = true
+                                        view.setImageDrawable(circularBitmapDrawable)
+                                    }
+                                })
+                    }
+
                     onClick {
                         this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(-1,
                                 ProfileFragmentItemViewModel(-1, 0, "", "", -1))
@@ -78,7 +94,6 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
             }.lparams {
                 width = matchParent
                 height = (screenHeight * 0.2f).toInt()
-//                height = wrapContent
             }
             refresh {
                 backgroundColor = Color.parseColor("#f8f8f8")
@@ -95,12 +110,57 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                             leftPadding = dip(10)
                             val bindAdapter = AutoBindAdapter { viewGroup, _ ->
                                 AnkoViewHolder(viewGroup, ProfileFragmentItemComponent())
-                            }.apply {
-                                onItemClickListener = { i, viewModel, _ ->
-                                    Debuger.printMsg(this, "invoke  1  " + this@ProfileFragmentComponent.viewModelSafe.onItemClicked)
-                                    this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+                            }.assignment { holder, item, position ->
+                               when (position) {
+                                    0 -> {
+                                        holder. component.bindSelf(ProfileFragmentViewModel::profileNo) {
+                                            viewModel?.profileNo
+                                        }.toView(holder.itemView) { _, value ->
+                                                    if (value?.value != null) {
+                                                        holder. component.viewModel?.description = value.value
+                                                    }
+                                                }
+                                    }
+                                    1 -> {
+                                        holder.component.bindSelf(ProfileFragmentViewModel::employ) {
+                                            viewModel?.employ
+                                        }.toView(holder.itemView) { _, value ->
+                                                    if (value?.value != null) {
+                                                        holder. component.viewModel?.description = value.value
+                                                    }
+                                                }
+                                    }
+                                    2 -> {
+                                        holder. component.bindSelf(ProfileFragmentViewModel::station) {
+                                            viewModel?.station
+                                        }.toView(holder.itemView) { _, value ->
+                                                    if (value?.value != null) {
+                                                        holder. component.viewModel?.description = value.value
+                                                    }
+                                                }
+                                    }
+                                    3 -> {
+                                        holder.component.bindSelf(ProfileFragmentViewModel::position) {
+                                            viewModel?.position
+                                        }.toView(holder.itemView) { _, value ->
+                                                    if (value?.value != null) {
+                                                        holder. component.viewModel?.description = value.value
+                                                    }
+                                                }
+                                    }
                                 }
-                            }
+                            }.apply {
+                                        onItemClickListener = { i, viewModel, _ ->
+                                            this@ProfileFragmentComponent.viewModel?.profileName?.value = "校长"
+                                            this@ProfileFragmentComponent.viewModel?.profileNo?.value = "校长"
+                                            this@ProfileFragmentComponent.viewModel?.employ?.value = "校长"
+                                            this@ProfileFragmentComponent.viewModel?.station?.value = "校长"
+                                            this@ProfileFragmentComponent.viewModel?.position?.value = "校长"
+                                            this@ProfileFragmentComponent.viewModelSafe.avatar.value = "http://img.blog.csdn.net/20160912142824244?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"
+                                            Debuger.printMsg(this, "invoke  1  " + this@ProfileFragmentComponent.viewModelSafe.onItemClicked)
+//                                    this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+                                        }
+                                    }
                             bindSelf(ProfileFragmentViewModel::profileItemsList) { it.profileItemsList }
                                     .toView(this) { _, value ->
                                         bindAdapter.setItemsList(value)
@@ -121,47 +181,39 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                             val that = this
                             doAsync {
                                 for (i in 0 until viewModel?.profileSettingsList?.size!!) {
-                                    val compnent = ProfileFragmentItemComponent()
+                                    val component = ProfileFragmentItemComponent()
                                     bindSelf(ProfileFragmentViewModel::profileSettingsList) { it.profileSettingsList }
                                             .toView(that) { arg, value ->
                                                 if (value == null) return@toView
-                                                compnent.isBound = true //数据是否绑定,当手动设置databinding数据时需要修改为true,否则数据无法自动刷新
-                                                compnent.viewModel = value[i]
-//                                                viewModelSafe.notificationTotalObserva.value = 5
-//                                                viewModelSafe.notificationTotalObserva.notifyChange(ProfileFragmentViewModel::notificationTotalObserva)
+                                                component.isBound = true //数据是否绑定,当手动设置databinding数据时需要修改为true,否则数据无法自动刷新
+                                                component.viewModel = value[i]
                                             }
-
-                                    compnent.bindSelf {
+                                    component.bindSelf {
                                         viewModelSafe.notificationTotalObserva
                                     }.toView(that) { _, va ->
                                                 @Suppress("LABEL_NAME_CLASH")
                                                 if (va == null) return@toView
-                                                compnent.viewModel?.notificationTotal = va
+                                                component.viewModel?.notificationTotal?.value = va
                                             }
-
-                                    val v = compnent.createViewWithBindings(AnkoContextImpl(that.context,
+                                    val v = component.createViewWithBindings(AnkoContextImpl(that.context,
                                             that, false))
                                     v.backgroundResource = R.drawable.profile_recycle_shader
                                     val lp = LinearLayout.LayoutParams(matchParent, wrapContent)
                                     lp.topMargin = dip(10)
                                     v.leftPadding = dip(10)
                                     addView(v, lp)
-
-
                                     v.apply {
                                         register.bindAll()
                                     }
                                     v.apply {
                                         onClick {
                                             viewModel?.notificationTotalObserva?.value = 5
-                                            compnent.notifyChanges()
                                             Debuger.printMsg(this, "invoke  2  ")
-                                            this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(compnent.viewModelSafe.index, compnent.viewModelSafe)
+//                                            this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(component.viewModelSafe.index, component.viewModelSafe)
                                         }
                                     }
                                 }
                             }
-
                         }.lparams {
                             width = matchParent
                             height = wrapContent
@@ -186,9 +238,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                 height = matchParent
             }
         }
-
     }
-
 
     class ProfileFragmentItemComponent : BindingComponent<ViewGroup, ProfileFragmentItemViewModel>() {
 
@@ -196,10 +246,9 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
             val screenWidth = getAppNoStatusBarSize(ctx).width
             relativeLayout {
                 val that = this
-                imageView {
+                val icon = imageView {
                     id = R.id.left_icon
                     backgroundColor = Color.TRANSPARENT
-                    imageResource = R.drawable.note_icon
                     scaleType = ImageView.ScaleType.FIT_XY
                 }.lparams {
                     width = dip(20)
@@ -207,6 +256,12 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     centerVertically()
                     alignParentLeft()
                 }
+                bindSelf(ProfileFragmentItemViewModel::icon) { it.icon }
+                        .toView(icon) { view, value ->
+                            if (value != null && value != 0) {
+                                view.imageResource = value
+                            }
+                        }
                 textView {
                     bindSelf(ProfileFragmentItemViewModel::name) { it.name }.toText(this)
                     padding = dip(12)
@@ -247,22 +302,37 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     }
                 }
 
+                bindSelf(ProfileFragmentItemViewModel::dragging) { it }.toView(this) { _, item ->
+                    @Suppress("LABEL_NAME_CLASH")
+                    if (item == null || !viewModelSafe.dragging.value || viewModelSafe.badge.value == null) return@toView
+                    viewModelSafe.dragging.value = false
+                    viewModelSafe.badge.value?.setBadgeNumber(0)
+                    takeApi(RetrofitImpl::class)?.eraseBadge(
+                            "eraseBadge/index.html")?.senderAsync(
+                            String::class, this@ProfileFragmentItemComponent)
+                }
+
                 bindSelf(ProfileFragmentItemViewModel::notificationTotal) {
                     it/*.notificationTotal*/
                 }.toView(this) { view, model ->
                     var arrow: View? = null
                     if (model == null) return@toView
-                    val value = model.notificationTotal
+                    val value = model.notificationTotal.value
                     if (model.index > 4) return@toView
                     arrow = view.findViewById(R.id.right_arrow)
                     if (arrow == null) return@toView
                     val attachValue = "  " + value.toString() + "  "
-                    if (viewModelSafe.badge != null) {
-                        viewModelSafe.badge!!.setBadgeText(attachValue)
+
+                    if (viewModelSafe.badge.value != null) {
+                        if (value > 0) {
+                            viewModelSafe.badge.value?.setBadgeText(attachValue)
+                        } else {
+                            viewModelSafe.badge.value?.setBadgeNumber(0)
+                        }
                         return@toView
                     }
-                    val draging = observable(false)
-                    viewModelSafe.badge = BadgeView(context)
+                    val mBadge = BadgeView(context)
+                    viewModelSafe.badge.value = mBadge
                             .bindTarget(view)
                             .setBadgeGravity(Gravity.CENTER or Gravity.END)
                             .setGravityOffset((screenWidth * 0.03).toFloat(), true)
@@ -280,20 +350,31 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                     STATE_DRAGGING_OUT_OF_RANGE /*拖拽区域超出所属ViewParent*/ -> {
                                     }
                                     STATE_SUCCEED /*拖拽完成,气泡消失*/ -> {
-                                        badge.setBadgeNumber(0)
-                                        this@ProfileFragmentItemComponent.viewModel?.notificationTotal = 0
-                                        draging.value = true
-                                        draging.notifyChange(draging::value)
+                                        viewModelSafe.notificationTotal.value = 0
+                                        viewModelSafe.dragging.value = true
                                     }
                                     STATE_CANCELED/*拖拽取消*/ -> {
                                     }
                                 }
                             })
-                    bindSelf (draging::value){ draging }.toView(view) { a, drag ->
-                        if (drag == null || !drag.value) return@toView
-                        takeApi(RetrofitImpl::class)?.eraseBadge("eraseBadge/index.html")?.senderAsync<Any>(this@ProfileFragmentItemComponent)
-                        var any2: String? = takeApi(RetrofitImpl::class)?.eraseBadge("eraseBadge/index.html")?.senderAwait(this@ProfileFragmentItemComponent)
+                }
+                register.assignmentHolder { holder, item, position ->
+                    when (position) {
+                        0 -> {
+                            bindSelf(ProfileFragmentViewModel::profileNo)
+                        }
+                        1 -> {
+                            bindSelf(ProfileFragmentViewModel::employ)
+                        }
+                        2 -> {
+                            bindSelf(ProfileFragmentViewModel::station)
+                        }
+                        3 -> {
+                            bindSelf(ProfileFragmentViewModel::position)
+                        }
+
                     }
+
 
                 }
 
@@ -306,9 +387,6 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
             }
         }
 
+
     }
-
 }
-
-
-//

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.Context
 import android.content.res.Configuration
+import android.support.multidex.MultiDex
 import android.text.TextUtils
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.api.RefreshFooter
@@ -18,6 +19,7 @@ import com.superfactory.library.R
 import com.tencent.bugly.crashreport.CrashReport
 import kotlin.reflect.KClass
 
+//import cn.nekocode.emojix.Emojix
 
 /**
  * Created by vicky on 2018.01.17.
@@ -73,22 +75,32 @@ abstract class BaseApp : Application() {
 
     private var retrofit: RetrofitCenter<*>? = null
 
-     open fun <T:Any> takeApi(impl:KClass<T>): T? {
-        if (retrofit!=null){
-           if (retrofit?.clazz == impl){
-               retrofit=null
-           }
+
+    open fun <T : Any> takeApiOnce(impl: KClass<T>, url: String): T? {
+        return RetrofitCenter.getRetrofiter(url, impl, true).buildingApiServer() as? T
+    }
+
+    open fun <T : Any> takeApiOnceSafe(impl: KClass<T>, url: String): T {
+        return takeApiOnce(impl, url)!!
+    }
+
+
+    open fun <T : Any> takeApi(impl: KClass<T>): T? {
+        if (retrofit != null) {
+            if (retrofit?.clazz == impl) {
+                retrofit = null
+            }
         }
         if (retrofit == null) {
             val baseUrl = specifyBaseUrl()
             if (baseUrl != null) {
-                retrofit = RetrofitCenter.getRetrofiter(baseUrl,impl)
+                retrofit = RetrofitCenter.getRetrofiter(baseUrl, impl, false)
             }
         }
         return retrofit?.buildingApiServer() as T
     }
 
-    open fun <T:Any> takeApiSafe(impl:KClass<T>): T {
+    open fun <T : Any> takeApiSafe(impl: KClass<T>): T {
         return takeApi(impl)!!
     }
 
@@ -172,6 +184,20 @@ abstract class BaseApp : Application() {
 
     fun injectEmojix(): Boolean {
         return true
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
+    }
+
+    fun wrapEmoji(newBase: Context): Context {
+        if (injectEmojix()) {
+            //        return Emojix.wrap(newBase)
+            return newBase
+        } else {
+            return newBase
+        }
     }
 
 

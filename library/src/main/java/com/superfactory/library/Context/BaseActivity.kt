@@ -1,15 +1,15 @@
 package com.superfactory.library.Context
 
+
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
-import cn.nekocode.emojix.Emojix
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
-import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
+import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.R
 import org.jetbrains.anko.AnkoContextImpl
@@ -27,18 +27,18 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
     protected var toolbarAnko: View? = null
     private var layout: BindingComponent<A, V>? = null
 
-    private val toolbarClickEvent=observable(View.OnClickListener {
-        if (it!=null){
+    private val toolbarClickEvent = observable(View.OnClickListener {
+        if (it != null) {
             performToolbarClickEvent(it)
         }
     })
 
-    protected open fun performToolbarClickEvent(view: View){
-        when(view.id){
-            R.id.toolbar_left->{
+    protected open fun performToolbarClickEvent(view: View) {
+        when (view.id) {
+            R.id.toolbar_left -> {
 
             }
-            R.id.toolbar_right->{
+            R.id.toolbar_right -> {
 
             }
         }
@@ -60,7 +60,7 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         viewModel = newViewModel().apply {
             if (showToolBar) {
@@ -76,7 +76,7 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
                         }
                         notifyChanges()
                     } as BaseToolBar<A, V>
-                    toolbar!!.eventDelegate=toolbarClickEvent
+                    toolbar!!.eventDelegate = toolbarClickEvent
                 }
             }
 
@@ -107,11 +107,10 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
             }
 
         }
-        if (viewModel!=null){
+        if (viewModel != null) {
             onLoadedModel(viewModel!!)
         }
     }
-
 
 
     protected open fun setToolbarAttribution(toolbarBinder: BaseToolBar<A, V>, actionBar: ActionBar?, toolbarView: Toolbar) {
@@ -136,11 +135,7 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
     override fun attachBaseContext(newBase: Context) {
         if (newBase.applicationContext != null) {
             val app = newBase.applicationContext as BaseApp
-            if (app.injectEmojix()) {
-                super.attachBaseContext(Emojix.wrap(newBase))
-            } else {
-                super.attachBaseContext(newBase)
-            }
+            super.attachBaseContext(app.wrapEmoji(newBase))
         } else {
             super.attachBaseContext(newBase)
         }

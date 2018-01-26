@@ -72,6 +72,15 @@ fun <T : Any> View.takeApiSafe(impl: KClass<T>): T {
     return delegate!!.takeApiSafe(impl)
 }
 
+fun <T : Any> View.takeApi(impl: KClass<T>, url: String): T? {
+    val delegate = appDelegate()
+    return delegate?.takeApiOnce(impl, url)
+}
+
+fun <T : Any> View.takeApiSafe(impl: KClass<T>, url: String): T {
+    return takeApi(impl, url)!!
+}
+
 
 fun View.appDelegate(): BaseApp? {
     return (this.context)?.applicationContext as? BaseApp
