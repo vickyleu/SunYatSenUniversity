@@ -1,11 +1,14 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
 import android.graphics.Color
+import android.os.Bundle
+import android.os.Debug
 import android.support.v4.content.ContextCompat
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.observableNullable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
+import com.superfactory.library.Debuger
 import com.superfactory.library.Graphics.Badge.Badge
 import com.superfactory.sunyatsin.R
 
@@ -16,7 +19,7 @@ import com.superfactory.sunyatsin.R
  * @Date 2018年01月19日  13:41:34
  * @ClassName 这里输入你的类名(或用途)
  */
-class ProfileFragmentViewModel : ToolbarBindingModel() {
+class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
     override fun setToolbar(toolbarBindingModel: ToolbarBindingModel) {
         toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
         toolbarBindingModel.title.value = "APP"
@@ -32,6 +35,11 @@ class ProfileFragmentViewModel : ToolbarBindingModel() {
     val position = observable("")//职务
     val notificationTotalObserva = observable(3)
 
+    override fun toString(): String {
+        return "{notificationTotalObserva:" + notificationTotalObserva.value + "}" + "{" +
+                "profileName" + profileName.value + "}"
+    }
+
     val profileItemsList = arrayListOf(
             ProfileFragmentItemViewModel(0, R.drawable.note_icon, "警号", ""),
             ProfileFragmentItemViewModel(1, R.drawable.note_icon, "部门", ""),
@@ -45,13 +53,24 @@ class ProfileFragmentViewModel : ToolbarBindingModel() {
     )
 
     var onItemClicked: ((Int, ProfileFragmentItemViewModel) -> Unit)? = null
-    //observableNullable<((Int, ProfileFragmentItemViewModel) -> Unit)>(null)
 
+    init {
+        Debuger.printMsg(this,bundle?:"bundle是空的")
+        if (bundle != null) {
+            profileName.value = bundle.getString("profileName")
+            profileNo.value = bundle.getString("profileNo")
+            employ.value = bundle.getString("employ")
+            station.value = bundle.getString("station")
+            position.value = bundle.getString("position")
+            avatar.value = bundle.getString("avatar")
+            Debuger.printMsg(this,avatar.value)
+        }
+    }
 }
 
 
-data class ProfileFragmentItemViewModel(val index: Int,val icon: Int,val  name: String,var description: String,val type: Int = 0):BaseObservable(){
-    var notificationTotal=observable(0)
-    var badge=observableNullable<Badge>(null)
-    var dragging =observable(false)
+data class ProfileFragmentItemViewModel(val index: Int, val icon: Int, val name: String, var description: String, val type: Int = 0) : BaseObservable() {
+    var notificationTotal = observable(0)
+    var badge = observableNullable<Badge>(null)
+    var dragging = observable(false)
 }

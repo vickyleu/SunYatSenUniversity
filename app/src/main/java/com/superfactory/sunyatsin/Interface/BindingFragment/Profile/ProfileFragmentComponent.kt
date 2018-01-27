@@ -36,6 +36,14 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.nestedScrollView
+import android.databinding.adapters.ImageViewBindingAdapter.setImageDrawable
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.support.annotation.Nullable
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import java.lang.Exception
 
 
 /**
@@ -48,6 +56,7 @@ import org.jetbrains.anko.support.v4.nestedScrollView
 class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingComponent<ProfileFragment, ProfileFragmentViewModel>(viewModel) {
     override fun createViewWithBindings(ui: AnkoContext<ProfileFragment>): View = with(ui) {
 
+        Debuger.printMsg(this, "createViewWithBindings")
         val screenHeight = getAppNoStatusBarSize(ctx).height
         verticalLayout {
             verticalLayout {
@@ -58,14 +67,25 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     borderColor = Color.WHITE
                     borderWidth = dip(2)
                     imageResource = R.drawable.note_icon
-                    bindSelf(ProfileFragmentViewModel::avatar) { it.avatar }.toView(this) { view, value ->
-                        //                        Glide.with(context).load(value).into(view)
+                    bindSelf(ProfileFragmentViewModel::avatar) { it.avatar.value }.toView(this) { view, value ->
                         Glide.with(context).load(value)
                                 .asBitmap()
                                 .centerCrop()
+                                .placeholder(R.drawable.note_icon)
+                                .listener(object :RequestListener<String,Bitmap>{
+                                    override fun onException(e: Exception?, model: String?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+                                        Debuger.printMsg("onLoadFailed = %s", e?.message?.toString()?:"null")
+                                        return false;
+                                    }
+
+                                    override fun onResourceReady(resource: Bitmap?, model: String?, target: Target<Bitmap>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                                        return false
+                                    }
+
+                                })
                                 .into(object : BitmapImageViewTarget(view) {
                                     override fun setResource(resource: Bitmap) {
-                                        val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, resource)
+                                        val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
                                         circularBitmapDrawable.isCircular = true
                                         view.setImageDrawable(circularBitmapDrawable)
                                     }
@@ -86,6 +106,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     text = context.getString(R.string.profile_name)
                     textSize = 14f
                     textColor = Color.parseColor("#ffffff")
+                    bindSelf(ProfileFragmentViewModel::profileName) { it.profileName.value }.toText(this)
                 }.lparams {
                     setVerticalGravity(Gravity.CENTER_VERTICAL)
                     setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
@@ -112,14 +133,8 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                 AnkoViewHolder(viewGroup, ProfileFragmentItemComponent())
                             }.apply {
                                 onItemClickListener = { i, viewModel, _ ->
-                                    viewModelSafe.profileName.value = "校长"
-                                    viewModelSafe.profileNo.value = "192551"
-                                    viewModelSafe.employ.value = "刑侦重案部"
-                                    viewModelSafe.station.value = "侦查组"
-                                    viewModelSafe.position.value = "侦查员"
-                                    viewModelSafe.avatar.value = "http://img.blog.csdn.net/20160912142824244?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"
                                     Debuger.printMsg(this, "invoke  1  " + viewModelSafe.onItemClicked)
-//                                    this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+                                    this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
                                 }
                             }.assignment { holder, _, position ->
                                         when (position) {
@@ -139,7 +154,9 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                                 Debuger.printMsg(this, "3")
                                                 holder.component.viewModel?.description = viewModel?.position?.value ?: ""
                                             }
-
+                                            else -> {
+                                                return@assignment
+                                            }
                                         }
                                         holder.component.notifyChanges()
                                     }
@@ -173,6 +190,8 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                     component.bindSelf {
                                         viewModelSafe.notificationTotalObserva
                                     }.toView(that) { _, va ->
+                                                Debuger.printMsg(this, "notificationTotalObserva:"
+                                                + va?.toString() ?: "null")
                                                 @Suppress("LABEL_NAME_CLASH")
                                                 if (va == null) return@toView
                                                 component.viewModel?.notificationTotal?.value = va
@@ -183,15 +202,18 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                     val lp = LinearLayout.LayoutParams(matchParent, wrapContent)
                                     lp.topMargin = dip(10)
                                     v.leftPadding = dip(10)
-                                    addView(v, lp)
+                                    uiThread {
+                                        addView(v, lp)
+                                    }
                                     v.apply {
                                         register.bindAll()
                                     }
                                     v.apply {
                                         onClick {
-                                            viewModel?.notificationTotalObserva?.value = 5
+                                            //                                            viewModel?.notificationTotalObserva?.value = 5
+//                                            viewModel?.profileNo?.value = "12530"
                                             Debuger.printMsg(this, "invoke  2  ")
-//                                            this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(component.viewModelSafe.index, component.viewModelSafe)
+                                            this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(component.viewModelSafe.index, component.viewModelSafe)
                                         }
                                     }
                                 }
@@ -260,7 +282,10 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
 
                 textView {
                     id = R.id.right_text
-                    bindSelf(ProfileFragmentItemViewModel::description) { it.description }.toText(this)
+                    bindSelf(ProfileFragmentItemViewModel::description) { it.description }.toView(this) { view, value ->
+                        Debuger.printMsg(this, "value:" + value)
+                        view.setText(value)
+                    }
                 }.lparams {
                     width = wrapContent
                     height = wrapContent
@@ -304,14 +329,20 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     arrow = view.findViewById(R.id.right_arrow)
                     if (arrow == null) return@toView
                     val attachValue = "  " + value.toString() + "  "
-
                     if (viewModelSafe.badge.value != null) {
                         if (value > 0) {
-                            viewModelSafe.badge.value?.setBadgeText(attachValue)
+                            if (viewModelSafe.badge.value!!.targetView?.hashCode() != view.hashCode()) {
+                                viewModelSafe.badge.value!!.bindTarget(view)
+                                viewModelSafe.badge.value?.setBadgeText(attachValue)
+                                return@toView
+                            } else {
+                                viewModelSafe.badge.value?.setBadgeText(attachValue)
+                                return@toView
+                            }
                         } else {
                             viewModelSafe.badge.value?.setBadgeNumber(0)
+                            return@toView
                         }
-                        return@toView
                     }
                     val mBadge = BadgeView(context)
                     viewModelSafe.badge.value = mBadge

@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -193,6 +194,10 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         }
                         value.id = R.id.toolbar_left
 
+                        if (value.parent != null) {
+                            val parent = value.parent as ViewGroup
+                            parent.removeView(value)
+                        }
                         view.addView(value)
                         value.onClick {
                             if (eventDelegate != null && eventDelegate!!.value != null) {
@@ -213,7 +218,10 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         } catch (ignored: Exception) {
                         }
                         value.id = R.id.toolbar_right
-
+                        if (value.parent != null) {
+                            val parent = value.parent as ViewGroup
+                            parent.removeView(value)
+                        }
                         view.addView(value)
                         value.onClick {
                             if (eventDelegate != null && eventDelegate!!.value != null) {
@@ -223,23 +231,42 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                     }
                 }
 
+                if ((viewModel as? ToolbarBindingModel)?.leftView?.value == null &&
+                        (viewModel as? ToolbarBindingModel)?.leftIcon?.value != null) {
+                    val property = (viewModel as? ToolbarBindingModel)?.leftIcon!!
+                    property.value = property.defaultValue
+                } else if ((viewModel as? ToolbarBindingModel)?.leftView?.value != null) {
+                    val property = (viewModel as? ToolbarBindingModel)?.leftView!!
+                    property.value = property.defaultValue
+                }
+
+                if ((viewModel as? ToolbarBindingModel)?.rightView?.value == null &&
+                        (viewModel as? ToolbarBindingModel)?.rightIcon?.value != null) {
+                    val property = (viewModel as? ToolbarBindingModel)?.rightIcon!!
+                    property.value = property.defaultValue
+                } else if ((viewModel as? ToolbarBindingModel)?.rightView?.value != null) {
+                    val property = (viewModel as? ToolbarBindingModel)?.rightView!!
+                    property.value = property.defaultValue
+                }
+
+
             }
         }
     }
 
-    fun <V:Parcelable, A : BaseActivity<V, A>> initToolbar(owner: A, toolbar: Toolbar) {
+    fun <V : Parcelable, A : BaseActivity<V, A>> initToolbar(owner: A, toolbar: Toolbar) {
         owner.setSupportActionBar(toolbar)
     }
 
-    fun <V:Parcelable, A : BaseFragment<V, A>> initToolbar(owner: A, toolbar: Toolbar) {
+    fun <V : Parcelable, A : BaseFragment<V, A>> initToolbar(owner: A, toolbar: Toolbar) {
         (owner.activity as BaseActivity<*, *>).setSupportActionBar(toolbar)
     }
 
-    fun <V:Parcelable, A : BaseActivity<V, A>> getActionBar(owner: A): ActionBar? {
+    fun <V : Parcelable, A : BaseActivity<V, A>> getActionBar(owner: A): ActionBar? {
         return owner.supportActionBar
     }
 
-    fun <V:Parcelable, A : BaseFragment<V, A>> getActionBar(owner: A): ActionBar? {
+    fun <V : Parcelable, A : BaseFragment<V, A>> getActionBar(owner: A): ActionBar? {
         return (owner.activity as BaseActivity<*, *>).getSupportActionBar()
     }
 

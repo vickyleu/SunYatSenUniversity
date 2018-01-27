@@ -2,6 +2,7 @@ package com.superfactory.sunyatsin.Interface.BindingActivity.MainActivity
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.view.View
@@ -23,7 +24,7 @@ import java.util.*
  * @Date 2018年01月17日  14:43:59
  * @ClassName 这里输入你的类名(或用途)
  */
-class MainActivityViewModel(intent: Intent?, manager: FragmentManager?) : ToolbarBindingModel() {
+class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : ToolbarBindingModel() {
     override fun setToolbar(toolbarBindingModel: ToolbarBindingModel) {
         toolbarBindingModel.backgroundColor.value=Color.BLUE
         toolbarBindingModel.title.value="妈卖批"
@@ -39,17 +40,14 @@ class MainActivityViewModel(intent: Intent?, manager: FragmentManager?) : Toolba
             R.id.ctrl_button -> {
                 if (selected == 2) return@OnClickListener
                 selected = 2
-                Debuger.printMsg(this, "点击了中间按钮")
             }
             R.id.ctrl_text_left -> {
                 if (selected == 0) return@OnClickListener
                 selected = 0
-                Debuger.printMsg(this, "点击了左边按钮")
             }
             R.id.ctrl_text_right -> {
                 if (selected == 1) return@OnClickListener
                 selected = 1
-                Debuger.printMsg(this, "点击了右边按钮")
             }
             else -> {
                 return@OnClickListener
@@ -64,8 +62,17 @@ class MainActivityViewModel(intent: Intent?, manager: FragmentManager?) : Toolba
     private fun selectFragment(fragments: ObservableFieldImpl<FragmentContainer>,
                                fragmentList: ObservableFieldImpl<ArrayList<Fragment>>, selected: Int) {
         val container = fragments.value
+        val b=Bundle()
+        b.putString("profileName","校长")
+        b.putString("profileNo","192551")
+        b.putString("employ","刑侦重案部")
+        b.putString("station","侦查组")
+        b.putString("position","侦查员")
+        b.putString("avatar","https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1517076402&di=4e9af711575f0190734265e187e62737&src=http://img.tupianzj.com/uploads/Bizhi/mn53_12802.jpg")
+        container.extras=b//intent?.extras
         container.fragment = fragmentList.value.get(selected)
-        Debuger.printMsg(this, "切换了:" + if (container.fragment != null) container.fragment!!.javaClass.simpleName else "无")
+
+        Debuger.printMsg(this, "切换了:" + if (container.fragment != null) container.fragment!!.javaClass.simpleName+" arg="+container.fragment?.arguments else "无")
     }
 
     init {

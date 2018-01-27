@@ -12,8 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
+import com.superfactory.library.Bridge.Anko.Adapt.FragmentContainer
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.observable
+import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Debuger
 import com.superfactory.library.R
 import org.jetbrains.anko.AnkoContextImpl
@@ -36,6 +38,8 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
 
     protected var showToolBar: Boolean = false
 
+    open var extra: Bundle? =null
+        get() = arguments?.getBundle(FragmentContainer.TAG)
 
     private val toolbarClickEvent = observable(View.OnClickListener {
         if (it != null) {
@@ -70,8 +74,11 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
         } else {
             Debuger.printMsg(this, TAG)
         }
+        if (viewModel == null) return null
         viewModel!!.apply {
             if (showToolBar) {
+                val abc=this as ToolbarBindingModel
+                Debuger.printMsg(this,abc.rightIcon.value?.toString()?:"空么")
                 val tc = newToolBarComponent(this)
                 if (tc != null) {
                     toolbar = tc.apply {
@@ -204,9 +211,14 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
 
 
     override fun onDestroyView() {
-        super.onDestroyView();
+        super.onDestroyView()
+        destroyModel(viewModel)
         // Save State Here
-        saveStateToArguments();
+        saveStateToArguments()
+    }
+
+    protected open fun destroyModel(viewModel: V?) {
+
     }
 
     private fun saveStateToArguments() {
@@ -235,6 +247,10 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
     private fun restoreState() {
         if (savedState != null) {
             viewModel = savedState?.getParcelable(TAG)
+            if (viewModel!=null&&viewModel is ToolbarBindingModel){
+                //todo
+            }
+            Debuger.printMsg(this, "savedState:" + viewModel?.toString() ?: "null")
             onRestoreState(savedState!!)
         }
     }
@@ -248,7 +264,8 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
 //////////////////////////////
     private fun saveState(): Bundle {
         val state = Bundle()
-        state.putParcelable(TAG, viewModel)
+        if (viewModel != null)
+            state.putParcelable(TAG, viewModel)
         return state
     }
 

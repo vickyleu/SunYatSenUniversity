@@ -34,8 +34,9 @@ interface Observable {
     fun removeOnPropertyChangedCallback(callback: PropertyChangedCallback)
 }
 
-open class BaseObservable() : Observable , Parcelable {
-    @Transient private var mCallbacks: PropertyChangeRegistry? = null
+open class BaseObservable() : Observable, Parcelable {
+    @Transient
+    private var mCallbacks: PropertyChangeRegistry? = null
 
     constructor(parcel: Parcel) : this() {
     }
@@ -77,6 +78,7 @@ open class BaseObservable() : Observable , Parcelable {
             return arrayOfNulls(size)
         }
     }
+
 }
 
 interface ObservableField<T> : Observable {
@@ -93,11 +95,19 @@ interface ObservableField<T> : Observable {
     }
 }
 
+class ObservableFieldImpl<T : Any?>(private var _value: T, private val configureClosure: PropertyChangedCallback? = null)
+    : BaseObservable(), ReadWriteProperty<Any?, T>, ObservableField<T>, Parcelable {
 
-class ObservableFieldImpl<T>(_value: T, private val configureClosure: PropertyChangedCallback? = null)
-    : BaseObservable(), ReadWriteProperty<Any?, T>, ObservableField<T> {
+    private var configured: Boolean = false
+    private var name= convertValue(_value)
 
-    private var configured = false
+    private fun convertValue(value: T) = if (value == null) "" else {
+        if((value as Any).javaClass is Parcelable){
+            Parcelable::class.java.name
+        }else{
+            (value as Any).javaClass.superclass.name
+        }
+    }
 
     override val defaultValue = _value
 
@@ -105,8 +115,14 @@ class ObservableFieldImpl<T>(_value: T, private val configureClosure: PropertyCh
         set(value) {
             checkConfigured()
             field = value
+            name= convertValue(value)
             notifyChange()
         }
+
+     fun setStableValue(stableVar:T) {
+         _value=stableVar
+     }
+
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         checkConfigured()
@@ -127,19 +143,111 @@ class ObservableFieldImpl<T>(_value: T, private val configureClosure: PropertyCh
             addOnPropertyChangedCallback(configureClosure)
         }
     }
+
+//    override fun writeToParcel(parcel: Parcel, flags: Int) {
+//        super.writeToParcel(parcel, flags)
+//        parcel.writeByte(if (configured) 1 else 0)
+//        parcel.writeString(name)
+//    }
+//
+//    override fun describeContents(): Int {
+//        return 0
+//    }
+//
+//    companion object CREATOR : Parcelable.Creator<ObservableFieldImpl<*>> {
+//        override fun createFromParcel(parcel: Parcel): ObservableFieldImpl<*> {
+//            val name = parcel.readString()
+//            if (name==null||name.equals("")){
+//                return observable<Any?>(null)
+//            }
+//            var inst:ObservableFieldImpl<*> ?= null
+//            when(name){
+//                String.javaClass.name->{
+//                    inst=observable(parcel.readString())
+//                }
+//                Int.javaClass.name->{
+//                    inst=observable(parcel.readInt())
+//                }
+//                Float.javaClass.name->{
+//                    inst=observable(parcel.readFloat())
+//                }
+//                Double.javaClass.name->{
+//                    inst=observable(parcel.readDouble())
+//                }
+//                Byte.javaClass.name->{
+//                    inst=observable(parcel.readByte())
+//                }
+//                Long.javaClass.name->{
+//                    inst=observable(parcel.readLong())
+//                }
+//                Boolean::class.java.name->{
+//                    inst=observable(parcel.readByte() != 0.toByte())
+//                }
+//                Parcelable::class.java.name->{
+//                    inst=observable(parcel.readParcelable<Parcelable>(ClassLoader.getSystemClassLoader()))
+//                }
+//                Array<Parcelable>::class.java.name->{
+//
+//                }
+//                List::class.java.name->{
+//
+//                }
+//                else->{
+//                    inst=observable(Any())
+//                }
+//            }
+//            inst.configured = parcel.readByte() != 0.toByte()
+//            return inst
+//        }
+//
+//        override fun newArray(size: Int): Array<ObservableFieldImpl<*>?> {
+//            return arrayOfNulls(size)
+//        }
+//    }
+
+
 }
 
-/**
- * Creates new instance of the [Observable] field.
- */
-fun <T> observable(initialValue: T, change: PropertyChangedCallback? = null)
-        = ObservableFieldImpl(initialValue, change)
 
 /**
  * Creates new instance of the [Observable] field.
  */
-fun <T> BaseObservable.observable(initialValue: T)
-        = ObservableFieldImpl(initialValue) { _, kProperty -> notifyChange(kProperty) }
+fun <T> observable(initialValue: T, change: PropertyChangedCallback? = null) = ObservableFieldImpl(initialValue, change)
 
-fun <T> BaseObservable.observableNullable(initialValue: T?)
-        = ObservableFieldImpl<T?>(initialValue) { _, kProperty -> notifyChange(kProperty) }
+/**
+ * Creates new instance of the [Observable] field.
+ */
+fun <T> BaseObservable.observable(initialValue: T) = ObservableFieldImpl(initialValue) { _, kProperty -> notifyChange(kProperty) }
+
+
+//fun  BaseObservable.observableInt(initialValue: Int) = ObservableFieldImpl(SignedInt(initialValue)) { _, kProperty -> notifyChange(kProperty) }
+
+class SignedInt(var initialValue: Int):Parcelable {
+
+    constructor(parcel: Parcel,any: Any?) : this(parcel.readInt()) {
+    }
+
+    fun toInt():Int{
+       return initialValue
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(initialValue)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<SignedInt> {
+        override fun createFromParcel(parcel: Parcel): SignedInt {
+            return SignedInt(parcel,null)
+        }
+
+        override fun newArray(size: Int): Array<SignedInt?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
+
+fun <T> BaseObservable.observableNullable(initialValue: T?) = ObservableFieldImpl<T?>(initialValue) { _, kProperty -> notifyChange(kProperty) }

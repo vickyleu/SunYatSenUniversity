@@ -26,13 +26,14 @@ fun FrameLayout.setFragmentPosition(container: FragmentContainer?) {
         transaction.replace(this.id, fragment)
 //        transaction.addToBackStack()
     } else {
-            if (fragment.motherFuckerTags == null) {
-                fragment.arguments= Bundle()
-                transaction.add(this.id, fragment,fragment.javaClass.simpleName + fragment.hashCode())
+        if (fragment.motherFuckerTags == null) {
+            if (fragment.arguments == null)
+                fragment.arguments = Bundle()
+            transaction.add(this.id, fragment, fragment.javaClass.simpleName + fragment.hashCode())
 //                transaction.addToBackStack()
-            }else{
-                Debuger.printMsg(this, "瑟瑟发抖11>>>"+fragment.javaClass.simpleName)
-            }
+        } else {
+            Debuger.printMsg(this, "瑟瑟发抖11>>>" + fragment.javaClass.simpleName)
+        }
     }
     transaction.show(fragment)
     transaction.commit()

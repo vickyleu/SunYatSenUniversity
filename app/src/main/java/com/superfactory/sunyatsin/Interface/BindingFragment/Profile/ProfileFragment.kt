@@ -1,5 +1,6 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
+import android.content.Intent
 import android.os.Bundle
 import com.superfactory.library.Context.BaseToolbarFragment
 import com.superfactory.library.Debuger
@@ -17,7 +18,7 @@ import org.jetbrains.anko.support.v4.startActivity
 class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFragment>() {
 
     override fun newViewModel(): ProfileFragmentViewModel {
-        val model = ProfileFragmentViewModel()
+        val model = ProfileFragmentViewModel(extra)
         return model
     }
 
@@ -26,6 +27,13 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+    }
+
+    override fun destroyModel(viewModel: ProfileFragmentViewModel?) {
+        super.destroyModel(viewModel)
+        if (viewModel!=null){
+//            viewModel.ba
+        }
     }
 
     override fun onLoadedModel(viewModel: ProfileFragmentViewModel) {
@@ -55,8 +63,6 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
                 }
             }
         }
-        Debuger.printMsg(this, "onCreate  1  " + viewModel)
-        Debuger.printMsg(this, "onCreate  2  " + viewModel.onItemClicked)
     }
 
 }
