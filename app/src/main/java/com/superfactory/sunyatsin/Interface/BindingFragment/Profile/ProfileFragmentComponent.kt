@@ -72,9 +72,10 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                 .asBitmap()
                                 .centerCrop()
                                 .placeholder(R.drawable.note_icon)
-                                .listener(object :RequestListener<String,Bitmap>{
+                                .listener(object : RequestListener<String, Bitmap> {
                                     override fun onException(e: Exception?, model: String?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
-                                        Debuger.printMsg("onLoadFailed = %s", e?.message?.toString()?:"null")
+                                        Debuger.printMsg("onLoadFailed = %s", e?.message?.toString()
+                                                ?: "null")
                                         return false;
                                     }
 
@@ -196,15 +197,10 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                                 if (va == null) return@toView
                                                 component.viewModel?.notificationTotal?.value = va
                                             }
-                                    var first=true
-                                    component.bindSelf{it.dragging }.toView(that){
-                                        _,value->
-                                        if (value!=null&&!value){
-                                            if (first){
-                                                first=false
-                                            }else{
-                                                viewModelSafe.notificationTotalObserva.setStableValue(0)
-                                            }
+
+                                    component.bindSelf { it.notificationTotal }.toView(that) { _, value ->
+                                        if (value != null) {
+                                            viewModelSafe.notificationTotalObserva.setStableValue(value)
                                         }
                                     }
                                     val v = component.createViewWithBindings(AnkoContextImpl(that.context,
@@ -221,7 +217,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                     }
                                     v.apply {
                                         onClick {
-                                            //                                            viewModel?.notificationTotalObserva?.value = 5
+//                                            viewModel?.notificationTotalObserva?.value = 5
 //                                            viewModel?.profileNo?.value = "12530"
                                             Debuger.printMsg(this, "invoke  2  ")
                                             this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(component.viewModelSafe.index, component.viewModelSafe)
