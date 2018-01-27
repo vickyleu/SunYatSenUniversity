@@ -111,16 +111,23 @@ class ObservableFieldImpl<T : Any?>(private var _value: T, private val configure
 
     override val defaultValue = _value
 
+    private var internalFlags=false
     override var value = _value
         set(value) {
-            checkConfigured()
-            field = value
-            name= convertValue(value)
-            notifyChange()
+            if (!internalFlags){
+                checkConfigured()
+                field = value
+                name= convertValue(value)
+                notifyChange()
+            }else{
+                field = value
+            }
         }
 
      fun setStableValue(stableVar:T) {
-         _value=stableVar
+         internalFlags=true
+         value=stableVar
+         internalFlags=false
      }
 
 

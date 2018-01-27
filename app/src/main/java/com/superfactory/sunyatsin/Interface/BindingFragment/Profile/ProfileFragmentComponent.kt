@@ -196,6 +196,17 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                                 if (va == null) return@toView
                                                 component.viewModel?.notificationTotal?.value = va
                                             }
+                                    var first=true
+                                    component.bindSelf{it.dragging }.toView(that){
+                                        _,value->
+                                        if (value!=null&&!value){
+                                            if (first){
+                                                first=false
+                                            }else{
+                                                viewModelSafe.notificationTotalObserva.setStableValue(0)
+                                            }
+                                        }
+                                    }
                                     val v = component.createViewWithBindings(AnkoContextImpl(that.context,
                                             that, false))
                                     v.backgroundResource = R.drawable.profile_recycle_shader
@@ -283,8 +294,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                 textView {
                     id = R.id.right_text
                     bindSelf(ProfileFragmentItemViewModel::description) { it.description }.toView(this) { view, value ->
-                        Debuger.printMsg(this, "value:" + value)
-                        view.setText(value)
+                        view.text = value
                     }
                 }.lparams {
                     width = wrapContent
