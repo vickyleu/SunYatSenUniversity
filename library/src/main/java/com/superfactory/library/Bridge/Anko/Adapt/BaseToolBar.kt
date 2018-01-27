@@ -116,6 +116,31 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
             }
 
             if (viewModel != null && viewModel is ToolbarBindingModel) {
+
+                val model=(viewModel as? ToolbarBindingModel)
+                if (model?.leftView?.value == null &&
+                        model?.leftIcon?.value != null) {
+                    val property = model.leftIcon
+                    property.value = property.value
+                } else if (model?.leftView?.value != null) {
+                    val property = model.leftView
+                    property.value = property.value
+                }
+
+                if (model?.rightView?.value == null &&
+                        model?.rightIcon?.value != null) {
+                    val property = model.rightIcon
+                    property.value = property.value
+                } else if (model?.rightView?.value != null) {
+                    val property = model.rightView
+                    property.value = property.value
+                }
+
+                if (model?.backgroundColor?.value != null) {
+                    val property = model.backgroundColor
+                    property.value = property.value
+                }
+
                 bindSelf {
                     (it as ToolbarBindingModel).backgroundColor
                 }.toView(this) { view, value ->
@@ -230,25 +255,6 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         }
                     }
                 }
-
-                if ((viewModel as? ToolbarBindingModel)?.leftView?.value == null &&
-                        (viewModel as? ToolbarBindingModel)?.leftIcon?.value != null) {
-                    val property = (viewModel as? ToolbarBindingModel)?.leftIcon!!
-                    property.value = property.defaultValue
-                } else if ((viewModel as? ToolbarBindingModel)?.leftView?.value != null) {
-                    val property = (viewModel as? ToolbarBindingModel)?.leftView!!
-                    property.value = property.defaultValue
-                }
-
-                if ((viewModel as? ToolbarBindingModel)?.rightView?.value == null &&
-                        (viewModel as? ToolbarBindingModel)?.rightIcon?.value != null) {
-                    val property = (viewModel as? ToolbarBindingModel)?.rightIcon!!
-                    property.value = property.defaultValue
-                } else if ((viewModel as? ToolbarBindingModel)?.rightView?.value != null) {
-                    val property = (viewModel as? ToolbarBindingModel)?.rightView!!
-                    property.value = property.defaultValue
-                }
-
 
             }
         }
