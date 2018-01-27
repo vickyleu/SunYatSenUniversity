@@ -1,5 +1,6 @@
 package com.superfactory.library.Bridge.Anko.ViewExtensions
 
+import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import com.superfactory.library.Bridge.Anko.Adapt.FragmentContainer
@@ -26,6 +27,7 @@ fun FrameLayout.setFragmentPosition(container: FragmentContainer?) {
 //        transaction.addToBackStack()
     } else {
             if (fragment.motherFuckerTags == null) {
+                fragment.arguments= Bundle()
                 transaction.add(this.id, fragment,fragment.javaClass.simpleName + fragment.hashCode())
 //                transaction.addToBackStack()
             }else{

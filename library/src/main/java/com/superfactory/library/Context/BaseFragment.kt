@@ -2,6 +2,7 @@ package com.superfactory.library.Context
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.ActionBar
@@ -25,7 +26,8 @@ import org.jetbrains.anko.AnkoContextImpl
  * @Date 2018年01月18日  11:11:39
  * @ClassName 这里输入你的类名(或用途)
  */
-abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V, A> {
+abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V, A> {
+    private val TAG = javaClass.simpleName
     protected var toolbar: BaseToolBar<A, V>? = null
     protected var toolbarAnko: View? = null
 
@@ -35,18 +37,18 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
     protected var showToolBar: Boolean = false
 
 
-    private val toolbarClickEvent= observable(View.OnClickListener {
-        if (it!=null){
+    private val toolbarClickEvent = observable(View.OnClickListener {
+        if (it != null) {
             performToolbarClickEvent(it)
         }
     })
 
-    protected open fun performToolbarClickEvent(view: View){
-        when(view.id){
-            R.id.toolbar_left->{
+    protected open fun performToolbarClickEvent(view: View) {
+        when (view.id) {
+            R.id.toolbar_left -> {
 
             }
-            R.id.toolbar_right->{
+            R.id.toolbar_right -> {
 
             }
         }
@@ -60,7 +62,15 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view: View? = null
-        viewModel = newViewModel().apply {
+//        if (savedInstanceState!=null){
+//            viewModel=savedInstanceState.getParcelable(TAG)
+//        }else {
+        if (viewModel == null) {
+            viewModel = newViewModel()
+        } else {
+            Debuger.printMsg(this, TAG)
+        }
+        viewModel!!.apply {
             if (showToolBar) {
                 val tc = newToolBarComponent(this)
                 if (tc != null) {
@@ -68,7 +78,7 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
                         toolbarAnko = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
                         notifyChanges()
                     } as BaseToolBar<A, V>
-                    toolbar!!.eventDelegate=toolbarClickEvent
+                    toolbar!!.eventDelegate = toolbarClickEvent
                 }
             }
             layout = newComponent(this).apply {
@@ -94,7 +104,7 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
             }
         }
 
-        if (viewModel!=null){
+        if (viewModel != null) {
             onLoadedModel(viewModel!!)
         }
         if (view == null) {
@@ -133,7 +143,7 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
         if (behavior != null)
             return
         val layout = this.view
-        if (layout == null||!(layout is ViewGroup)) return
+        if (layout == null || !(layout is ViewGroup)) return
         if (layout.layoutParams != null && layout.layoutParams is CoordinatorLayout.LayoutParams) {
             val params = layout.layoutParams as CoordinatorLayout.LayoutParams
             behavior = params.behavior
@@ -159,7 +169,7 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
         if (behavior == null)
             return
         val layout = this.view
-        if (layout == null||!(layout is ViewGroup)) return
+        if (layout == null || !(layout is ViewGroup)) return
         if (layout.layoutParams != null && layout.layoutParams is CoordinatorLayout.LayoutParams) {
             val params = layout.layoutParams as CoordinatorLayout.LayoutParams
             params.behavior = behavior
@@ -167,6 +177,79 @@ abstract class BaseFragment<V, A : BaseFragment<V, A>> : Fragment(), BaseAnko<V,
             behavior = null
 //            layout.removeView()
         }
+    }
+
+
+    private var savedState: Bundle? = null
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState);
+        // Restore State Here
+        if (!restoreStateFromArguments()) {
+            // First Time running, Initialize something here
+            onFirstTimeLaunched()
+        }
+    }
+
+    private fun onFirstTimeLaunched() {
+
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState);
+        // Save State Here
+        saveStateToArguments();
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView();
+        // Save State Here
+        saveStateToArguments();
+    }
+
+    private fun saveStateToArguments() {
+        if (view != null)
+            savedState = saveState()
+        if (savedState != null) {
+            val b = arguments ?: return
+            b.putBundle("internalSavedViewState" + javaClass.hashCode(), savedState)
+        }
+    }
+
+    private fun restoreStateFromArguments(): Boolean {
+        val b = arguments ?: return false
+        savedState = b.getBundle("internalSavedViewState" + javaClass.hashCode())
+        if (savedState != null) {
+            restoreState()
+            return true;
+        }
+        return false;
+    }
+
+
+    /////////////////////////////////
+// 取出状态数据
+/////////////////////////////////
+    private fun restoreState() {
+        if (savedState != null) {
+            viewModel = savedState?.getParcelable(TAG)
+            onRestoreState(savedState!!)
+        }
+    }
+
+    private fun onRestoreState(savedState: Bundle) {
+
+    }
+
+    //////////////////////////////
+// 保存状态数据
+//////////////////////////////
+    private fun saveState(): Bundle {
+        val state = Bundle()
+        state.putParcelable(TAG, viewModel)
+        return state
     }
 
 }

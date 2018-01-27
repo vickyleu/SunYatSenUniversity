@@ -1,5 +1,7 @@
 package com.superfactory.library.Bridge.Anko
 
+import android.os.Parcel
+import android.os.Parcelable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -32,8 +34,11 @@ interface Observable {
     fun removeOnPropertyChangedCallback(callback: PropertyChangedCallback)
 }
 
-open class BaseObservable : Observable {
+open class BaseObservable() : Observable , Parcelable {
     @Transient private var mCallbacks: PropertyChangeRegistry? = null
+
+    constructor(parcel: Parcel) : this() {
+    }
 
     @Synchronized
     override fun addOnPropertyChangedCallback(callback: PropertyChangedCallback) {
@@ -54,6 +59,24 @@ open class BaseObservable : Observable {
      */
     @Synchronized
     fun notifyChange(property: KProperty<*>? = null) = mCallbacks?.notifyChange(this, property)
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<BaseObservable> {
+        override fun createFromParcel(parcel: Parcel): BaseObservable {
+            return BaseObservable(parcel)
+        }
+
+        override fun newArray(size: Int): Array<BaseObservable?> {
+            return arrayOfNulls(size)
+        }
+    }
 }
 
 interface ObservableField<T> : Observable {

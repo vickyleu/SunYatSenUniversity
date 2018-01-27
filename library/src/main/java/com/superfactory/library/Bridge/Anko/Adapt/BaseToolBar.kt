@@ -3,6 +3,7 @@ package com.superfactory.library.Bridge.Anko.Adapt
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Parcelable
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
@@ -226,19 +227,19 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
         }
     }
 
-    fun <V, A : BaseActivity<V, A>> initToolbar(owner: A, toolbar: Toolbar) {
+    fun <V:Parcelable, A : BaseActivity<V, A>> initToolbar(owner: A, toolbar: Toolbar) {
         owner.setSupportActionBar(toolbar)
     }
 
-    fun <V, A : BaseFragment<V, A>> initToolbar(owner: A, toolbar: Toolbar) {
+    fun <V:Parcelable, A : BaseFragment<V, A>> initToolbar(owner: A, toolbar: Toolbar) {
         (owner.activity as BaseActivity<*, *>).setSupportActionBar(toolbar)
     }
 
-    fun <V, A : BaseActivity<V, A>> getActionBar(owner: A): ActionBar? {
+    fun <V:Parcelable, A : BaseActivity<V, A>> getActionBar(owner: A): ActionBar? {
         return owner.supportActionBar
     }
 
-    fun <V, A : BaseFragment<V, A>> getActionBar(owner: A): ActionBar? {
+    fun <V:Parcelable, A : BaseFragment<V, A>> getActionBar(owner: A): ActionBar? {
         return (owner.activity as BaseActivity<*, *>).getSupportActionBar()
     }
 

@@ -3,6 +3,9 @@ package com.superfactory.library.Context
 
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.os.Bundle
+import android.os.Parcelable
+import android.os.PersistableBundle
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -22,7 +25,8 @@ import org.jetbrains.anko.AnkoContextImpl
  * @Date 2018年01月17日  11:35:47
  * @ClassName 这里输入你的类名(或用途)
  */
-abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), BaseAnko<V, A> {
+abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatActivity(), BaseAnko<V, A> {
+    private val TAG = javaClass.simpleName
     protected var toolbar: BaseToolBar<A, V>? = null
     protected var toolbarAnko: View? = null
     private var layout: BindingComponent<A, V>? = null
@@ -62,7 +66,13 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        viewModel = newViewModel().apply {
+//        if (savedInstanceState!=null){
+//            viewModel=savedInstanceState.getParcelable(TAG)
+//        }else{
+        if (viewModel == null) {
+            viewModel = newViewModel()
+        }
+        viewModel!!.apply {
             if (showToolBar) {
                 val tc = newToolBarComponent(this)
                 if (tc != null) {
@@ -140,4 +150,15 @@ abstract class BaseActivity<V, A : BaseActivity<V, A>> : AppCompatActivity(), Ba
             super.attachBaseContext(newBase)
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState?.putParcelable(TAG, viewModel)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        viewModel = savedInstanceState?.getParcelable(TAG)
+        super.onRestoreInstanceState(savedInstanceState)
+    }
+
 }

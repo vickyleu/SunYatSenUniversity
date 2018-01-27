@@ -8,6 +8,7 @@ package com.superfactory.library.Bridge.Anko.Adapt
  * @ClassName 这里输入你的类名(或用途)
  */
 interface BaseAnko<V, A> {
+
     fun ankoToolBar(viewModel: V): BaseToolBar<V, A>?
 
     fun onLoadedModel(viewModel: V)

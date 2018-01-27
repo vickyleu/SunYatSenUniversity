@@ -58,7 +58,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     borderColor = Color.WHITE
                     borderWidth = dip(2)
                     imageResource = R.drawable.note_icon
-                    bindSelf(ProfileFragmentViewModel::avatar) { viewModel?.avatar }.toView(this) { view, value ->
+                    bindSelf(ProfileFragmentViewModel::avatar) { it.avatar }.toView(this) { view, value ->
                         //                        Glide.with(context).load(value).into(view)
                         Glide.with(context).load(value)
                                 .asBitmap()
@@ -110,56 +110,38 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                             leftPadding = dip(10)
                             val bindAdapter = AutoBindAdapter { viewGroup, _ ->
                                 AnkoViewHolder(viewGroup, ProfileFragmentItemComponent())
-                            }.assignment { holder, item, position ->
-                               when (position) {
-                                    0 -> {
-                                        holder. component.bindSelf(ProfileFragmentViewModel::profileNo) {
-                                            viewModel?.profileNo
-                                        }.toView(holder.itemView) { _, value ->
-                                                    if (value?.value != null) {
-                                                        holder. component.viewModel?.description = value.value
-                                                    }
-                                                }
-                                    }
-                                    1 -> {
-                                        holder.component.bindSelf(ProfileFragmentViewModel::employ) {
-                                            viewModel?.employ
-                                        }.toView(holder.itemView) { _, value ->
-                                                    if (value?.value != null) {
-                                                        holder. component.viewModel?.description = value.value
-                                                    }
-                                                }
-                                    }
-                                    2 -> {
-                                        holder. component.bindSelf(ProfileFragmentViewModel::station) {
-                                            viewModel?.station
-                                        }.toView(holder.itemView) { _, value ->
-                                                    if (value?.value != null) {
-                                                        holder. component.viewModel?.description = value.value
-                                                    }
-                                                }
-                                    }
-                                    3 -> {
-                                        holder.component.bindSelf(ProfileFragmentViewModel::position) {
-                                            viewModel?.position
-                                        }.toView(holder.itemView) { _, value ->
-                                                    if (value?.value != null) {
-                                                        holder. component.viewModel?.description = value.value
-                                                    }
-                                                }
-                                    }
-                                }
                             }.apply {
-                                        onItemClickListener = { i, viewModel, _ ->
-                                            this@ProfileFragmentComponent.viewModel?.profileName?.value = "校长"
-                                            this@ProfileFragmentComponent.viewModel?.profileNo?.value = "校长"
-                                            this@ProfileFragmentComponent.viewModel?.employ?.value = "校长"
-                                            this@ProfileFragmentComponent.viewModel?.station?.value = "校长"
-                                            this@ProfileFragmentComponent.viewModel?.position?.value = "校长"
-                                            this@ProfileFragmentComponent.viewModelSafe.avatar.value = "http://img.blog.csdn.net/20160912142824244?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"
-                                            Debuger.printMsg(this, "invoke  1  " + this@ProfileFragmentComponent.viewModelSafe.onItemClicked)
+                                onItemClickListener = { i, viewModel, _ ->
+                                    viewModelSafe.profileName.value = "校长"
+                                    viewModelSafe.profileNo.value = "192551"
+                                    viewModelSafe.employ.value = "刑侦重案部"
+                                    viewModelSafe.station.value = "侦查组"
+                                    viewModelSafe.position.value = "侦查员"
+                                    viewModelSafe.avatar.value = "http://img.blog.csdn.net/20160912142824244?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center"
+                                    Debuger.printMsg(this, "invoke  1  " + viewModelSafe.onItemClicked)
 //                                    this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+                                }
+                            }.assignment { holder, _, position ->
+                                        when (position) {
+                                            0 -> {
+                                                Debuger.printMsg(this, "0" + viewModel?.profileNo?.value)
+                                                holder.component.viewModel?.description = viewModel?.profileNo?.value ?: ""
+                                            }
+                                            1 -> {
+                                                Debuger.printMsg(this, "1")
+                                                holder.component.viewModel?.description = viewModel?.employ?.value ?: ""
+                                            }
+                                            2 -> {
+                                                Debuger.printMsg(this, "2")
+                                                holder.component.viewModel?.description = viewModel?.station?.value ?: ""
+                                            }
+                                            3 -> {
+                                                Debuger.printMsg(this, "3")
+                                                holder.component.viewModel?.description = viewModel?.position?.value ?: ""
+                                            }
+
                                         }
+                                        holder.component.notifyChanges()
                                     }
                             bindSelf(ProfileFragmentViewModel::profileItemsList) { it.profileItemsList }
                                     .toView(this) { _, value ->
@@ -359,21 +341,26 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                             })
                 }
                 register.assignmentHolder { holder, item, position ->
-                    when (position) {
-                        0 -> {
-                            bindSelf(ProfileFragmentViewModel::profileNo)
-                        }
-                        1 -> {
-                            bindSelf(ProfileFragmentViewModel::employ)
-                        }
-                        2 -> {
-                            bindSelf(ProfileFragmentViewModel::station)
-                        }
-                        3 -> {
-                            bindSelf(ProfileFragmentViewModel::position)
-                        }
-
-                    }
+                    //                    when (position) {
+//                        0 -> {
+//                            register.bindSelf(ProfileFragmentViewModel::profileNo)
+//                            {it.description}.toText(tv)
+//
+//                        }
+//                        1 -> {
+//                            register.bindSelf(ProfileFragmentViewModel::employ)
+//                            {it.description}.toText(tv)
+//                        }
+//                        2 -> {'
+//                            register.bindSelf(ProfileFragmentViewModel::station)
+//                            {it.description}.toText(tv)
+//                        }
+//                        3 -> {
+//                            register.bindSelf(ProfileFragmentViewModel::position)
+//                            {it.description}.toText(tv)
+//                        }
+//
+//                    }
 
 
                 }

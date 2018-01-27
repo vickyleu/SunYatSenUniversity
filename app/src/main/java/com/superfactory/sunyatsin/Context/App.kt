@@ -14,7 +14,7 @@ import com.superfactory.sunyatsin.Communication.RetrofitImpl
  * @Date 2018年01月17日  11:02:05
  * @ClassName 这里输入你的类名(或用途)
  */
-class App : BaseApp() {
+open class App : BaseApp() {
 
     override fun buglyID(): String {
         return "13686de2a3"

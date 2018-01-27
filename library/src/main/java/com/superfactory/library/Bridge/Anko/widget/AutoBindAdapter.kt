@@ -16,9 +16,8 @@ class AutoBindAdapter<Data>(private val createExp: (ViewGroup, Int) -> BaseViewH
 
     override fun onBindViewHolder(holder: BaseViewHolder<Data>,
                                   item: Data, position: Int) {
-        holder.bind(item)
         holder.component.assignmentHolder?.invoke(holder, item, position)
         assignment?.invoke(holder, item, position)
-        holder.component.bindAll()
+        holder.bind(item)
     }
 }
