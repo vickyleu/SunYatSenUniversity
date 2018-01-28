@@ -11,4 +11,14 @@
     <item name="appbar" type="id" />
     <item name="toolbar_right" type="id" />
     <item name="toolbar_left" type="id" />
+
+
+    <item name="dialog_view" type="id" />
+    <item name="lv_circularring" type="id" />
+    <item name="lcv_circleload" type="id" />
+    <item name="rdv_right" type="id" />
+    <item name="wv_wrong" type="id" />
+    <item name="loading_text" type="id" />
+
+
 </resources>

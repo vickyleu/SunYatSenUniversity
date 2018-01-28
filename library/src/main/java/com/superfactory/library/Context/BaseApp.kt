@@ -17,7 +17,10 @@ import com.superfactory.library.BuildConfig
 import com.superfactory.library.Communication.RetrofitCenter
 import com.superfactory.library.R
 import com.tencent.bugly.crashreport.CrashReport
+import com.xiasuhuei321.loadingdialog.manager.StyleManager
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 import kotlin.reflect.KClass
+
 
 //import cn.nekocode.emojix.Emojix
 
@@ -53,6 +56,11 @@ abstract class BaseApp : Application() {
                 }
             }
 
+            val s = StyleManager()
+            //在这里调用方法设置s的属性
+            //code here...
+            s.Anim(false).repeatTime(0).contentSize(-1).intercept(true)
+            LoadingDialog.initStyle(s)
         }
 
 

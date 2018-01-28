@@ -315,14 +315,14 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     }
                 }
 
-                bindSelf(ProfileFragmentItemViewModel::dragging) { it }.toView(this) { _, item ->
+                bindSelf(ProfileFragmentItemViewModel::dragging) { it }.toView(this) { view, item ->
                     @Suppress("LABEL_NAME_CLASH")
                     if (item == null || !viewModelSafe.dragging.value || viewModelSafe.badge.value == null) return@toView
                     viewModelSafe.dragging.value = false
                     viewModelSafe.badge.value?.setBadgeNumber(0)
                     takeApi(RetrofitImpl::class)?.eraseBadge(
                             "eraseBadge/index.html")?.senderAsync(
-                            String::class, this@ProfileFragmentItemComponent)
+                            String::class, this@ProfileFragmentItemComponent,view.context)
                 }
 
                 bindSelf(ProfileFragmentItemViewModel::notificationTotal) {
