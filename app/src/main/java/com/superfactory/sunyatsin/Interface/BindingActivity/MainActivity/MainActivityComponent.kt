@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.drawable.*
 import android.graphics.drawable.shapes.OvalShape
 import android.graphics.drawable.shapes.RectShape
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.getDrawable
 import android.view.Gravity
 import android.view.View
@@ -64,7 +65,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                 frameLayout {
                     id = R.id.ctrl_shadow
                     backgroundDrawable = getDrawable(ctx, R.drawable.gradient_shape)//getGradientDrawable(ctx)
-                    visibility=View.INVISIBLE
+                    visibility = View.INVISIBLE
                 }.lparams {
                     topMargin = -(buttonHeight * dividerPercent).toInt()
                     setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
@@ -101,7 +102,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                         id = R.id.ctrl_text
                         isDuplicateParentStateEnabled = true
                         backgroundColor = Color.TRANSPARENT
-                        setTextColor(ctx.resources.getColorStateList(ctrl_text_selector))
+                        setTextColor(ContextCompat.getColorStateList(ctx, ctrl_text_selector))
                         text = ctx.getString(R.string.note_create)
                         textSize = 12f
                     }.lparams {
@@ -132,7 +133,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                         text = ctx.getString(R.string.note_controller)
                         textSize = 12f
                         isDuplicateParentStateEnabled = true
-                        setTextColor(ctx.resources.getColorStateList(ctrl_text_selector))
+                        setTextColor(ContextCompat.getColorStateList(ctx, ctrl_text_selector))
                     }.lparams {
                         width = wrapContent
                         height = wrapContent
@@ -178,7 +179,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                         backgroundColor = Color.TRANSPARENT
                         textSize = 12f
                         isDuplicateParentStateEnabled = true
-                        setTextColor(ctx.resources.getColorStateList(ctrl_text_selector))
+                        setTextColor(ContextCompat.getColorStateList(ctx, ctrl_text_selector))
                     }.lparams {
                         width = wrapContent
                         height = wrapContent
@@ -281,8 +282,8 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
         val elementsCentral = StateListDrawable()
 
 
-        val press = ctx.resources.getDrawable(R.drawable.pressed) as BitmapDrawable
-        val normal = ctx.resources.getDrawable(R.drawable.normal) as BitmapDrawable
+        val press = ContextCompat.getDrawable(ctx, R.drawable.pressed) as BitmapDrawable
+        val normal = ContextCompat.getDrawable(ctx, R.drawable.normal) as BitmapDrawable
         press.getPaint().setAntiAlias(true)
         normal.getPaint().setAntiAlias(true)
 

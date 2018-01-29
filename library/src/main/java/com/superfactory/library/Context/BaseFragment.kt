@@ -18,7 +18,9 @@ import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Debuger
 import com.superfactory.library.R
+import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.AnkoContextImpl
+import org.jetbrains.anko.topPadding
 
 
 /**
@@ -38,7 +40,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
 
     protected var showToolBar: Boolean = false
 
-    open var extra: Bundle? =null
+    open var extra: Bundle? = null
         get() = arguments?.getBundle(FragmentContainer.TAG)
 
     private val toolbarClickEvent = observable(View.OnClickListener {
@@ -77,8 +79,8 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
         if (viewModel == null) return null
         viewModel!!.apply {
             if (showToolBar) {
-                val abc=this as ToolbarBindingModel
-                Debuger.printMsg(this,abc.rightIcon.value?.toString()?:"空么")
+                val abc = this as ToolbarBindingModel
+                Debuger.printMsg(this, abc.rightIcon.value?.toString() ?: "空么")
                 val tc = newToolBarComponent(this)
                 if (tc != null) {
                     toolbar = tc.apply {
@@ -106,6 +108,9 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
                     }
                 } else {
                     view = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
+                    if (ifNeedTopPadding()){
+                        openTopPadding()
+                    }
                 }
                 notifyChanges()
             }
@@ -118,6 +123,14 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
             throw RuntimeException(javaClass.simpleName + "创建view为空")
         }
         return view;
+    }
+
+    protected open fun ifNeedTopPadding(): Boolean {
+        return true
+    }
+
+    private fun openTopPadding() {
+        view?.topPadding = StatusBarUtil.getStatusBarHeight(view?.context!!)
     }
 
     protected open fun setToolbarAttribution(toolbarBinder: BaseToolBar<A, V>, actionBar: ActionBar?, toolbarView: Toolbar) {
@@ -247,7 +260,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
     private fun restoreState() {
         if (savedState != null) {
             viewModel = savedState?.getParcelable(TAG)
-            if (viewModel!=null&&viewModel is ToolbarBindingModel){
+            if (viewModel != null && viewModel is ToolbarBindingModel) {
                 //todo
             }
             Debuger.printMsg(this, "savedState:" + viewModel?.toString() ?: "null")

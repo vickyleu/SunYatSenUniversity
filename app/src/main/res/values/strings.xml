@@ -5,4 +5,18 @@
     <string name="note_controller">日志</string>
     <string name="profile_controller">我的</string>
     <string name="profile_name">用户名</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <!--<string name="prompt_email">Email</string>-->
+    <!--<string name="prompt_password">Password (optional)</string>-->
+    <!--<string name="action_sign_in">Sign in or register</string>-->
+    <!--<string name="action_sign_in_short">Sign in</string>-->
+    <string name="error_invalid_phone">手机号码格式不正确</string>
+    <string name="error_invalid_password">密码太短</string>
+    <string name="error_incorrect_password">密码不正确</string>
+    <string name="error_field_required">必填</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
 </resources>

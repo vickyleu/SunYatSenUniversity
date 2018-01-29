@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.Parcelable
-import android.os.PersistableBundle
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -15,7 +14,9 @@ import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.R
+import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.AnkoContextImpl
+import org.jetbrains.anko.topPadding
 
 
 /**
@@ -62,6 +63,8 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
 
     }
 
+    private lateinit var root: View
+
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -92,7 +95,7 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
 
             layout = newComponent(this).apply {
                 if (toolbarAnko != null) {
-                    createView(
+                    root = createView(
                             AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, true),
                             toolbarAnko,
                             this@BaseActivity,
@@ -106,7 +109,10 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
                                 toolbarAnko!! as Toolbar)
                     }
                 } else {
-                    createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, true))
+                    root = createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, true))
+                    if (ifNeedTopPadding()){
+                        openTopPadding()
+                    }
                 }
                 // 经测试在代码里直接声明透明状态栏更有效
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
@@ -120,6 +126,14 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
         if (viewModel != null) {
             onLoadedModel(viewModel!!)
         }
+    }
+
+    protected open fun ifNeedTopPadding(): Boolean {
+        return true
+    }
+
+    private fun openTopPadding() {
+        root.topPadding = StatusBarUtil.getStatusBarHeight(root.context)
     }
 
 

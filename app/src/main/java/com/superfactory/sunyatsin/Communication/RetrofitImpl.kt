@@ -20,14 +20,19 @@ interface RetrofitImpl {
 
 
     @GET("{path}")
-    fun eraseBadge(@Path("path")path: String): Observable<ResponseBody>
+    fun eraseBadge(@Path("path") path: String): Observable<ResponseBody>
 
-    @GET("user/login")
-    fun login(@Query("username") username: String, @Query("password") password: String): Call<ResponseBody>
+
+    @Headers("Content-Type: application/json",
+            "Accept: application/json")//需要添加头
+    @POST("login?__ajax")
+    fun login(@Query("username") username: String, @Query("password") password: String,
+              @Query("mobileLogin") mobileLogin: Boolean): Call<ResponseBody>
+
+
 
     @POST
     fun getMovieDetails(path: String, filters: Map<String, String>): Call<Any>
-
 
 
 //    takeApi(RetrofitImpl::class)?.eraseBadge(

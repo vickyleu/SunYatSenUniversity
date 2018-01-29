@@ -34,7 +34,7 @@ import kotlin.reflect.KClass
 /**
  * 同步请求,会阻塞线程
  */
-inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAwait(component: BindingComponent<*, *>,ctx:Context): D? {
+inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAwait(component: BindingComponent<*, *>, ctx: Context): D? {
     val exec = Executors.newSingleThreadExecutor()
     var any: D? = null
     exec.submit {
@@ -60,7 +60,7 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAwait(component: Bi
 /**
  * 异步请求
  */
-inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>,ctx:Context) {
+inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context) {
     val viewModel = component.viewModel
     this.enqueue(object : Callback<T> {
         /**
@@ -91,7 +91,7 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass
  * 同步请求,会阻塞线程
  */
 
-inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAwait(component: BindingComponent<*, *>,ctx:Context): D? {
+inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAwait(component: BindingComponent<*, *>, ctx: Context): D? {
     try {
         return subscribeOn(Schedulers.newThread())//请求在新的线程中执行
                 .observeOn(Schedulers.io())         //请求完成后在io线程中执行
@@ -121,7 +121,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAwait(compone
     return null
 }
 
-inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(component: BindingComponent<*, *>,ctx:Context): List<D>? {
+inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(component: BindingComponent<*, *>, ctx: Context): List<D>? {
     try {
         return subscribeOn(Schedulers.newThread())//请求在新的线程中执行
                 .observeOn(Schedulers.io())         //请求完成后在io线程中执行
@@ -152,7 +152,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(com
     return null
 }
 
-inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(clazz: KClass<D>, component: BindingComponent<*, *>,ctx:Context) {
+inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context) {
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
             .observeOn(Schedulers.io())         //请求完成后在io线程中执行
             .map(object : Func1<T, List<D>?> {
@@ -217,7 +217,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(cla
 /**
  * 异步请求
  */
-inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>,ctx:Context) {
+inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context) {
     val ld = LoadingDialog(ctx)
     ld.setLoadingText("加载中")
             .setSuccessText("加载成功")//显示加载成功时的文字
@@ -261,7 +261,8 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                 override fun onNext(t: D?) {
                     //请求成功
                     //在你代码中合适的位置调用反馈
-                    ld.loadSuccess()
+                    if (t == null)
+                        ld.loadSuccess()
                 }
 
                 /**

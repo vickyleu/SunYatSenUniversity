@@ -165,7 +165,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                     .toView(this) { _, value ->
                                         bindAdapter.setItemsList(value)
                                     }
-                            layoutManager = LinearLayoutManager(context)!!
+                            layoutManager = LinearLayoutManager(context)
                             addItemDecoration(getLineDividerItemDecoration(1, ContextCompat.getColor(context, R.color.gray)))
                             adapter = bindAdapter
                         }.lparams {

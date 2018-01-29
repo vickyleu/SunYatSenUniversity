@@ -5,7 +5,12 @@ import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Context.BaseActivity
+
 class MainActivity : BaseActivity<MainActivityViewModel, MainActivity>() {
+
+    override fun ifNeedTopPadding(): Boolean {
+        return false
+    }
 
     override fun newViewModel() = MainActivityViewModel(intent, supportFragmentManager)
 

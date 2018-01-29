@@ -25,7 +25,7 @@ open class App : BaseApp() {
     }
 
     override fun specifyBaseUrl(): String? {
-        return "http://www.baidu.com/"
+        return "http://120.76.219.199:18080/jeeplus/a/"
     }
 
 
