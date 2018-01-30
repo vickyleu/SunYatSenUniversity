@@ -18,9 +18,13 @@ import kotlin.reflect.KClass
 /**
  * 异步请求
  */
-inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, SE : Any, T2 : ResponseBody> RetrofitImpl.
-        senderAsyncMultiple(fun0: ((RetrofitImpl) -> Observable<T1>),clazz: KClass<D1>, component: BindingComponent<*, *>, ctx: Context,
-                            clazzB: KClass<D2>, crossinline fun1: ((RetrofitImpl) -> Observable<T2?>)) {
-    fun0(this).senderAsyncMultiple(clazz,component,ctx,clazzB,fun1(this),)
-            //.senderAsyncMultiple(clazz, component, ctx, clazzB, fun1)
+inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : ResponseBody> RetrofitImpl.
+        senderAsyncMultiple(fun0: ((RetrofitImpl) -> Observable<T1>),clazzA: KClass<D1>,
+                            component: BindingComponent<*, *>, ctx: Context,
+                            crossinline fun1: ((RetrofitImpl,D1) -> Observable<T2>?),clazzB: KClass<D2> ) {
+    val fun2:(D1)->Observable<T2>? ={
+        d1 ->
+        fun1(this,d1)
+    }
+    fun0(this).senderAsyncMultiple(clazzA,component,ctx,clazzB,fun2)
 }

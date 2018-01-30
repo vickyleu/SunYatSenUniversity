@@ -5,6 +5,7 @@ import android.text.TextUtils
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.PostModel
+import com.superfactory.sunyatsin.Struct.Base.BaseStruct
 import com.superfactory.sunyatsin.Struct.LoginStruct
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 
@@ -17,18 +18,13 @@ import com.xiasuhuei321.loadingdialog.view.LoadingDialog
  */
 class LoginActivityViewModel : BaseObservable() {
     val tips = observable("")
-    override fun postResult(model: Any): PostModel {
-        if (model is LoginStruct) {
-            return PostModel(model.success, model.msg)
-        }
-        return super.postResult(model)
-    }
 
-    override fun postFailure(error: String?) {
-        if (!TextUtils.isEmpty(error)) {
-            tips.value = error!!
-        }
-    }
+//    override fun postResult(model: Any): PostModel {
+//        if (model is LoginStruct) {
+//            return PostModel(model.success, model.msg)
+//        }
+//        return super.postResult(model)
+//    }
 
     override fun startRequest(ld: LoadingDialog) {
         ld.setLoadingText("加载中")
@@ -41,9 +37,46 @@ class LoginActivityViewModel : BaseObservable() {
                 .show()
     }
 
-    override fun async(model: Any?) {
-        if ((model as?LoginStruct)?.success == true) {
-            ownerNotifier?.invoke(0, model)
+    override fun requestFailed(ld: LoadingDialog, error: Throwable?) {
+        if (!TextUtils.isEmpty(error?.message)) {
+            tips.value = error?.message!!
         }
     }
+
+    override fun requestSuccess(ld: LoadingDialog, t: Any?) {
+//        ld.close()
+        if (t==null){
+            ld.close()
+            tips.value = "无法解析数据"
+            return
+        }
+        if (t is LoginStruct){
+            if (t.success){
+                ld.close()
+                ownerNotifier?.invoke(0, t)
+            }else{
+                ld.close()
+                tips.value =t.errorCode?:"未知错误"
+            }
+        }else if (t is BaseStruct){
+            if (t.success){
+                ld.close()
+                ownerNotifier?.invoke(0, t)
+            }else{
+                ld.close()
+                tips.value =t.errorCode?:"未知错误"
+            }
+        }
+    }
+
+//    override fun appendingRequest(ld: LoadingDialog, t: Any?) {
+//        super.appendingRequest(ld, t)
+//    }
+
+
+//    override fun async(model: Any?) {
+//        if ((model as?LoginStruct)?.success == true) {
+//            ownerNotifier?.invoke(0, model)
+//        }
+//    }
 }

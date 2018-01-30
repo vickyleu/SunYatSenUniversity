@@ -1,7 +1,6 @@
 package com.superfactory.sunyatsin.Communication
 
 import okhttp3.ResponseBody
-import retrofit2.Call
 import retrofit2.http.*
 import rx.Observable
 
@@ -14,14 +13,8 @@ import rx.Observable
  */
 interface RetrofitImpl {
 
-    @FormUrlEncoded
-    @POST("upcoming")
-    fun getList(@Field("value") value: String): Observable<ResponseBody>
-
-
     @GET("{path}")
     fun eraseBadge(@Path("path") path: String): Observable<ResponseBody>
-
 
     @Headers("Content-Type: application/json",
             "Accept: application/json")//需要添加头
@@ -31,31 +24,7 @@ interface RetrofitImpl {
 
     @Headers("Content-Type: application/json",
             "Accept: application/json")//需要添加头
-    @POST("sys/user/infoData;JSESSIONID=21a65e45a78f415c9c21f9376df9c1d3?__ajax=true&mobileLogin=true")
-    fun loginBefore(@Query("username") username: String, @Query("password") password: String,
-              @Query("mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
-
-
-
-
-    @POST
-    fun getMovieDetails(path: String, filters: Map<String, String>): Call<Any>
-
-
-//    takeApi(RetrofitImpl::class)?.eraseBadge(
-//    "eraseBadge/index.html")?.senderAsync(
-//    String::class, this@ProfileFragmentItemComponent)
-//
-//    takeApi(RetrofitImpl::class)?.eraseBadge(
-//    "eraseBadge/index.html")?.senderListAsync(
-//    String::class, this@ProfileFragmentItemComponent)
-//
-////                        var any2: String? = takeApi(RetrofitImpl::class)?.eraseBadge(
-////                                "eraseBadge/index.html")?.senderAwait(
-////                                this@ProfileFragmentItemComponent)
-////
-////                        var any3: List<String>? = takeApi(RetrofitImpl::class)?.eraseBadge(
-////                                "eraseBadge/index.html")?.senderListAwait(
-////                                this@ProfileFragmentItemComponent)
+    @GET("sys/user/infoData;JSESSIONID={JSESSIONID}?__ajax=true&mobileLogin={mobileLogin}")
+    fun loginBefore(@Query("JSESSIONID") JSESSIONID: String, @Query("mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
 }

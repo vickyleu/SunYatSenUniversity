@@ -10,6 +10,12 @@ import com.superfactory.sunyatsin.Struct.Base.BaseStruct
  * @Date 2018年01月30日  14:05:16
  * @ClassName 这里输入你的类名(或用途)
  */
-data class LoginStruct(val body: LoginBody?) : BaseStruct()
+data class LoginStruct(val body: LoginBody?) : BaseStruct(){
+    open fun isValidLogin():Boolean{
+        if (success&&body?.JSESSIONID!=null)
+            return true
+        else return false
+    }
+}
 
 data class LoginBody(val username: String?, val name: String, val mobileLogin: Boolean?, val JSESSIONID: String) : BaseBody()

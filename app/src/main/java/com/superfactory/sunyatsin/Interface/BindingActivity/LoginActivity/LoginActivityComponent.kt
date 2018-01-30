@@ -34,14 +34,14 @@ import com.superfactory.library.Bridge.Anko.DslView.OnTextCleanListener
 import com.superfactory.library.Bridge.Anko.DslView.autoCompleteCleanUpTextView
 import com.superfactory.library.Bridge.Anko.DslView.cleanUpEditText
 import com.superfactory.library.Bridge.Anko.ViewExtensions.hideInput
-import com.superfactory.library.Communication.Sender.senderAsync
-import com.superfactory.library.Communication.Sender.senderAsyncMultiple
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Graphics.Adapt.SimpleWatcher
 import com.superfactory.library.Graphics.AutoCompleteCleanUpTextView
 import com.superfactory.library.Graphics.CleanUpEditText
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
+import com.superfactory.sunyatsin.Communication.senderAsyncMultiple
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.Base.BaseStruct
 import com.superfactory.sunyatsin.Struct.LoginStruct
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
@@ -174,204 +174,185 @@ class LoginActivityComponent(viewModel: LoginActivityViewModel) : BindingCompone
         var account: AutoCompleteCleanUpTextView? = null
         var passwd: CleanUpEditText? = null
         coordinatorLayout {
-//            scrollView {
-                //            isFocusable = true
+            //            scrollView {
+            //            isFocusable = true
 //            isFocusableInTouchMode = true
-                verticalLayout {
-                    isFocusable = true
-                    isFocusableInTouchMode = true
-                    imageView {
-                        backgroundColor = Color.TRANSPARENT
-                        imageResource = R.drawable.launch_icon
-                        scaleType = ImageView.ScaleType.FIT_XY
-                    }.lparams {
-                        width = wrapContent
-                        height = wrapContent
-                        topMargin = dip(55)
-                        bottomMargin = dip(45)
-                        setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
-                    }
+            verticalLayout {
+                isFocusable = true
+                isFocusableInTouchMode = true
+                imageView {
+                    backgroundColor = Color.TRANSPARENT
+                    imageResource = R.drawable.launch_icon
+                    scaleType = ImageView.ScaleType.FIT_XY
+                }.lparams {
+                    width = wrapContent
+                    height = wrapContent
+                    topMargin = dip(55)
+                    bottomMargin = dip(45)
+                    setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
+                }
 
-                    textInputLayout {
-                        account = autoCompleteCleanUpTextView {
-                            id = R.id.account
-                            hint = "请输入您的账号"
-                            textSize = 14f
-                            singleLine = true
-                            bottomPadding = dip(20)
-                            compoundDrawablePadding = dip(30)
-                            backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.text_underline)
-                            maxLength = 20
-                            imeOptions = EditorInfo.IME_ACTION_NEXT
-                            setRightClick(object : OnTextCleanListener {
-                                override fun onClean() {
-                                    requestFocus()
-                                }
-                            })
-                            onClick {
+                textInputLayout {
+                    account = autoCompleteCleanUpTextView {
+                        id = R.id.account
+                        hint = "请输入您的账号"
+                        textSize = 14f
+                        singleLine = true
+                        bottomPadding = dip(20)
+                        compoundDrawablePadding = dip(30)
+                        backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.text_underline)
+                        maxLength = 20
+                        imeOptions = EditorInfo.IME_ACTION_NEXT
+                        setRightClick(object : OnTextCleanListener {
+                            override fun onClean() {
                                 requestFocus()
                             }
+                        })
+                        onClick {
+                            requestFocus()
+                        }
 //                        inputType = EditorInfo.TYPE_CLASS_PHONE
-                            inputType = EditorInfo.TYPE_CLASS_TEXT
-                            setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.avatar_icon), null, null, null)
-                            layoutParams = LinearLayout.LayoutParams(matchParent, wrapContent)
-                            setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
-                                if (id == EditorInfo.IME_NULL || id == EditorInfo.IME_ACTION_NEXT) {
-                                    if (isValidSize(5)) {
-                                        passwd!!.requestFocus()
-                                        return@OnEditorActionListener true
-                                    } else {
+                        inputType = EditorInfo.TYPE_CLASS_TEXT
+                        setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.avatar_icon), null, null, null)
+                        layoutParams = LinearLayout.LayoutParams(matchParent, wrapContent)
+                        setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
+                            if (id == EditorInfo.IME_NULL || id == EditorInfo.IME_ACTION_NEXT) {
+                                if (isValidSize(5)) {
+                                    passwd!!.requestFocus()
+                                    return@OnEditorActionListener true
+                                } else {
 //                                    if (isValidSize(11)) {
 //                                        error = "手机号码格式不正确"
 //                                    }else{
 //                                        error="手机号码长度过短"
 //                                    }
-                                        error = "账号太短"
-                                        Thread({
-                                            this.post {
-                                                this.requestFocus()
-                                            }
-                                        }).start()
-                                    }
-                                }
-                                return@OnEditorActionListener false
-                            })
-                            addTextChangedListener(object : SimpleWatcher() {
-                                /**
-                                 * This method is called to notify you that, within `s`,
-                                 * the `count` characters beginning at `start`
-                                 * have just replaced old text that had length `before`.
-                                 * It is an error to attempt to make changes to `s` from
-                                 * this callback.
-                                 */
-                                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                                    viewModel?.tips?.value = ""
-                                    if (s?.length ?: 0 > 0)
-                                        populateAutoComplete(ui.owner, this@autoCompleteCleanUpTextView)
-                                }
-                            })
-                        }
-                    }.lparams {
-                        width = matchParent
-                        height = wrapContent
-                    }
-
-                    textInputLayout {
-                        passwd = cleanUpEditText {
-                            hint = "请输入您的密码"
-                            textSize = 14f
-                            maxLength = 20
-                            singleLine = true
-                            bottomPadding = dip(20)
-                            compoundDrawablePadding = dip(30)
-                            backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.text_underline)
-                            imeOptions = EditorInfo.IME_ACTION_DONE
-                            setRightClick(object : OnTextCleanListener {
-                                override fun onClean() {
-                                    if (account!!.isValidSize(5)) {
-//                                if (account!!.isValidPhoneNumber()) {
-                                        requestFocus()
-                                    } else {
-                                        account!!.requestFocus()
-                                    }
-                                }
-                            })
-                            onClick {
-                                if (account!!.isValidSize(5)) {
-//                            if (account!!.isValidPhoneNumber()) {
-                                    account!!.clearFocus()
-                                    isFocusable = true
-                                    isFocusableInTouchMode = true
-//
-                                    requestFocus()
-                                    val imm = this@cleanUpEditText.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                                    imm.toggleSoftInputFromWindow(windowToken, 0, 0)
-                                } else {
-                                    clearFocus()
-                                    isFocusable = false
-                                    isFocusableInTouchMode = false
+                                    error = "账号太短"
                                     Thread({
-                                        post {
-                                            account!!.requestFocus()
-                                            isFocusable = true
+                                        this.post {
+                                            this.requestFocus()
                                         }
                                     }).start()
                                 }
                             }
-                            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                            setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.passwd_icon), null, null, null)
-                            layoutParams = LinearLayout.LayoutParams(matchParent, wrapContent)
-                            setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
-                                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                                    attemptLogin(account!!, passwd!!)
-                                    return@OnEditorActionListener true
-                                }
-                                return@OnEditorActionListener false
-                            })
-                            addTextChangedListener(object : SimpleWatcher() {
-                                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                                    viewModel?.tips?.value = ""
-                                }
-                            })
-                        }
-                    }.lparams {
-                        width = matchParent
-                        height = wrapContent
+                            return@OnEditorActionListener false
+                        })
+                        addTextChangedListener(object : SimpleWatcher() {
+                            /**
+                             * This method is called to notify you that, within `s`,
+                             * the `count` characters beginning at `start`
+                             * have just replaced old text that had length `before`.
+                             * It is an error to attempt to make changes to `s` from
+                             * this callback.
+                             */
+                            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                                viewModel?.tips?.value = ""
+                                if (s?.length ?: 0 > 0)
+                                    populateAutoComplete(ui.owner, this@autoCompleteCleanUpTextView)
+                            }
+                        })
                     }
+                }.lparams {
+                    width = matchParent
+                    height = wrapContent
+                }
 
-
-                    textView {
-                        textColor = Color.RED
-                        textSize = 12f
-                        visibility = View.INVISIBLE
-                        bindSelf(LoginActivityViewModel::tips) { it.tips.value }.toView(this) { view, value ->
-                            view.text = value
-                            view.visibility = if (TextUtils.isEmpty(value)) View.INVISIBLE else View.VISIBLE
-                            if (!TextUtils.isEmpty(value)) {
-                                Snackbar.make(view, value!!, LENGTH_SHORT).show()
+                textInputLayout {
+                    passwd = cleanUpEditText {
+                        hint = "请输入您的密码"
+                        textSize = 14f
+                        maxLength = 20
+                        singleLine = true
+                        bottomPadding = dip(20)
+                        compoundDrawablePadding = dip(30)
+                        backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.text_underline)
+                        imeOptions = EditorInfo.IME_ACTION_DONE
+                        setRightClick(object : OnTextCleanListener {
+                            override fun onClean() {
+                                if (account!!.isValidSize(5)) {
+//                                if (account!!.isValidPhoneNumber()) {
+                                    requestFocus()
+                                } else {
+                                    account!!.requestFocus()
+                                }
+                            }
+                        })
+                        onClick {
+                            if (account!!.isValidSize(5)) {
+//                            if (account!!.isValidPhoneNumber()) {
+                                account!!.clearFocus()
+                                isFocusable = true
+                                isFocusableInTouchMode = true
+//
+                                requestFocus()
+                                val imm = this@cleanUpEditText.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                                imm.toggleSoftInputFromWindow(windowToken, 0, 0)
+                            } else {
+                                clearFocus()
+                                isFocusable = false
+                                isFocusableInTouchMode = false
+                                Thread({
+                                    post {
+                                        account!!.requestFocus()
+                                        isFocusable = true
+                                    }
+                                }).start()
                             }
                         }
-                    }.lparams {
-                        width = wrapContent
-                        height = wrapContent
-                        gravity = Gravity.CENTER_HORIZONTAL
+                        inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                        setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, R.drawable.passwd_icon), null, null, null)
+                        layoutParams = LinearLayout.LayoutParams(matchParent, wrapContent)
+                        setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
+                            if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                                attemptLogin(account!!, passwd!!)
+                                return@OnEditorActionListener true
+                            }
+                            return@OnEditorActionListener false
+                        })
+                        addTextChangedListener(object : SimpleWatcher() {
+                            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                                viewModel?.tips?.value = ""
+                            }
+                        })
                     }
+                }.lparams {
+                    width = matchParent
+                    height = wrapContent
+                }
 
-                    button {
-                        text = "登录"
-                        textSize = 17f
-                        padding = 0
-                        setTextColor(ContextCompat.getColorStateList(context, R.color.button_text_state))
-                        backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.button_submit_selector)
-                        onClick {
-                            attemptLogin(account!!, passwd!!)
+
+                textView {
+                    textColor = Color.RED
+                    textSize = 12f
+                    visibility = View.INVISIBLE
+                    bindSelf(LoginActivityViewModel::tips) { it.tips.value }.toView(this) { view, value ->
+                        view.text = value
+                        view.visibility = if (TextUtils.isEmpty(value)) View.INVISIBLE else View.VISIBLE
+                        if (!TextUtils.isEmpty(value)) {
+                            Snackbar.make(view, value!!, LENGTH_SHORT).show()
                         }
-                        isFocusable = true
-                        requestFocus()
-                    }.lparams {
-                        width = matchParent
-                        height = wrapContent
-                        minimumWidth = 0
-                        minimumHeight = 0
                     }
-                    lparams {
-                        width = matchParent
-                        height = matchParent
-                        leftPadding = dip(10)
-                        rightPadding = dip(10)
-                        gravity = Gravity.CENTER_HORIZONTAL
-                    }
+                }.lparams {
+                    width = wrapContent
+                    height = wrapContent
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }
 
-                    populateAutoComplete(ui.owner, account!!)
-
-                    onTouch { v, event ->
-                        account!!.clearFocus()
-                        passwd!!.clearFocus()
-                        isFocusable = true
-                        isFocusableInTouchMode = true
-                        requestFocus()
-                        this@verticalLayout.hideInput(owner)
+                button {
+                    text = "登录"
+                    textSize = 17f
+                    padding = 0
+                    setTextColor(ContextCompat.getColorStateList(context, R.color.button_text_state))
+                    backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.button_submit_selector)
+                    onClick {
+                        attemptLogin(account!!, passwd!!)
                     }
+                    isFocusable = true
+                    requestFocus()
+                }.lparams {
+                    width = matchParent
+                    height = wrapContent
+                    minimumWidth = 0
+                    minimumHeight = 0
                 }
                 lparams {
                     width = matchParent
@@ -381,15 +362,34 @@ class LoginActivityComponent(viewModel: LoginActivityViewModel) : BindingCompone
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
 
+                populateAutoComplete(ui.owner, account!!)
+
                 onTouch { v, event ->
                     account!!.clearFocus()
                     passwd!!.clearFocus()
                     isFocusable = true
                     isFocusableInTouchMode = true
                     requestFocus()
-                    this@coordinatorLayout.hideInput(owner)
+                    this@verticalLayout.hideInput(owner)
                 }
             }
+            lparams {
+                width = matchParent
+                height = matchParent
+                leftPadding = dip(10)
+                rightPadding = dip(10)
+                gravity = Gravity.CENTER_HORIZONTAL
+            }
+
+            onTouch { v, event ->
+                account!!.clearFocus()
+                passwd!!.clearFocus()
+                isFocusable = true
+                isFocusableInTouchMode = true
+                requestFocus()
+                this@coordinatorLayout.hideInput(owner)
+            }
+        }
 //        }
     }
 
@@ -435,10 +435,20 @@ class LoginActivityComponent(viewModel: LoginActivityViewModel) : BindingCompone
             focusView?.requestFocus()
         } else {
 
-            takeApi(account.context, RetrofitImpl::class)?.login(account.text.toString(), passwd.text.toString(),true)?.
-                    senderAsyncMultiple(LoginStruct::class,
-                    this@LoginActivityComponent,
-                    account.context)
+            takeApi(account.context, RetrofitImpl::class)?.senderAsyncMultiple(
+                    { retrofitImpl -> retrofitImpl.login(account.text.toString(), passwd.text.toString(), true) },
+                    LoginStruct::class,
+                    this, account.context,
+                    { retrofitImpl, loginStruct ->
+                         if (loginStruct.isValidLogin()) retrofitImpl.loginBefore(loginStruct.body!!.JSESSIONID, true)
+                         else null },
+                    BaseStruct::class
+            )
+
+//            takeApi(account.context, RetrofitImpl::class)?.login(account.text.toString(), passwd.text.toString(),true)?.
+//                    senderAsyncMultiple(LoginStruct::class,
+//                    this@LoginActivityComponent,
+//                    account.context)
             // Show a progress spinner, and kick off a background task to
         }
     }

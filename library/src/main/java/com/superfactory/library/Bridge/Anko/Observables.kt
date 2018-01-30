@@ -1,5 +1,6 @@
 package com.superfactory.library.Bridge.Anko
 
+import android.graphics.Color
 import android.os.Parcel
 import android.os.Parcelable
 import com.superfactory.library.Bridge.Model.PostModel
@@ -39,7 +40,7 @@ interface Observable {
 open class BaseObservable() : Observable, Parcelable {
     @Transient
     private var mCallbacks: PropertyChangeRegistry? = null
-    open var ownerNotifier: ((Int,Any?) -> Unit)? = null
+    open var ownerNotifier: ((Int, Any?) -> Unit)? = null
 
     constructor(parcel: Parcel) : this() {
     }
@@ -82,18 +83,28 @@ open class BaseObservable() : Observable, Parcelable {
         }
     }
 
-    open fun postResult(model: Any): PostModel {
-        return PostModel(true,null)
-    }
-
-    open fun async(model: Any?) {
-    }
-
-    open fun postFailure(error: String?) {
-
-    }
     open fun startRequest(ld: LoadingDialog) {
+        ld.setLoadingText("加载中")
+                .setSuccessText("加载成功")//显示加载成功时的文字
+                //.setFailedText("加载失败")
+                .setInterceptBack(false)
+                .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
+                .setRepeatCount(0)
+                .setDrawColor(Color.parseColor("#f8f8f8"))
+                .show()
+    }
 
+    open fun appendingRequest(ld: LoadingDialog, model: Any?) {
+
+    }
+
+    open  fun requestSuccess(ld: LoadingDialog, model: Any?) {
+        ld.loadSuccess()
+    }
+
+    open  fun requestFailed(ld: LoadingDialog, error: Throwable?) {
+        ld.setFailedText(error?.message?:"异常退出")
+        ld.loadFailed()
     }
 
 

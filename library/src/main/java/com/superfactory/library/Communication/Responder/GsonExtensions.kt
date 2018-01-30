@@ -22,7 +22,9 @@ import com.superfactory.library.Debuger
 //@Throws(Exception::class)
 inline fun <reified T> Gson.fromJson(json: String): T? = try {
     Debuger.printMsg(this, json)
-    this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+    val model = this.fromJson<T>(json, object : TypeToken<T>() {}.type)
+    Debuger.printMsg(this, model ?: "null")
+    model
 } catch (e: Exception) {
     e.printStackTrace()
     null
@@ -30,7 +32,9 @@ inline fun <reified T> Gson.fromJson(json: String): T? = try {
 //@Throws(Exception::class)
 inline fun <reified T : Any> Gson.fromJsonList(json: String): List<T>? = try {
     Debuger.printMsg(this, json)
-    this.fromJson<List<T>>(json, object : TypeToken<List<T>>() {}.type)
+    val model = this.fromJson<List<T>>(json, object : TypeToken<List<T>>() {}.type)
+    Debuger.printMsg(this, model ?: "null")
+    model
 } catch (e: Exception) {
     e.printStackTrace()
     null
