@@ -2,6 +2,7 @@ package com.superfactory.library.Communication.Responder
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.superfactory.library.Debuger
 
 
 /**
@@ -20,13 +21,15 @@ import com.google.gson.reflect.TypeToken
 
 //@Throws(Exception::class)
 inline fun <reified T> Gson.fromJson(json: String): T? = try {
+    Debuger.printMsg(this, json)
     this.fromJson<T>(json, object : TypeToken<T>() {}.type)
 } catch (e: Exception) {
     e.printStackTrace()
     null
 }
-
-inline fun <reified T:Any> Gson.fromJsonList(json: String): List<T>? = try {
+//@Throws(Exception::class)
+inline fun <reified T : Any> Gson.fromJsonList(json: String): List<T>? = try {
+    Debuger.printMsg(this, json)
     this.fromJson<List<T>>(json, object : TypeToken<List<T>>() {}.type)
 } catch (e: Exception) {
     e.printStackTrace()

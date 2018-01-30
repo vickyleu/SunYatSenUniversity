@@ -3,12 +3,16 @@ package com.superfactory.library.Communication.Sender
 import android.content.Context
 import android.graphics.Color
 import com.google.gson.GsonBuilder
+import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.BindingComponent
+import com.superfactory.library.Bridge.Model.PostModel
 import com.superfactory.library.Communication.Responder.fromJson
 import com.superfactory.library.Communication.Responder.fromJsonList
 import com.superfactory.library.Debuger
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 import okhttp3.ResponseBody
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -61,7 +65,23 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAwait(component: Bi
  * 异步请求
  */
 inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context) {
+    senderAsync(clazz, component, ctx, true)
+}
+
+inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, flags: Boolean) {
     val viewModel = component.viewModel
+    val ld = LoadingDialog(ctx)
+    try {
+        ld.setLoadingText("加载中")
+                .setSuccessText("加载成功")//显示加载成功时的文字
+                //.setFailedText("加载失败")
+                .setInterceptBack(false)
+                .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
+                .setRepeatCount(0)
+                .setDrawColor(Color.parseColor("#f8f8f8"))
+                .show()
+    } catch (e: Exception) {
+    }
     this.enqueue(object : Callback<T> {
         /**
          * Invoked for a received HTTP response.
@@ -74,18 +94,132 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass
             try {
                 val model: D? = GsonBuilder().setLenient().create().fromJson(json = response?.body()?.string()?.trim()
                         ?: "")
-                Debuger.printMsg(this, model ?: "null")
-            } catch (e: IOException) {
+                Debuger.printMsg("tags", model ?: "null")
+                parseModel(model)
+            } catch (e: Exception) {
                 e.printStackTrace()
+                if (flags) {
+                    try {
+                        ld.loadFailed()
+                    } catch (e: Exception) {
+                    }
+                } else {
+                    (viewModel as? BaseObservable)?.postFailure("内部异常")
+                }
+            }
+        }
+
+        private fun parseModel(model: D?) {
+            if (model == null) {
+                if (flags) {
+                    try {
+                        ld.setFailedText("数据解析失败")
+                        ld.loadFailed()
+                    } catch (e: Exception) {
+                    }
+
+                } else {
+                    try {
+                        ld.close()
+                    } catch (e: Exception) {
+                    }
+
+                    (viewModel as? BaseObservable)?.postFailure("数据解析失败")
+                }
+            } else {
+                if (viewModel != null) {
+                    val observable = viewModel as? BaseObservable
+                    if (observable != null) {
+                        val postModel: PostModel? = observable.postResult(model)
+                        if (postModel != null) {
+                            if (postModel.success) {
+                                try {
+                                    ld.loadSuccess()
+                                } catch (e: Exception) {
+                                }
+                                observable.doAsync {
+                                    try {
+                                        uiThread {
+                                            ld.close()
+                                        }
+                                    } catch (e: Exception) {
+                                    }
+                                    observable.async(model)
+                                }
+                            } else {
+                                if (flags) {
+                                    try {
+                                        ld.setFailedText(postModel.error)
+                                        ld.loadFailed()
+                                    } catch (e: Exception) {
+                                    }
+
+                                } else {
+                                    try {
+                                        ld.close()
+                                    } catch (e: Exception) {
+                                    }
+
+                                    observable.postFailure(postModel.error)
+                                }
+                            }
+                        } else {
+                            if (flags) {
+                                try {
+                                    ld.loadFailed()
+                                } catch (e: Exception) {
+                                }
+
+                            } else {
+                                try {
+                                    ld.close()
+                                } catch (e: Exception) {
+                                }
+
+                                observable.postFailure("未知错误")
+                            }
+                        }
+                    } else {
+                        try {
+                            ld.loadSuccess()
+                        } catch (e: Exception) {
+                        }
+
+                    }
+
+                } else
+                    try {
+                        ld.loadSuccess()
+                    } catch (e: Exception) {
+                    }
+
             }
         }
 
         override fun onFailure(call: Call<T>, t: Throwable) {
             Debuger.printMsg(this, t.message ?: "null")
+            try {
+                if (flags) {
+                    try {
+                        ld.loadFailed()
+                    } catch (e: Exception) {
+                    }
+
+                } else {
+                    try {
+                        ld.close()
+                    } catch (e: Exception) {
+                    }
+
+                    (viewModel as? BaseObservable)?.postFailure("内部异常")
+                }
+            } catch (e: Exception) {
+            }
         }
     })
     Debuger.printMsg(this, "开始异步")
 }
+
 
 /**
  * 同步请求,会阻塞线程
@@ -214,20 +348,106 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(cla
     Debuger.printMsg(this, "开始异步")
 }
 
+
 /**
  * 异步请求
  */
+inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, SE : Any, T2 : ResponseBody> Observable<T1>.
+        senderAsyncMultiple(clazz: KClass<D1>, component: BindingComponent<*, *>, ctx: Context, impl: Observable<T2>?,
+                            clazzB: KClass<D2>, crossinline fun1: ((SE, D1?) -> Observable<T2?>)) {
+    val ld = LoadingDialog(ctx)
+    (component.viewModel as? BaseObservable)?.startRequest(ld)
+    if (impl != null) {
+        this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
+                .observeOn(Schedulers.io())
+                .map(object : Func1<T1, D1?> {
+                    override fun call(t: T1): D1? {
+                        try {
+                            val model: D1? = GsonBuilder().setLenient().create().fromJson(json = t.string()?.trim()
+                                    ?: "")
+                            Debuger.printMsg(this, model ?: "null")
+                            return model
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                        return null
+                    }
+                })
+                .flatMap(object : Func1<D1?, Observable<T2?>?> {
+                    override fun call(t: D1?): Observable<T2?>? {
+                        if (t == null) return null
+                        return fun1(impl, t)
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())//请求在新的线程中执行
+                .observeOn(Schedulers.io())
+                .map(object : Func1<T2?, D2?> {
+                    override fun call(t: T2?): D2? {
+                        try {
+                            val model: D2? = GsonBuilder().setLenient().create().fromJson(json = t?.string()?.trim()
+                                    ?: "")
+                            Debuger.printMsg(this, model ?: "null")
+                            return model
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                        return null
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
+                .subscribe(object : Subscriber<D2?>() {
+                    /**
+                     * Provides the Observer with a new item to observe.
+                     *
+                     *
+                     * The [Observable] may call this method 0 or more times.
+                     *
+                     *
+                     * The `Observable` will not call this method again after it calls either [.onCompleted] or
+                     * [.onError].
+                     *
+                     * @param t
+                     * the item emitted by the Observable
+                     */
+                    override fun onNext(t: D2?) {
+                        //请求成功
+                        //在你代码中合适的位置调用反馈
+                        if (t != null)
+                            ld.loadSuccess()
+                    }
+
+                    /**
+                     * Notifies the Observer that the [Observable] has finished sending push-based notifications.
+                     *
+                     *
+                     * The [Observable] will not call this method if it calls [.onError].
+                     */
+                    override fun onCompleted() {
+                    }
+
+                    /**
+                     * Notifies the Observer that the [Observable] has experienced an error condition.
+                     *
+                     *
+                     * If the [Observable] calls this method, it will not thereafter call [.onNext] or
+                     * [.onCompleted].
+                     *
+                     * @param e
+                     * the exception encountered by the Observable
+                     */
+                    override fun onError(e: Throwable?) {
+                        ld.loadFailed()
+                        //请求失败
+                        Debuger.printMsg(this, e?.message ?: "null")
+                    }
+                })
+
+    }
+}
+
 inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context) {
     val ld = LoadingDialog(ctx)
-    ld.setLoadingText("加载中")
-            .setSuccessText("加载成功")//显示加载成功时的文字
-            //.setFailedText("加载失败")
-            .setInterceptBack(false)
-            .setLoadSpeed(LoadingDialog.Speed.SPEED_ONE)
-            .setRepeatCount(0)
-            .setDrawColor(Color.parseColor("#f8f8f8"))
-            .show()
-
+    (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
             .observeOn(Schedulers.io())         //请求完成后在io线程中执行
             .map(object : Func1<T, D?> {
@@ -261,7 +481,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                 override fun onNext(t: D?) {
                     //请求成功
                     //在你代码中合适的位置调用反馈
-                    if (t == null)
+                    if (t != null)
                         ld.loadSuccess()
                 }
 

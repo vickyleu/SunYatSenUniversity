@@ -1,9 +1,11 @@
 package com.superfactory.library.Bridge.Anko.ViewExtensions
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
 import android.view.View.OnClickListener
+import android.view.inputmethod.InputMethodManager
 import com.superfactory.library.Debuger
 
 fun View.setVisibilityIfNeeded(visibility: Int?) {
@@ -67,5 +69,13 @@ fun View.setClickedIfNecessary(clickListener: OnClickListener?) {
     Debuger.printMsg(this ,"setClickedIfNecessary="+clickListener)
     if (clickListener != null)
         clickListener.onClick(this)
+}
+
+/**
+ * 强制隐藏输入法键盘
+ */
+fun View.hideInput(context: Context) {
+    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
 }
 

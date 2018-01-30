@@ -131,6 +131,10 @@ abstract class BindingComponent<in T, V>
 
 
     fun destroyView() = register.unbindAll()
+    open fun onRequestPermissionsResult(ctx: Activity?,requestCode: Int, permissions: Array<out String>, grantResults: IntArray){
+
+    }
+
 
 
 }

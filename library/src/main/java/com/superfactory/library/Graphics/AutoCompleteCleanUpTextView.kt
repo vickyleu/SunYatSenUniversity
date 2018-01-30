@@ -1,6 +1,9 @@
 package com.superfactory.library.Graphics
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.text.Selection
 import android.text.TextWatcher
@@ -113,8 +116,23 @@ class AutoCompleteCleanUpTextView(context: Context) : AutoCompleteTextView(conte
                     setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], null,
                             null, null) //注意刚开始使用的是setCompoundDrawables方法就没有用，不知道为什么
                 } else {
-                    setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], null,
-                            getResources().getDrawable(R.drawable.auto_clean_up_icon), null);
+                    var right = ContextCompat.getDrawable(context, R.drawable.auto_clean_up_icon)
+                    if (compoundDrawables[0] != null) {
+                        var height = compoundDrawables[0].intrinsicHeight
+                        var originWidth = right.intrinsicWidth
+                        val originHeight = right.intrinsicWidth
+                        val scale = height.toFloat() / originHeight.toFloat()
+                        originWidth =(originWidth.toFloat()* scale).toInt()
+                        // Read your drawable from somewhere
+                        val bitmap = (right as? BitmapDrawable)?.bitmap
+                        if (bitmap != null) {
+                            if (originWidth<=0)originWidth=1
+                            if (height<=0)height=1
+                            // Scale it
+                            right = BitmapDrawable(resources, Bitmap.createScaledBitmap(bitmap, originWidth, height, true))
+                        }
+                    }
+                    setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], null, right, null)
                 }
             }
 
@@ -181,7 +199,7 @@ class AutoCompleteCleanUpTextView(context: Context) : AutoCompleteTextView(conte
              */
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 if (touch_flag < 3)
-                touch_flag++
+                    touch_flag++
                 m = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                 if (isFocused) {
                     m?.showSoftInput(this@AutoCompleteCleanUpTextView, InputMethodManager.SHOW_FORCED);
@@ -203,7 +221,7 @@ class AutoCompleteCleanUpTextView(context: Context) : AutoCompleteTextView(conte
                         cleanUp.onClean()
                     }
                 }
-                if (event?.action==MotionEvent.ACTION_UP){
+                if (event?.action == MotionEvent.ACTION_UP) {
                     touch_flag = 0
                 }
                 if (touch_flag == 2) {

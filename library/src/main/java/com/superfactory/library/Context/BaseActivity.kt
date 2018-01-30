@@ -8,14 +8,18 @@ import android.os.Parcelable
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.TextUtils
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.R
+import com.superfactory.library.Utils.ResourceIdUtil
 import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.AnkoContextImpl
+import org.jetbrains.anko.find
 import org.jetbrains.anko.topPadding
 
 
@@ -50,6 +54,7 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
 
     }
 
+    protected open var binder: BindingComponent<*, *>? = layout
 
     protected var showToolBar: Boolean = false
 
@@ -110,7 +115,7 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
                     }
                 } else {
                     root = createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, true))
-                    if (ifNeedTopPadding()){
+                    if (ifNeedTopPadding()) {
                         openTopPadding()
                     }
                 }
@@ -174,5 +179,28 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
         viewModel = savedInstanceState?.getParcelable(TAG)
         super.onRestoreInstanceState(savedInstanceState)
     }
+
+    override fun onStop() {
+        hideInputMethod()
+        super.onStop()
+    }
+
+    private fun hideInputMethod() {
+        try {
+            val id = ResourceIdUtil.findFocus(this)
+            if (!TextUtils.isEmpty(id)) {
+                var imm: InputMethodManager? = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm!!.hideSoftInputFromWindow(find<View>(ResourceIdUtil.getId(this, id!!)).windowToken, 0)
+                imm = null
+            }
+        } catch (ignored: Exception) {
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        binder?.onRequestPermissionsResult(this,requestCode, permissions, grantResults)
+    }
+
 
 }

@@ -1,9 +1,12 @@
 package com.superfactory.library.Graphics
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.support.design.widget.TextInputEditText
 import android.support.v4.content.ContextCompat
 import android.text.Editable
+import android.text.Selection
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.MotionEvent
@@ -27,7 +30,7 @@ class CleanUpEditText(context: Context) : TextInputEditText(context) {
     private val INDEX_BOTTOM = 3
     private var m: InputMethodManager? = null
     private var mOnClick: OnClickListener? = null
-
+    var maxLength: Int = 0
     override fun setOnClickListener(listener: OnClickListener?) {
         this.mOnClick = listener
     }
@@ -85,12 +88,43 @@ class CleanUpEditText(context: Context) : TextInputEditText(context) {
     init {
         addTextChangedListener(object : TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (maxLength > 0) {
+                    var editable = text
+                    val length = editable.length//原字符串长度
+                    if (length > maxLength) {//如果原字符串长度大于最大长度
+                        var selectEndIndex = Selection.getSelectionEnd(editable);//getSelectionEnd：获取光标结束的索引值
+                        val str = editable.toString()//旧字符串
+                        val newStr = str.substring(0, maxLength);//截取新字符串
+                        setText(newStr)
+                        editable = text
+                        val newLength = editable.length//新字符串长度
+                        if (selectEndIndex > newLength) {//如果光标结束的索引值超过新字符串长度
+                            selectEndIndex = editable.length
+                        }
+                        Selection.setSelection(editable, selectEndIndex);//设置新光标所在的位置
+                    }
+                }
                 if (s?.length == 0) {
                     setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], null,
                             null, null) //注意刚开始使用的是setCompoundDrawables方法就没有用，不知道为什么
                 } else {
-                    setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], null,
-                            ContextCompat.getDrawable(context, R.drawable.auto_clean_up_icon), null);
+                    var right = ContextCompat.getDrawable(context, R.drawable.auto_clean_up_icon)
+                    if (compoundDrawables[0] != null) {
+                        var height = compoundDrawables[0].intrinsicHeight
+                        var originWidth = right.intrinsicWidth
+                        val originHeight = right.intrinsicWidth
+                        val scale = height.toFloat() / originHeight.toFloat()
+                        originWidth =(originWidth.toFloat()* scale).toInt()
+                        // Read your drawable from somewhere
+                        val bitmap = (right as? BitmapDrawable)?.bitmap
+                        if (bitmap != null) {
+                            if (originWidth<=0)originWidth=1
+                            if (height<=0)height=1
+                            // Scale it
+                            right = BitmapDrawable(resources, Bitmap.createScaledBitmap(bitmap, originWidth, height, true))
+                        }
+                    }
+                    setCompoundDrawablesWithIntrinsicBounds(compoundDrawables[0], null, right, null)
                 }
             }
 

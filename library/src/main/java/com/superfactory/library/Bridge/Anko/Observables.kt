@@ -2,6 +2,8 @@ package com.superfactory.library.Bridge.Anko
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.superfactory.library.Bridge.Model.PostModel
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -37,6 +39,7 @@ interface Observable {
 open class BaseObservable() : Observable, Parcelable {
     @Transient
     private var mCallbacks: PropertyChangeRegistry? = null
+    open var ownerNotifier: ((Int,Any?) -> Unit)? = null
 
     constructor(parcel: Parcel) : this() {
     }
@@ -79,6 +82,21 @@ open class BaseObservable() : Observable, Parcelable {
         }
     }
 
+    open fun postResult(model: Any): PostModel {
+        return PostModel(true,null)
+    }
+
+    open fun async(model: Any?) {
+    }
+
+    open fun postFailure(error: String?) {
+
+    }
+    open fun startRequest(ld: LoadingDialog) {
+
+    }
+
+
 }
 
 interface ObservableField<T> : Observable {
@@ -99,36 +117,36 @@ class ObservableFieldImpl<T : Any?>(private var _value: T, private val configure
     : BaseObservable(), ReadWriteProperty<Any?, T>, ObservableField<T>, Parcelable {
 
     private var configured: Boolean = false
-    private var name= convertValue(_value)
+    private var name = convertValue(_value)
 
     private fun convertValue(value: T) = if (value == null) "" else {
-        if((value as Any).javaClass is Parcelable){
+        if ((value as Any).javaClass is Parcelable) {
             Parcelable::class.java.name
-        }else{
+        } else {
             (value as Any).javaClass.superclass.name
         }
     }
 
     override val defaultValue = _value
 
-    private var internalFlags=false
+    private var internalFlags = false
     override var value = _value
         set(value) {
-            if (!internalFlags){
+            if (!internalFlags) {
                 checkConfigured()
                 field = value
-                name= convertValue(value)
+                name = convertValue(value)
                 notifyChange()
-            }else{
+            } else {
                 field = value
             }
         }
 
-     fun setStableValue(stableVar:T) {
-         internalFlags=true
-         value=stableVar
-         internalFlags=false
-     }
+    fun setStableValue(stableVar: T) {
+        internalFlags = true
+        value = stableVar
+        internalFlags = false
+    }
 
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
@@ -229,13 +247,13 @@ fun <T> BaseObservable.observable(initialValue: T) = ObservableFieldImpl(initial
 
 //fun  BaseObservable.observableInt(initialValue: Int) = ObservableFieldImpl(SignedInt(initialValue)) { _, kProperty -> notifyChange(kProperty) }
 
-class SignedInt(var initialValue: Int):Parcelable {
+class SignedInt(var initialValue: Int) : Parcelable {
 
-    constructor(parcel: Parcel,any: Any?) : this(parcel.readInt()) {
+    constructor(parcel: Parcel, any: Any?) : this(parcel.readInt()) {
     }
 
-    fun toInt():Int{
-       return initialValue
+    fun toInt(): Int {
+        return initialValue
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -248,7 +266,7 @@ class SignedInt(var initialValue: Int):Parcelable {
 
     companion object CREATOR : Parcelable.Creator<SignedInt> {
         override fun createFromParcel(parcel: Parcel): SignedInt {
-            return SignedInt(parcel,null)
+            return SignedInt(parcel, null)
         }
 
         override fun newArray(size: Int): Array<SignedInt?> {

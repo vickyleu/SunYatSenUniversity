@@ -15,6 +15,7 @@ import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.Interface.BindingFragment.Note.NoteFragment
 import com.superfactory.sunyatsin.Interface.BindingFragment.Profile.ProfileFragment
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.LoginStruct
 import java.util.*
 
 /**
@@ -62,6 +63,7 @@ class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : To
     private fun selectFragment(fragments: ObservableFieldImpl<FragmentContainer>,
                                fragmentList: ObservableFieldImpl<ArrayList<Fragment>>, selected: Int) {
         val container = fragments.value
+        val loginStruct=intent?.extras?.getParcelable<LoginStruct>("data")
         val b=Bundle()
         b.putString("profileName","校长")
         b.putString("profileNo","192551")

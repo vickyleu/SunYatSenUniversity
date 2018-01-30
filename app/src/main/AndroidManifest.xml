@@ -22,28 +22,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- <activity android:name=".Interface.BindingActivity.SplashActivity.SplashActivity"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
 
-        <!--<activity android:name=".Interface.BindingActivity.SplashActivity.SplashActivity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
-        <activity android:name=".Interface.BindingActivity.LoginActivity.LoginActivity" >
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
+        <activity android:name=".Interface.BindingActivity.LoginActivity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Interface.BindingActivity.MainActivity.MainActivity"/>
-
-
+        <activity android:name=".Interface.BindingActivity.MainActivity.MainActivity" />
         <activity
             android:name=".Interface.BindingActivity.SplashActivity.LoginActivity"
-            android:label="@string/title_activity_login"/>
-
+            android:label="@string/title_activity_login" />
     </application>
 
 </manifest>

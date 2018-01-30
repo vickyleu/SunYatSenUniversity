@@ -36,11 +36,6 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.nestedScrollView
-import android.databinding.adapters.ImageViewBindingAdapter.setImageDrawable
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import android.support.annotation.Nullable
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import java.lang.Exception

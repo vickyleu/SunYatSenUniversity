@@ -27,7 +27,14 @@ interface RetrofitImpl {
             "Accept: application/json")//需要添加头
     @POST("login?__ajax")
     fun login(@Query("username") username: String, @Query("password") password: String,
-              @Query("mobileLogin") mobileLogin: Boolean): Call<ResponseBody>
+              @Query("mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+
+    @Headers("Content-Type: application/json",
+            "Accept: application/json")//需要添加头
+    @POST("sys/user/infoData;JSESSIONID=21a65e45a78f415c9c21f9376df9c1d3?__ajax=true&mobileLogin=true")
+    fun loginBefore(@Query("username") username: String, @Query("password") password: String,
+              @Query("mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+
 
 
 

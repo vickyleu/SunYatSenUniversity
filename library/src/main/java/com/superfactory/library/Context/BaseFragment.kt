@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import com.superfactory.library.Bridge.Anko.Adapt.BaseAnko
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Bridge.Anko.Adapt.FragmentContainer
@@ -108,7 +109,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
                     }
                 } else {
                     view = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
-                    if (ifNeedTopPadding()){
+                    if (ifNeedTopPadding()) {
                         openTopPadding()
                     }
                 }
@@ -197,6 +198,16 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
             behavior = null
 //            layout.removeView()
         }
+    }
+
+    override fun onStop() {
+        try {
+            val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.hideSoftInputFromWindow(view?.windowToken, 0)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        super.onStop()
     }
 
 
