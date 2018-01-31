@@ -36,7 +36,7 @@ abstract class BaseToolBarActivity<V : ToolbarBindingModel, A : BaseToolBarActiv
         }
     }
 
-    override fun performToolbarClickEvent(view: View) {
+    override fun performToolbarClickEvent(view: View, event: BaseToolBar.Companion.ToolbarEvent) {
         when (view.id) {
             R.id.toolbar_left -> {
                 finish()

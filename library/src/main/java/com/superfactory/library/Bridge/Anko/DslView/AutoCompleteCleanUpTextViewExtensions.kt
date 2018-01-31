@@ -16,20 +16,21 @@ import org.jetbrains.anko.custom.ankoView
  */
 
 inline fun ViewManager.cleanUpEditText(): CleanUpEditText = cleanUpEditText() {}
+
 inline fun ViewManager.cleanUpEditText(init: CleanUpEditText.() -> Unit):
         CleanUpEditText {
-    return ankoView(::CleanUpEditText, theme = 0) { init() }
+    return ankoView(::CleanUpEditText, theme = 0) {
+        init().apply {
+            setRightClick(null)
+        }
+    }
 }
+
 inline fun ViewManager.themedCleanUpEditText(theme: Int = 0): CleanUpEditText = themedCleanUpEditText(theme) {}
 inline fun ViewManager.themedCleanUpEditText(theme: Int = 0, init: CleanUpEditText.() ->
 Unit): CleanUpEditText {
     return ankoView(::CleanUpEditText, theme) { init() }
 }
-
-
-
-
-
 
 
 inline fun ViewManager.autoCompleteCleanUpTextView(): AutoCompleteCleanUpTextView = autoCompleteCleanUpTextView() {}

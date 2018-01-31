@@ -25,7 +25,7 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
         toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
         toolbarBindingModel.title.value = "APP"
         val ctx = getStaticsContextRef()
-        toolbarBindingModel.rightIcon.value = ContextCompat.getDrawable(ctx, R.drawable.note_icon)
+        toolbarBindingModel.rightIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)
     }
 
     val avatar = observable("")//头像
@@ -34,7 +34,7 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
     val employ = observable("")//部门
     val station = observable("")//岗位
     val position = observable("")//职务
-    val notificationTotalObserva = observable(3)
+    val notificationTotalObserva = observable(0)
 
     override fun toString(): String {
         return "{notificationTotalObserva:" + notificationTotalObserva.value + "}" + "{" +
@@ -42,15 +42,16 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
     }
 
     val profileItemsList = arrayListOf(
-            ProfileFragmentItemViewModel(0, R.drawable.note_icon, "警号", ""),
-            ProfileFragmentItemViewModel(1, R.drawable.note_icon, "部门", ""),
-            ProfileFragmentItemViewModel(2, R.drawable.note_icon, "岗位", "")
-//            ProfileFragmentItemViewModel(3, R.drawable.note_icon, "职务", "")
+            ProfileFragmentItemViewModel(0, R.drawable.police_number_icon, "警号", ""),
+            ProfileFragmentItemViewModel(1, R.drawable.department_icon, "部门", ""),
+            ProfileFragmentItemViewModel(2, R.drawable.station_icon, "岗位", "")
+//  ,ProfileFragmentItemViewModel(3, R.drawable.duty_icon_ignored, "职务", "")
+
     )
 
     val profileSettingsList = arrayListOf(
-            ProfileFragmentItemViewModel(3, R.drawable.note_icon, "问卷", "", 1),
-            ProfileFragmentItemViewModel(4, R.drawable.note_icon, "设置", "", 1)
+            ProfileFragmentItemViewModel(3, R.drawable.questionnaire_icon, "问卷", "", 1),
+            ProfileFragmentItemViewModel(4, R.drawable.setting_up_icon, "设置", "", 1)
     )
 
     var onItemClicked: ((Int, ProfileFragmentItemViewModel) -> Unit)? = null

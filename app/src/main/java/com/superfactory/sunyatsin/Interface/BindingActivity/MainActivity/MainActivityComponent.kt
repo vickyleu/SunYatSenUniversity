@@ -143,7 +143,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                     }
                     imageView {
                         isDuplicateParentStateEnabled = true
-                        imageResource = R.drawable.note_icon
+                        backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.note_selector)
                         backgroundColor = Color.TRANSPARENT
                         scaleType = ImageView.ScaleType.FIT_XY
                         adjustViewBounds = true
@@ -190,7 +190,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
 
                     imageView {
                         isDuplicateParentStateEnabled = true
-                        imageResource = R.drawable.note_icon
+                        backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.profile_selector)
                         backgroundColor = Color.TRANSPARENT
                         scaleType = ImageView.ScaleType.FIT_XY
                         adjustViewBounds = true
@@ -231,25 +231,9 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
     }
 
     private fun getGradientDrawable(ctx: Context): Drawable? {
-//        <shape xmlns:android="http://schemas.android.com/apk/res/android"
-//        android:shape="rectangle">
-//        <gradient
-//        android:angle="90"
-//        android:endColor="#46cccbcc"
-//        android:startColor="#828b8787" />
-//        <padding
-//        android:bottom="7dp"
-//        android:left="7dp"
-//        android:right="7dp"
-//        android:top="7dp" />
-//        <corners android:radius="8dp" />
-//        </shape>
-
-        val shape = ShapeDrawable(RectShape())
         // 创建渐变的shape drawable
         val colors = intArrayOf(
                 Color.parseColor("#828b8787"),
-//                Color.parseColor("#FF00FF00"),
                 Color.parseColor("#46cccbcc")
         )//分别为开始颜色，中间夜色，结束颜色
         val gd = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors)//创建drawable
@@ -267,35 +251,25 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
         elementTopCircle.paint.color = Color.parseColor("#b4b3b3")
         elementTopCircle.paint.strokeWidth = 1f// dipValue(1, ctx).toFloat()
         elementTopCircle.paint.style = Paint.Style.STROKE
-        elementTopCircle.getPaint().setAntiAlias(true)
+        elementTopCircle.paint.isAntiAlias = true
 
         val elementOutCircle = ShapeDrawable(OvalShape())
         elementOutCircle.paint.color = Color.WHITE
         elementOutCircle.paint.style = Paint.Style.FILL
-        elementOutCircle.getPaint().setAntiAlias(true)
+        elementOutCircle.paint.isAntiAlias = true
 
         val elementBottomCover = ShapeDrawable(RectShape())
         elementBottomCover.paint.color = Color.WHITE
         elementBottomCover.paint.style = Paint.Style.FILL
-        elementBottomCover.getPaint().setAntiAlias(true)
+        elementBottomCover.paint.isAntiAlias = true
 
         val elementsCentral = StateListDrawable()
 
 
-        val press = ContextCompat.getDrawable(ctx, R.drawable.pressed) as BitmapDrawable
-        val normal = ContextCompat.getDrawable(ctx, R.drawable.normal) as BitmapDrawable
-        press.getPaint().setAntiAlias(true)
-        normal.getPaint().setAntiAlias(true)
-
-
-//        val press = ShapeDrawable(OvalShape())
-//        press.paint.color = Color.parseColor("#d051fa")
-//        press.paint.style = Paint.Style.FILL
-//        press.getPaint().setAntiAlias(true)
-//        val normal = ShapeDrawable(OvalShape())
-//        normal.paint.color = Color.parseColor("#1688ff")
-//        normal.paint.style = Paint.Style.FILL
-//        normal.getPaint().setAntiAlias(true)
+        val press = ContextCompat.getDrawable(ctx, R.drawable.new_note_hignlight_icon) as BitmapDrawable
+        val normal = ContextCompat.getDrawable(ctx, R.drawable.new_note_icon) as BitmapDrawable
+        press.paint.isAntiAlias = true
+        normal.paint.isAntiAlias = true
 
         elementsCentral.addState(intArrayOf(android.R.attr.state_pressed), press)
         elementsCentral.addState(intArrayOf(), normal)

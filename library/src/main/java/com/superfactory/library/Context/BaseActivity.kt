@@ -3,6 +3,7 @@ package com.superfactory.library.Context
 
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v7.app.ActionBar
@@ -38,21 +39,45 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
 
     private val toolbarClickEvent = observable(View.OnClickListener {
         if (it != null) {
-            performToolbarClickEvent(it)
+            var event: BaseToolBar.Companion.ToolbarEvent? = null
+            when (it.id) {
+                R.id.toolbar_left -> {
+                    event = BaseToolBar.Companion.ToolbarEvent.LEFT
+                }
+                R.id.toolbar_right -> {
+                    event = BaseToolBar.Companion.ToolbarEvent.RIGHT
+                }
+
+                else -> {
+                    event = BaseToolBar.Companion.ToolbarEvent.NONE
+                }
+            }
+            performToolbarClickEvent(it, event)
         }
     })
 
-    protected open fun performToolbarClickEvent(view: View) {
-        when (view.id) {
-            R.id.toolbar_left -> {
-
-            }
-            R.id.toolbar_right -> {
-
-            }
-        }
+    protected open fun performToolbarClickEvent(view: View, event: BaseToolBar.Companion.ToolbarEvent) {
 
     }
+
+    fun getVerName(): String? {
+        try {
+            return (application as BaseApp).getVerName()
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    fun getVerCode(): Int {
+        try {
+            return (application as BaseApp).getVerCode()
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return -1
+    }
+
 
     protected open var binder: BindingComponent<*, *>? = layout
 
@@ -199,7 +224,7 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        binder?.onRequestPermissionsResult(this,requestCode, permissions, grantResults)
+        binder?.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
     }
 
 

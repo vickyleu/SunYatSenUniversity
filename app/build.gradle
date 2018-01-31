@@ -10,7 +10,7 @@ android {
     }
     defaultConfig {
         applicationId "com.superfactory.sunyatsin"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -19,6 +19,7 @@ android {
                 cppFlags "-frtti -fexceptions"
             }
         }
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -50,6 +51,8 @@ dependencies {
         exclude group: 'com.squareup.retrofit', module: 'converter-gson'
         exclude group: 'com.squareup.retrofit', module: 'adapter-rxjava'
     }
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:support-vector-drawable:26.1.0'
     kapt "com.android.databinding:compiler:3.0.1"
 
 }

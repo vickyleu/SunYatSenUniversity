@@ -27,4 +27,12 @@ interface RetrofitImpl {
     @GET("sys/user/infoData;JSESSIONID={JSESSIONID}?")
     fun loginAfter(@Path("JSESSIONID") JSESSIONID: String, @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
+    @Headers("Content-Type: application/json",
+            "Accept: application/json")//需要添加头
+    @POST("sys/user/savePwd;JSESSIONID={JSESSIONID}?")
+    fun changePsw(@Path("JSESSIONID") JSESSIONID: String,
+                  @Field("oldPassword") oldPassword: String,
+                  @Field("newPassword") newPassword: String,
+                  @Query("__ajax=true&mobileLogin") mobileLogin: Boolean)
+
 }

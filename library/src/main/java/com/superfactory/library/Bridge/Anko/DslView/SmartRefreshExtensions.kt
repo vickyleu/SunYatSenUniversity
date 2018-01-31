@@ -11,7 +11,10 @@ import org.jetbrains.anko.custom.ankoView
 
 @PublishedApi
 internal object `$$Anko$Factories$SmartRefreshLayout` {
-    val SMART_REFRESH_LAYOUT = { ctx: Context -> _SmartRefreshLayout(ctx) }
+    val SMART_REFRESH_LAYOUT = { ctx: Context -> _SmartRefreshLayout(ctx).apply {
+        isEnableRefresh = false
+        isEnableLoadmore = false
+    } }
 }
 
 inline fun ViewManager.refresh(): SmartRefreshLayout = refresh() {}

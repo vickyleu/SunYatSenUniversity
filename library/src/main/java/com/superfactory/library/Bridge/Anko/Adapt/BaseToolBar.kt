@@ -36,6 +36,14 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
  * @ClassName 这里输入你的类名(或用途)
  */
 open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
+    companion object {
+        enum class ToolbarEvent {
+            LEFT,
+            RIGHT,
+            NONE
+        }
+    }
+
     var eventDelegate: ObservableFieldImpl<View.OnClickListener>? = null
     override fun createViewWithBindings(ui: AnkoContext<A>): View = with(ui) {
         themedToolbar_v7(R.style.mToolbarStyle) {
@@ -117,7 +125,7 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
 
             if (viewModel != null && viewModel is ToolbarBindingModel) {
 
-                val model=(viewModel as? ToolbarBindingModel)
+                val model = (viewModel as? ToolbarBindingModel)
                 if (model?.leftView?.value == null &&
                         model?.leftIcon?.value != null) {
                     val property = model.leftIcon

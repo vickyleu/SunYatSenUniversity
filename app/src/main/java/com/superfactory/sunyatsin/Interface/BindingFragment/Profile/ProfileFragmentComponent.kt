@@ -61,12 +61,12 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     circleBackgroundColor = Color.BLUE
                     borderColor = Color.WHITE
                     borderWidth = dip(2)
-                    imageResource = R.drawable.note_icon
+                    imageResource = R.drawable.normal_avatar
                     bindSelf(ProfileFragmentViewModel::avatar) { it.avatar.value }.toView(this) { view, value ->
                         Glide.with(context).load(value)
                                 .asBitmap()
                                 .centerCrop()
-                                .placeholder(R.drawable.note_icon)
+                                .placeholder(R.drawable.normal_avatar)
                                 .listener(object : RequestListener<String, Bitmap> {
                                     override fun onException(e: Exception?, model: String?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
                                         Debuger.printMsg("onLoadFailed = %s", e?.message?.toString()
@@ -128,10 +128,10 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                             val bindAdapter = AutoBindAdapter { viewGroup, _ ->
                                 AnkoViewHolder(viewGroup, ProfileFragmentItemComponent())
                             }.apply {
-                                onItemClickListener = { i, viewModel, _ ->
+                                /*onItemClickListener = { i, viewModel, _ ->
                                     Debuger.printMsg(this, "invoke  1  " + viewModelSafe.onItemClicked)
-                                    this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
-                                }
+//                                    this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+                                }*/
                             }.assignment { holder, _, position ->
                                         when (position) {
                                             0 -> {
@@ -300,7 +300,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                         rightChild.id = R.id.right_arrow
                         val lp = RelativeLayout.LayoutParams(wrapContent, wrapContent)
                         rightChild.backgroundColor = Color.TRANSPARENT
-                        rightChild.imageResource = R.drawable.note_icon
+                        rightChild.imageResource = R.drawable.right_arrow_icon
                         rightChild.scaleType = ImageView.ScaleType.FIT_XY
                         lp.width = dip(20)
                         lp.height = dip(20)

@@ -35,7 +35,7 @@ class CleanUpEditText(context: Context) : TextInputEditText(context) {
         this.mOnClick = listener
     }
 
-    fun setRightClick(cleanUp: OnTextCleanListener) {
+    fun setRightClick(cleanUp: OnTextCleanListener?) {
         setOnTouchListener(object : OnTouchListener {
             var touch_flag = 0
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -68,6 +68,7 @@ class CleanUpEditText(context: Context) : TextInputEditText(context) {
                     if (event.getRawX() >= leftEdgeOfRightDrawable) {
                         error = null
                         setText("")
+                        if (cleanUp!=null)
                         cleanUp.onClean()
                     }
                 }
@@ -111,6 +112,20 @@ class CleanUpEditText(context: Context) : TextInputEditText(context) {
                     var right = ContextCompat.getDrawable(context, R.drawable.auto_clean_up_icon)
                     if (compoundDrawables[0] != null) {
                         var height = compoundDrawables[0].intrinsicHeight
+                        var originWidth = right.intrinsicWidth
+                        val originHeight = right.intrinsicWidth
+                        val scale = height.toFloat() / originHeight.toFloat()
+                        originWidth =(originWidth.toFloat()* scale).toInt()
+                        // Read your drawable from somewhere
+                        val bitmap = (right as? BitmapDrawable)?.bitmap
+                        if (bitmap != null) {
+                            if (originWidth<=0)originWidth=1
+                            if (height<=0)height=1
+                            // Scale it
+                            right = BitmapDrawable(resources, Bitmap.createScaledBitmap(bitmap, originWidth, height, true))
+                        }
+                    }else{
+                        var height = textSize.toInt()
                         var originWidth = right.intrinsicWidth
                         val originHeight = right.intrinsicWidth
                         val scale = height.toFloat() / originHeight.toFloat()

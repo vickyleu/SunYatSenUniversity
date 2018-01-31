@@ -1,10 +1,9 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
-import android.content.Intent
 import android.os.Bundle
 import com.superfactory.library.Context.BaseToolbarFragment
-import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.Interface.BindingActivity.MainActivity.MainActivity
+import com.superfactory.sunyatsin.Interface.BindingActivity.SettingsActivity.SettingsActivity
 import org.jetbrains.anko.support.v4.startActivity
 
 
@@ -31,7 +30,7 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
 
     override fun destroyModel(viewModel: ProfileFragmentViewModel?) {
         super.destroyModel(viewModel)
-        if (viewModel!=null){
+        if (viewModel != null) {
 //            viewModel.ba
         }
     }
@@ -43,15 +42,15 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
                 -1/*"头像"*/ -> {
                     startActivity<MainActivity>()
                 }
-                0/*"警号"*/ -> {
-                    startActivity<MainActivity>()
-                }
-                1/*"部门"*/ -> {
-                    startActivity<MainActivity>()
-                }
-                2/*"岗位"*/ -> {
-                    startActivity<MainActivity>()
-                }
+//                0/*"警号"*/ -> {
+//                    startActivity<MainActivity>()
+//                }
+//                1/*"部门"*/ -> {
+//                    startActivity<MainActivity>()
+//                }
+//                2/*"岗位"*/ -> {
+//                    startActivity<MainActivity>()
+//                }
 //                3/*"职务"*/ -> {
 //                    startActivity<MainActivity>()
 //                }
@@ -59,7 +58,7 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
                     startActivity<MainActivity>()
                 }
                 4/*"设置"*/ -> {
-                    startActivity<MainActivity>()
+                    startActivity<SettingsActivity>()
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.superfactory.library.Context
 import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.support.multidex.MultiDex
 import android.text.TextUtils
@@ -21,8 +22,7 @@ import com.xiasuhuei321.loadingdialog.manager.StyleManager
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 import kotlin.reflect.KClass
 import android.os.StrictMode
-
-
+import rx_activity_result2.RxActivityResult
 
 
 //import cn.nekocode.emojix.Emojix
@@ -74,6 +74,28 @@ abstract class BaseApp : Application() {
     fun getAppScreenSize(): ScreenSizeExtension {
         return mScreenSizeExtension;
     }
+
+    fun getVerName(): String? {
+        try {
+            return this.packageManager.getPackageInfo(
+                    this.packageName, 0).versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    fun getVerCode(): Int {
+        try {
+            return this.packageManager.getPackageInfo(
+                    this.packageName, 0).versionCode
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+
+        return -1
+    }
+
 
     open fun loadBaseFooter(context: Context, layout: RefreshLayout): RefreshFooter {
         //指定为经典Footer，默认是 BallPulseFooter
@@ -131,6 +153,7 @@ abstract class BaseApp : Application() {
             StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build())
             StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build())
         }
+        RxActivityResult.register(this);
         val dm = appDelegate!!.resources.displayMetrics
         mScreenSizeExtension.width = dm.widthPixels;
         mScreenSizeExtension.height = dm.heightPixels;

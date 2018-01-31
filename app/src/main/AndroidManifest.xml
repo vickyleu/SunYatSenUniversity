@@ -41,6 +41,14 @@
         <activity
             android:name=".Interface.BindingActivity.SplashActivity.LoginActivity"
             android:label="@string/title_activity_login" />
+        <activity
+            android:name=".Interface.BindingActivity.SplashActivity.SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+        <activity android:name=".Interface.BindingActivity.SettingsActivity.SettingsActivity" />
+        <activity android:name=".Interface.BindingActivity.AccountActivity.AccountActivity" />
+        <activity android:name="com.superfactory.sunyatsin.Interface.BindingActivity.CompellationActivity.CompellationActivity" />
+        <activity android:name="com.superfactory.sunyatsin.Interface.BindingActivity.GenderActivity.GenderActivity" />
+        <activity android:name=".Interface.BindingActivity.PasswordActivity.PasswordActivity" />
     </application>
 
 </manifest>
