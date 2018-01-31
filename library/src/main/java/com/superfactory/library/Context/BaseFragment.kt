@@ -81,7 +81,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
         viewModel!!.apply {
             if (showToolBar) {
                 val abc = this as ToolbarBindingModel
-                Debuger.printMsg(this, abc.rightIcon.value?.toString() ?: "空么")
+//                Debuger.printMsg(this, abc.rightIcon.value?.toString() ?: "空么")
                 val tc = newToolBarComponent(this)
                 if (tc != null) {
                     toolbar = tc.apply {
@@ -93,7 +93,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
             }
             layout = newComponent(this).apply {
                 if (toolbarAnko != null) {
-                    Debuger.printMsg(this, "妈卖批")
+//                    Debuger.printMsg(this, "妈卖批")
                     view = createView(
                             AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false),
                             toolbarAnko,

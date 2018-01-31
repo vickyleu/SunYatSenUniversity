@@ -146,10 +146,10 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                                 Debuger.printMsg(this, "2")
                                                 holder.component.viewModel?.description = viewModel?.station?.value ?: ""
                                             }
-                                            3 -> {
-                                                Debuger.printMsg(this, "3")
-                                                holder.component.viewModel?.description = viewModel?.position?.value ?: ""
-                                            }
+//                                            3 -> {
+//                                                Debuger.printMsg(this, "3")
+//                                                holder.component.viewModel?.description = viewModel?.position?.value ?: ""
+//                                            }
                                             else -> {
                                                 return@assignment
                                             }
@@ -326,7 +326,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     var arrow: View? = null
                     if (model == null) return@toView
                     val value = model.notificationTotal.value
-                    if (model.index > 4) return@toView
+                    if (model.index > 3) return@toView //todo 3为profileItemList 的size
                     arrow = view.findViewById(R.id.right_arrow)
                     if (arrow == null) return@toView
                     val attachValue = "  " + value.toString() + "  "

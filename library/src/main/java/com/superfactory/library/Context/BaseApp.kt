@@ -20,6 +20,9 @@ import com.tencent.bugly.crashreport.CrashReport
 import com.xiasuhuei321.loadingdialog.manager.StyleManager
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 import kotlin.reflect.KClass
+import android.os.StrictMode
+
+
 
 
 //import cn.nekocode.emojix.Emojix
@@ -124,7 +127,10 @@ abstract class BaseApp : Application() {
     override fun onCreate() {
         appDelegate = this
         super.onCreate()
-
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build())
+            StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build())
+        }
         val dm = appDelegate!!.resources.displayMetrics
         mScreenSizeExtension.width = dm.widthPixels;
         mScreenSizeExtension.height = dm.heightPixels;

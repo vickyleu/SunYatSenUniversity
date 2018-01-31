@@ -234,7 +234,7 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
     val ld = LoadingDialog(ctx)
     (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
-            .observeOn(Schedulers.io())
+            .observeOn(Schedulers.io())//在io线程中进行Gson解析
             .map(Func1<T1, D1?> { t ->
                 try {
                     return@Func1 GsonBuilder().setLenient().create().fromJson<D1?>(json = t.string()?.trim()
@@ -244,12 +244,18 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
                 }
                 null
             })
+            .observeOn(AndroidSchedulers.mainThread())//在主线程拦截嵌套请求
+            .map(Func1<D1?, D1?> { t ->
+                if (t == null) return@Func1 null
+                val flag: Boolean = (component.viewModel as? BaseObservable)?.appendingRequest(ld, t)
+                        ?: true
+                if (flag) t else null
+            })
+            .observeOn(Schedulers.newThread())//然后再到新的线程中执行请求
             .flatMap(Func1<D1?, Observable<T2>?> { t ->
                 if (t == null) return@Func1 null
-                (component.viewModel as? BaseObservable)?.appendingRequest(ld, t)
                 fun1(t)
             })
-            .subscribeOn(Schedulers.newThread())//请求在新的线程中执行
             .observeOn(Schedulers.io())
             .map(Func1<T2?, D2?> { t ->
                 try {

@@ -21,9 +21,8 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
     override fun createViewWithBindings(ui: AnkoContext<NoteFragment>): View = with(ui) {
         refresh {
             backgroundColor = Color.WHITE
-            setEnableRefresh(true)
-            setEnableLoadmore(false)
-            Debuger.printMsg(this, "生成view没有")
+            isEnableRefresh = true
+            isEnableLoadmore = false
             verticalLayout {
                 backgroundColor = Color.RED
                 lparams {

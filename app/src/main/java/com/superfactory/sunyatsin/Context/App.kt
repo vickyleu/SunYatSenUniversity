@@ -6,6 +6,7 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.superfactory.library.Context.BaseApp
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
+import com.superfactory.sunyatsin.Struct.Const
 
 /**
  * Created by vicky on 2018.01.17.
@@ -25,7 +26,7 @@ open class App : BaseApp() {
     }
 
     override fun specifyBaseUrl(): String? {
-        return "http://120.76.219.199:18080/jeeplus/a/"
+        return Const.RequestPrefix
     }
 
 

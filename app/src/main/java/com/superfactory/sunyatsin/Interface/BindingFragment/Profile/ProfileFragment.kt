@@ -52,13 +52,13 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
                 2/*"岗位"*/ -> {
                     startActivity<MainActivity>()
                 }
-                3/*"职务"*/ -> {
+//                3/*"职务"*/ -> {
+//                    startActivity<MainActivity>()
+//                }
+                3/*"问卷"*/ -> {
                     startActivity<MainActivity>()
                 }
-                4/*"问卷"*/ -> {
-                    startActivity<MainActivity>()
-                }
-                5/*"设置"*/ -> {
+                4/*"设置"*/ -> {
                     startActivity<MainActivity>()
                 }
             }

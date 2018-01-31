@@ -61,7 +61,7 @@ inline fun <Data, Input : View.OnClickListener?, Output : View.OnClickListener?,
         crossinline function: (Data) -> ObservableField<Input>) =
         to { viewModel, input, output ->
             if (viewModel != null) {
-                Debuger.printMsg(this, "注册监听器成功")
+//                Debuger.printMsg(this, "注册监听器成功")
             }
         }
 

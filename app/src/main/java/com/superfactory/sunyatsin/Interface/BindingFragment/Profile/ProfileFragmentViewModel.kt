@@ -2,7 +2,6 @@ package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Debug
 import android.support.v4.content.ContextCompat
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.observable
@@ -11,6 +10,8 @@ import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Debuger
 import com.superfactory.library.Graphics.Badge.Badge
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.Const
+import com.superfactory.sunyatsin.Struct.Login.LoginAfterStruct
 
 /**
  * Created by vicky on 2018.01.19.
@@ -43,27 +44,29 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
     val profileItemsList = arrayListOf(
             ProfileFragmentItemViewModel(0, R.drawable.note_icon, "警号", ""),
             ProfileFragmentItemViewModel(1, R.drawable.note_icon, "部门", ""),
-            ProfileFragmentItemViewModel(2, R.drawable.note_icon, "岗位", ""),
-            ProfileFragmentItemViewModel(3, R.drawable.note_icon, "职务", "")
+            ProfileFragmentItemViewModel(2, R.drawable.note_icon, "岗位", "")
+//            ProfileFragmentItemViewModel(3, R.drawable.note_icon, "职务", "")
     )
 
     val profileSettingsList = arrayListOf(
-            ProfileFragmentItemViewModel(4, R.drawable.note_icon, "问卷", "", 1),
-            ProfileFragmentItemViewModel(5, R.drawable.note_icon, "设置", "", 1)
+            ProfileFragmentItemViewModel(3, R.drawable.note_icon, "问卷", "", 1),
+            ProfileFragmentItemViewModel(4, R.drawable.note_icon, "设置", "", 1)
     )
 
     var onItemClicked: ((Int, ProfileFragmentItemViewModel) -> Unit)? = null
 
     init {
-        Debuger.printMsg(this,bundle?:"bundle是空的")
+        Debuger.printMsg(this, bundle ?: "bundle是空的")
         if (bundle != null) {
-            profileName.value = bundle.getString("profileName")
-            profileNo.value = bundle.getString("profileNo")
-            employ.value = bundle.getString("employ")
-            station.value = bundle.getString("station")
-            position.value = bundle.getString("position")
-            avatar.value = bundle.getString("avatar")
-            Debuger.printMsg(this,avatar.value)
+            val loginStruct = bundle.getParcelable<LoginAfterStruct>("data")
+            val data = loginStruct.body.data
+            profileName.value = data.name
+            profileNo.value = data.no
+            employ.value = data.office.name//部门
+            station.value = data.jobTypeName//岗位
+            position.value = ""//职务 ignored
+            avatar.value = Const.AvatarPrefix + data.photo
+            Debuger.printMsg(this, avatar.value)
         }
     }
 }

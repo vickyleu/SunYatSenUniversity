@@ -3,7 +3,6 @@ package com.superfactory.library.Bridge.Anko
 import android.graphics.Color
 import android.os.Parcel
 import android.os.Parcelable
-import com.superfactory.library.Bridge.Model.PostModel
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -94,16 +93,16 @@ open class BaseObservable() : Observable, Parcelable {
                 .show()
     }
 
-    open fun appendingRequest(ld: LoadingDialog, model: Any?) {
-
+    open fun appendingRequest(ld: LoadingDialog, model: Any?): Boolean {
+        return true
     }
 
-    open  fun requestSuccess(ld: LoadingDialog, model: Any?) {
+    open fun requestSuccess(ld: LoadingDialog, model: Any?) {
         ld.loadSuccess()
     }
 
-    open  fun requestFailed(ld: LoadingDialog, error: Throwable?) {
-        ld.setFailedText(error?.message?:"异常退出")
+    open fun requestFailed(ld: LoadingDialog, error: Throwable?) {
+        ld.setFailedText(error?.message ?: "异常退出")
         ld.loadFailed()
     }
 

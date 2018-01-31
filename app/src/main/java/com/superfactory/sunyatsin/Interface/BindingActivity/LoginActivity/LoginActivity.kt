@@ -6,6 +6,7 @@ import android.os.Parcelable
 import android.os.PersistableBundle
 import android.view.WindowManager
 import com.superfactory.library.Context.BaseActivity
+import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.Interface.BindingActivity.MainActivity.MainActivity
 import org.jetbrains.anko.startActivity
 
@@ -20,10 +21,13 @@ class LoginActivity : BaseActivity<LoginActivityViewModel, LoginActivity>() {
 
     override fun newComponent(v: LoginActivityViewModel) = LoginActivityComponent(v).apply {
         viewModelSafe.ownerNotifier = { _, any ->
-            val bundle = Bundle()
-            bundle.putParcelable("data", any as? Parcelable)
-            startActivity<MainActivity>()
-            finish()
+            if (any == null) {
+                Debuger.printMsg(this, "数据不能为空啊")
+            } else {
+                Debuger.printMsg("simpleName","987654311212121"+any.javaClass.simpleName)
+                startActivity<MainActivity>(Pair("data",any))
+                finish()
+            }
         }
     }
 

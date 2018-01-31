@@ -34,15 +34,17 @@ import com.superfactory.library.Bridge.Anko.DslView.OnTextCleanListener
 import com.superfactory.library.Bridge.Anko.DslView.autoCompleteCleanUpTextView
 import com.superfactory.library.Bridge.Anko.DslView.cleanUpEditText
 import com.superfactory.library.Bridge.Anko.ViewExtensions.hideInput
+import com.superfactory.sunyatsin.Struct.Const
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Graphics.Adapt.SimpleWatcher
 import com.superfactory.library.Graphics.AutoCompleteCleanUpTextView
 import com.superfactory.library.Graphics.CleanUpEditText
+import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.Communication.senderAsyncMultiple
 import com.superfactory.sunyatsin.R
-import com.superfactory.sunyatsin.Struct.Base.BaseStruct
-import com.superfactory.sunyatsin.Struct.LoginStruct
+import com.superfactory.sunyatsin.Struct.Login.LoginAfterStruct
+import com.superfactory.sunyatsin.Struct.Login.LoginStruct
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.textInputLayout
@@ -434,15 +436,20 @@ class LoginActivityComponent(viewModel: LoginActivityViewModel) : BindingCompone
             // form field with an error.
             focusView?.requestFocus()
         } else {
-
             takeApi(account.context, RetrofitImpl::class)?.senderAsyncMultiple(
                     { retrofitImpl -> retrofitImpl.login(account.text.toString(), passwd.text.toString(), true) },
                     LoginStruct::class,
                     this, account.context,
                     { retrofitImpl, loginStruct ->
-                         if (loginStruct.isValidLogin()) retrofitImpl.loginBefore(loginStruct.body!!.JSESSIONID, true)
-                         else null },
-                    BaseStruct::class
+                        if (loginStruct.isValidLogin()) {
+                            ConfigXmlAccessor.storeValue(account.context, Const.SignInInfo, Const.SignInSession, loginStruct.body!!.JSESSIONID)
+
+                            retrofitImpl.loginAfter(loginStruct.body.JSESSIONID, true)
+                        } else {
+                            null
+                        }
+                    },
+                    LoginAfterStruct::class
             )
 
 //            takeApi(account.context, RetrofitImpl::class)?.login(account.text.toString(), passwd.text.toString(),true)?.

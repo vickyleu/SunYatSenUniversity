@@ -24,7 +24,7 @@ interface RetrofitImpl {
 
     @Headers("Content-Type: application/json",
             "Accept: application/json")//需要添加头
-    @GET("sys/user/infoData;JSESSIONID={JSESSIONID}?__ajax=true&mobileLogin={mobileLogin}")
-    fun loginBefore(@Query("JSESSIONID") JSESSIONID: String, @Query("mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+    @GET("sys/user/infoData;JSESSIONID={JSESSIONID}?")
+    fun loginAfter(@Path("JSESSIONID") JSESSIONID: String, @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
 }

@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.view.View
 import com.superfactory.library.Bridge.Anko.Adapt.FragmentContainer
-import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
@@ -15,7 +14,7 @@ import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.Interface.BindingFragment.Note.NoteFragment
 import com.superfactory.sunyatsin.Interface.BindingFragment.Profile.ProfileFragment
 import com.superfactory.sunyatsin.R
-import com.superfactory.sunyatsin.Struct.LoginStruct
+import com.superfactory.sunyatsin.Struct.Login.LoginAfterStruct
 import java.util.*
 
 /**
@@ -27,8 +26,8 @@ import java.util.*
  */
 class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : ToolbarBindingModel() {
     override fun setToolbar(toolbarBindingModel: ToolbarBindingModel) {
-        toolbarBindingModel.backgroundColor.value=Color.BLUE
-        toolbarBindingModel.title.value="妈卖批"
+        toolbarBindingModel.backgroundColor.value = Color.BLUE
+        toolbarBindingModel.title.value = "妈卖批"
     }
 
     private var selected = 0
@@ -63,18 +62,12 @@ class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : To
     private fun selectFragment(fragments: ObservableFieldImpl<FragmentContainer>,
                                fragmentList: ObservableFieldImpl<ArrayList<Fragment>>, selected: Int) {
         val container = fragments.value
-        val loginStruct=intent?.extras?.getParcelable<LoginStruct>("data")
-        val b=Bundle()
-        b.putString("profileName","校长")
-        b.putString("profileNo","192551")
-        b.putString("employ","刑侦重案部")
-        b.putString("station","侦查组")
-        b.putString("position","侦查员")
-        b.putString("avatar","https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1517076402&di=4e9af711575f0190734265e187e62737&src=http://img.tupianzj.com/uploads/Bizhi/mn53_12802.jpg")
-        container.extras=b//intent?.extras
+        val loginStruct = intent?.extras?.getParcelable<LoginAfterStruct>("data")
+        val b = Bundle()
+        b.putParcelable("data", loginStruct)
+        container.extras = b//intent?.extras
         container.fragment = fragmentList.value.get(selected)
-
-        Debuger.printMsg(this, "切换了:" + if (container.fragment != null) container.fragment!!.javaClass.simpleName+" arg="+container.fragment?.arguments else "无")
+        Debuger.printMsg(this, "切换了:" + if (container.fragment != null) container.fragment!!.javaClass.simpleName + " arg=" + container.fragment?.arguments else "无")
     }
 
     init {
@@ -89,7 +82,6 @@ class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : To
             selectFragment(fragments, fragmentList, selected)
         }
     }
-
 
 
     fun update() {
