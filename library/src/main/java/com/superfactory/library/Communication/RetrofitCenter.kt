@@ -2,15 +2,12 @@ package com.superfactory.library.Communication
 
 import com.google.gson.GsonBuilder
 import com.superfactory.library.BuildConfig
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import okhttp3.internal.platform.Platform
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 import kotlin.reflect.KClass
 
 
@@ -60,7 +57,9 @@ open class RetrofitCenter<T : Any>(val baseUrl: String, val clazz: KClass<T>) {
         val httpClientBuilder = OkHttpClient.Builder()
                 .addInterceptor { chain ->
                     val request = chain.request().newBuilder()
-                            .addHeader("Accept", "Application/JSON").build()
+                            .addHeader("Content-Type", "application/json")
+                            .addHeader("Accept", "application/json")
+                            .build()
                     chain.proceed(request)
                 }
         if (BuildConfig.DEBUG) {

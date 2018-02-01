@@ -443,6 +443,7 @@ class LoginActivityComponent(viewModel: LoginActivityViewModel) : BindingCompone
                     { retrofitImpl, loginStruct ->
                         if (loginStruct.isValidLogin()) {
                             ConfigXmlAccessor.storeValue(account.context, Const.SignInInfo, Const.SignInSession, loginStruct.body!!.JSESSIONID)
+                            ConfigXmlAccessor.storeValue(account.context, Const.SignInInfo, Const.SignInAccount, loginStruct.body.username)
 
                             retrofitImpl.loginAfter(loginStruct.body.JSESSIONID, true)
                         } else {

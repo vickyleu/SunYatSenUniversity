@@ -2,9 +2,11 @@ package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.LinearLayoutManager
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +14,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.bumptech.glide.request.target.Target
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getAppNoStatusBarSize
 import com.superfactory.library.Bridge.Anko.DslView.circleImage
@@ -30,14 +34,16 @@ import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_DRAGGING_OU
 import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_START
 import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_SUCCEED
 import com.superfactory.library.Graphics.Badge.BadgeView
+import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.Const
+import com.superfactory.sunyatsin.Struct.QuestionaireStruct.QuestionnaireStruct
 import org.jetbrains.anko.*
+import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.nestedScrollView
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import java.lang.Exception
 
 
@@ -53,188 +59,205 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
 
         Debuger.printMsg(this, "createViewWithBindings")
         val screenHeight = getAppNoStatusBarSize(ctx).height
-        verticalLayout {
+        coordinatorLayout {
             verticalLayout {
-                backgroundColor = Color.parseColor("#1688ff")
-                circleImage {
-                    id = R.id.avatar
-                    circleBackgroundColor = Color.BLUE
-                    borderColor = Color.WHITE
-                    borderWidth = dip(2)
-                    imageResource = R.drawable.normal_avatar
-                    bindSelf(ProfileFragmentViewModel::avatar) { it.avatar.value }.toView(this) { view, value ->
-                        Glide.with(context).load(value)
-                                .asBitmap()
-                                .centerCrop()
-                                .placeholder(R.drawable.normal_avatar)
-                                .listener(object : RequestListener<String, Bitmap> {
-                                    override fun onException(e: Exception?, model: String?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
-                                        Debuger.printMsg("onLoadFailed = %s", e?.message?.toString()
-                                                ?: "null")
-                                        return false;
-                                    }
+                bindSelf(ProfileFragmentViewModel::tips) { it.tips.value }.toView(this) { view, value ->
+                    if (!TextUtils.isEmpty(value)) {
+                        Snackbar.make(view, value!!, Snackbar.LENGTH_SHORT).show()
+                    }
+                }
+                verticalLayout {
+                    backgroundColor = Color.parseColor("#1688ff")
+                    circleImage {
+                        id = R.id.avatar
+                        circleBackgroundColor = Color.BLUE
+                        borderColor = Color.WHITE
+                        borderWidth = dip(2)
+                        imageResource = R.drawable.normal_avatar
+                        bindSelf(ProfileFragmentViewModel::avatar) { it.avatar.value }.toView(this) { view, value ->
+                            Glide.with(context).load(value)
+                                    .asBitmap()
+                                    .centerCrop()
+                                    .placeholder(R.drawable.normal_avatar)
+                                    .listener(object : RequestListener<String, Bitmap> {
+                                        override fun onException(e: Exception?, model: String?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+                                            Debuger.printMsg("onLoadFailed = %s", e?.message?.toString()
+                                                    ?: "null")
+                                            return false;
+                                        }
 
-                                    override fun onResourceReady(resource: Bitmap?, model: String?, target: Target<Bitmap>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                                        return false
-                                    }
+                                        override fun onResourceReady(resource: Bitmap?, model: String?, target: Target<Bitmap>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                                            return false
+                                        }
 
-                                })
-                                .into(object : BitmapImageViewTarget(view) {
-                                    override fun setResource(resource: Bitmap) {
-                                        val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
-                                        circularBitmapDrawable.isCircular = true
-                                        view.setImageDrawable(circularBitmapDrawable)
-                                    }
-                                })
+                                    })
+                                    .into(object : BitmapImageViewTarget(view) {
+                                        override fun setResource(resource: Bitmap) {
+                                            val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
+                                            circularBitmapDrawable.isCircular = true
+                                            view.setImageDrawable(circularBitmapDrawable)
+                                        }
+                                    })
+                        }
+
+                        onClick {
+                            this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(-1,
+                                    ProfileFragmentItemViewModel(-1, 0, "", "", -1))
+                        }
+                    }.lparams {
+                        height = (screenHeight * 0.15).toInt()
+                        width = (screenHeight * 0.15).toInt()
+                        setVerticalGravity(Gravity.CENTER_VERTICAL)
+                        setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
+                    }
+                    textView {
+                        text = context.getString(R.string.profile_name)
+                        textSize = 14f
+                        textColor = Color.parseColor("#ffffff")
+                        bindSelf(ProfileFragmentViewModel::profileName) { it.profileName.value }.toText(this)
+                    }.lparams {
+                        setVerticalGravity(Gravity.CENTER_VERTICAL)
+                        setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
                     }
 
-                    onClick {
-                        this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(-1,
-                                ProfileFragmentItemViewModel(-1, 0, "", "", -1))
-                    }
                 }.lparams {
-                    height = (screenHeight * 0.15).toInt()
-                    width = (screenHeight * 0.15).toInt()
-                    setVerticalGravity(Gravity.CENTER_VERTICAL)
-                    setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
+                    width = matchParent
+                    height = (screenHeight * 0.2f).toInt()
                 }
-                textView {
-                    text = context.getString(R.string.profile_name)
-                    textSize = 14f
-                    textColor = Color.parseColor("#ffffff")
-                    bindSelf(ProfileFragmentViewModel::profileName) { it.profileName.value }.toText(this)
-                }.lparams {
-                    setVerticalGravity(Gravity.CENTER_VERTICAL)
-                    setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
-                }
+                refresh {
+                    backgroundColor = Color.parseColor("#f8f8f8")
+                    isEnableRefresh = false
+                    isEnableLoadmore = false
 
-            }.lparams {
-                width = matchParent
-                height = (screenHeight * 0.2f).toInt()
-            }
-            refresh {
-                backgroundColor = Color.parseColor("#f8f8f8")
-                isEnableRefresh = false
-                isEnableLoadmore = false
-
-                nestedScrollView {
-                    fitsSystemWindows = true
-                    verticalLayout {
-                        backgroundColor = Color.TRANSPARENT
+                    nestedScrollView {
+                        fitsSystemWindows = true
+                        verticalLayout {
+                            backgroundColor = Color.TRANSPARENT
 //                        fitsSystemWindows=true
-                        recyclerView {
-                            backgroundResource = R.drawable.profile_recycle_shader
-                            leftPadding = dip(10)
-                            val bindAdapter = AutoBindAdapter { viewGroup, _ ->
-                                AnkoViewHolder(viewGroup, ProfileFragmentItemComponent())
-                            }.apply {
-                                /*onItemClickListener = { i, viewModel, _ ->
-                                    Debuger.printMsg(this, "invoke  1  " + viewModelSafe.onItemClicked)
-//                                    this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
-                                }*/
-                            }.assignment { holder, _, position ->
-                                        when (position) {
-                                            0 -> {
-                                                Debuger.printMsg(this, "0" + viewModel?.profileNo?.value)
-                                                holder.component.viewModel?.description = viewModel?.profileNo?.value ?: ""
-                                            }
-                                            1 -> {
-                                                Debuger.printMsg(this, "1")
-                                                holder.component.viewModel?.description = viewModel?.employ?.value ?: ""
-                                            }
-                                            2 -> {
-                                                Debuger.printMsg(this, "2")
-                                                holder.component.viewModel?.description = viewModel?.station?.value ?: ""
-                                            }
+                            recyclerView {
+                                backgroundResource = R.drawable.profile_recycle_shader
+                                leftPadding = dip(10)
+                                val bindAdapter = AutoBindAdapter { viewGroup, _ ->
+                                    AnkoViewHolder(viewGroup, ProfileFragmentItemComponent())
+                                }.apply {
+                                    onItemClickListener = { i, viewModel, _ ->
+                                        Debuger.printMsg(this, "invoke  1  " + viewModelSafe.onItemClicked)
+                                        if (viewModel.index == 3) {
+                                            takeApi(RetrofitImpl::class)?.questionnaireList(ConfigXmlAccessor.restoreValue(
+                                                    context, Const.SignInInfo, Const.SignInSession, "")
+                                                    ?: "", true)?.senderAsync(QuestionnaireStruct::class,
+                                                    this@ProfileFragmentComponent,
+                                                    context)
+                                        } else
+                                            this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+                                    }
+                                }.assignment { holder, _, position ->
+                                            when (position) {
+                                                0 -> {
+                                                    Debuger.printMsg(this, "0" + viewModel?.profileNo?.value)
+                                                    holder.component.viewModel?.description = viewModel?.profileNo?.value ?: ""
+                                                }
+                                                1 -> {
+                                                    Debuger.printMsg(this, "1")
+                                                    holder.component.viewModel?.description = viewModel?.employ?.value ?: ""
+                                                }
+                                                2 -> {
+                                                    Debuger.printMsg(this, "2")
+                                                    holder.component.viewModel?.description = viewModel?.station?.value ?: ""
+                                                }
 //                                            3 -> {
 //                                                Debuger.printMsg(this, "3")
 //                                                holder.component.viewModel?.description = viewModel?.position?.value ?: ""
 //                                            }
-                                            else -> {
-                                                return@assignment
+                                                else -> {
+                                                    return@assignment
+                                                }
                                             }
+                                            holder.component.notifyChanges()
                                         }
-                                        holder.component.notifyChanges()
-                                    }
-                            bindSelf(ProfileFragmentViewModel::profileItemsList) { it.profileItemsList }
-                                    .toView(this) { _, value ->
-                                        bindAdapter.setItemsList(value)
-                                    }
-                            layoutManager = LinearLayoutManager(context)
-                            addItemDecoration(getLineDividerItemDecoration(1, ContextCompat.getColor(context, R.color.gray)))
-                            adapter = bindAdapter
-                        }.lparams {
-                            width = matchParent
-                            height = wrapContent
+                                bindSelf(ProfileFragmentViewModel::profileItemsList) { it.profileItemsList }
+                                        .toView(this) { _, value ->
+                                            bindAdapter.setItemsList(value)
+                                        }
+                                layoutManager = LinearLayoutManager(context)
+                                addItemDecoration(getLineDividerItemDecoration(1, ContextCompat.getColor(context, R.color.gray)))
+                                adapter = bindAdapter
+                            }.lparams {
+                                width = matchParent
+                                height = wrapContent
 
-                            topMargin = dip(10)
+                                topMargin = dip(10)
 //                    bottomMargin = dip(10)
-                        }
-                        verticalLayout {
-                            backgroundColor = Color.TRANSPARENT
-                            id = R.id.settings_layout
-                            val that = this
-                            doAsync {
-                                for (i in 0 until viewModel?.profileSettingsList?.size!!) {
-                                    val component = ProfileFragmentItemComponent()
-                                    bindSelf(ProfileFragmentViewModel::profileSettingsList) { it.profileSettingsList }
-                                            .toView(that) { arg, value ->
-                                                if (value == null) return@toView
-                                                component.isBound = true //数据是否绑定,当手动设置databinding数据时需要修改为true,否则数据无法自动刷新
-                                                component.viewModel = value[i]
-                                            }
-                                    component.bindSelf {
-                                        viewModelSafe.notificationTotalObserva
-                                    }.toView(that) { _, va ->
-                                                Debuger.printMsg(this, "notificationTotalObserva:"
-                                                + va?.toString() ?: "null")
-                                                @Suppress("LABEL_NAME_CLASH")
-                                                if (va == null) return@toView
-                                                component.viewModel?.notificationTotal?.value = va
-                                            }
+                            }
+                            verticalLayout {
+                                backgroundColor = Color.TRANSPARENT
+                                id = R.id.settings_layout
+                                val that = this
+                                doAsync {
+                                    for (i in 0 until viewModel?.profileSettingsList?.size!!) {
+                                        val component = ProfileFragmentItemComponent()
+                                        bindSelf(ProfileFragmentViewModel::profileSettingsList) { it.profileSettingsList }
+                                                .toView(that) { arg, value ->
+                                                    if (value == null) return@toView
+                                                    component.isBound = true //数据是否绑定,当手动设置databinding数据时需要修改为true,否则数据无法自动刷新
+                                                    component.viewModel = value[i]
+                                                }
+                                        component.bindSelf {
+                                            viewModelSafe.notificationTotalObserva
+                                        }.toView(that) { _, va ->
+                                                    Debuger.printMsg(this, "notificationTotalObserva:"
+                                                    + va?.toString() ?: "null")
+                                                    @Suppress("LABEL_NAME_CLASH")
+                                                    if (va == null) return@toView
+                                                    component.viewModel?.notificationTotal?.value = va
+                                                }
 
-                                    component.bindSelf { it.notificationTotal }.toView(that) { _, value ->
-                                        if (value != null) {
-                                            viewModelSafe.notificationTotalObserva.setStableValue(value)
+                                        component.bindSelf { it.notificationTotal }.toView(that) { _, value ->
+                                            if (value != null) {
+                                                viewModelSafe.notificationTotalObserva.setStableValue(value)
+                                            }
                                         }
-                                    }
-                                    val v = component.createViewWithBindings(AnkoContextImpl(that.context,
-                                            that, false))
-                                    v.backgroundResource = R.drawable.profile_recycle_shader
-                                    val lp = LinearLayout.LayoutParams(matchParent, wrapContent)
-                                    lp.topMargin = dip(10)
-                                    v.leftPadding = dip(10)
-                                    uiThread {
-                                        addView(v, lp)
-                                    }
-                                    v.apply {
-                                        register.bindAll()
-                                    }
-                                    v.apply {
-                                        onClick {
-//                                            viewModel?.notificationTotalObserva?.value = 5
+                                        val v = component.createViewWithBindings(AnkoContextImpl(that.context,
+                                                that, false))
+                                        v.backgroundResource = R.drawable.profile_recycle_shader
+                                        val lp = LinearLayout.LayoutParams(matchParent, wrapContent)
+                                        lp.topMargin = dip(10)
+                                        v.leftPadding = dip(10)
+                                        uiThread {
+                                            addView(v, lp)
+                                        }
+                                        v.apply {
+                                            register.bindAll()
+                                        }
+                                        v.apply {
+                                            onClick {
+                                                //                                            viewModel?.notificationTotalObserva?.value = 5
 //                                            viewModel?.profileNo?.value = "12530"
-                                            Debuger.printMsg(this, "invoke  2  ")
-                                            this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(component.viewModelSafe.index, component.viewModelSafe)
+                                                Debuger.printMsg(this, "invoke  2  ")
+                                                this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(component.viewModelSafe.index, component.viewModelSafe)
+                                            }
                                         }
                                     }
                                 }
+                            }.lparams {
+                                width = matchParent
+                                height = wrapContent
                             }
                         }.lparams {
+                            height = matchParent
                             width = matchParent
-                            height = wrapContent
+                            bottomMargin = dip(30)
                         }
                     }.lparams {
                         height = matchParent
                         width = matchParent
-                        bottomMargin = dip(30)
                     }
+
+
                 }.lparams {
-                    height = matchParent
                     width = matchParent
+                    height = matchParent
                 }
-
-
             }.lparams {
                 width = matchParent
                 height = matchParent
@@ -317,7 +340,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                     viewModelSafe.badge.value?.setBadgeNumber(0)
                     takeApi(RetrofitImpl::class)?.eraseBadge(
                             "eraseBadge/index.html")?.senderAsync(
-                            String::class, this@ProfileFragmentItemComponent,view.context)
+                            String::class, this@ProfileFragmentItemComponent, view.context)
                 }
 
                 bindSelf(ProfileFragmentItemViewModel::notificationTotal) {

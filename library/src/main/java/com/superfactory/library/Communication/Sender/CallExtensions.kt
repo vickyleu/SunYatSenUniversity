@@ -351,8 +351,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                 override fun onNext(t: D?) {
                     //请求成功
                     //在你代码中合适的位置调用反馈
-                    if (t != null)
-                        ld.loadSuccess()
+                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t)
                 }
 
                 /**
@@ -375,7 +374,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                  * the exception encountered by the Observable
                  */
                 override fun onError(e: Throwable?) {
-                    ld.loadFailed();
+                    (component.viewModel as? BaseObservable)?.requestFailed(ld, e)
                     //请求失败
                     Debuger.printMsg(this, e?.message ?: "null")
                 }

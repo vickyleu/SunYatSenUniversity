@@ -3,6 +3,7 @@ package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.text.TextUtils
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.observableNullable
@@ -12,6 +13,8 @@ import com.superfactory.library.Graphics.Badge.Badge
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.Struct.Const
 import com.superfactory.sunyatsin.Struct.Login.LoginAfterStruct
+import com.superfactory.sunyatsin.Struct.QuestionaireStruct.QuestionnaireStruct
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 
 /**
  * Created by vicky on 2018.01.19.
@@ -26,6 +29,30 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
         toolbarBindingModel.title.value = "APP"
         val ctx = getStaticsContextRef()
         toolbarBindingModel.rightIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)
+    }
+
+    override fun requestFailed(ld: LoadingDialog, error: Throwable?) {
+        ld.close()
+        if (!TextUtils.isEmpty(error?.message)) {
+            tips.value = error?.message!!
+        }
+    }
+
+    val tips = observable("")
+
+    override fun requestSuccess(ld: LoadingDialog, model: Any?) {
+        ld.close()
+        if (model != null) {
+            if (model is QuestionnaireStruct) {
+                if (model.success) {
+                    ld.close()
+                    ownerNotifier?.invoke(0, model)
+                } else {
+                    ld.close()
+                    tips.value = model.msg ?: "未知错误"
+                }
+            }
+        }
     }
 
     val avatar = observable("")//头像
