@@ -3,7 +3,7 @@ package com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireDetail
 import android.view.View
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Context.BaseToolBarActivity
-import com.superfactory.library.Graphics.KDialog.callback.ConfigDialog
+import com.superfactory.library.Graphics.KDialog.NSAlert.CircleDialog
 
 /**
  * Created by vicky on 2018.02.01.
@@ -17,7 +17,8 @@ class QuestionnaireDetailActivity : BaseToolBarActivity<QuestionnaireDetailActiv
     override fun newComponent(v: QuestionnaireDetailActivityViewModel) = QuestionnaireDetailActivityComponent(v).apply {
         viewModel?.ownerNotifier={
             i,any->
-//            ConfigDialog()
+            CircleDialog.Builder(this@QuestionnaireDetailActivity)
+
             finish()
         }
     }

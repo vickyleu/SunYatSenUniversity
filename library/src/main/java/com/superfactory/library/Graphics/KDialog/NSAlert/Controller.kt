@@ -1,9 +1,8 @@
-package com.superfactory.library.Graphics.KDialog
+package com.superfactory.library.Graphics.KDialog.NSAlert
 
 import android.content.Context
 import android.view.View
 import android.view.animation.AnimationUtils
-import com.superfactory.library.Graphics.Circledialog.BuildView
 import com.superfactory.library.Graphics.KDialog.params.CircleParams
 import com.superfactory.library.Graphics.KDialog.view.BuildViewImpl
 

@@ -1,4 +1,4 @@
-package com.superfactory.library.Graphics.Circledialog
+package com.superfactory.library.Graphics.KDialog.NSAlert
 
 /**
  * Created by vicky on 2018.02.01.

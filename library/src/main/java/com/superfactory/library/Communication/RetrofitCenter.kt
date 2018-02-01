@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.reflect.KClass
 
@@ -77,7 +77,7 @@ open class RetrofitCenter<T : Any>(val baseUrl: String, val clazz: KClass<T>) {
         IRETROFIT = Retrofit.Builder().baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))// 使用Gson作为数据转换器
 //                .addConverterFactory(ScalarsConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//使用RxJava作为回调适配器
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//使用RxJava作为回调适配器
 //                .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .callFactory(httpClientBuilder.build())
                 .build()

@@ -1,4 +1,4 @@
-package com.superfactory.library.Graphics.KDialog
+package com.superfactory.library.Graphics.KDialog.NSAlert
 
 import android.app.Dialog
 import android.content.Context

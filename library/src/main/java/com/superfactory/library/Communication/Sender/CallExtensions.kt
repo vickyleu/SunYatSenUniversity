@@ -8,15 +8,16 @@ import com.superfactory.library.Communication.Responder.fromJson
 import com.superfactory.library.Communication.Responder.fromJsonList
 import com.superfactory.library.Debuger
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import rx.Observable
-import rx.Subscriber
-import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Func1
-import rx.schedulers.Schedulers
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -106,8 +107,8 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAwait(compone
     try {
         return subscribeOn(Schedulers.newThread())//请求在新的线程中执行
                 .observeOn(Schedulers.io())         //请求完成后在io线程中执行
-                .map(object : Func1<T, D?> {
-                    override fun call(t: T): D? {
+                .map(object : Function<T, D?> {
+                    override fun apply(t: T): D? {
                         try {
                             val model: D? = GsonBuilder().setLenient().create().fromJson(json = t.string()?.trim()
                                     ?: "")
@@ -121,7 +122,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAwait(compone
                 })
                 .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
                 .timeout(1000, TimeUnit.MILLISECONDS)
-                .toBlocking().single()
+                .blockingSingle()
     } catch (ex: RuntimeException) {
         if (ex.cause is IOException) {
             // handle IOException
@@ -136,8 +137,8 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(com
     try {
         return subscribeOn(Schedulers.newThread())//请求在新的线程中执行
                 .observeOn(Schedulers.io())         //请求完成后在io线程中执行
-                .map(object : Func1<T, List<D>?> {
-                    override fun call(t: T): List<D>? {
+                .map(object : Function<T, List<D>?> {
+                    override fun apply(t: T): List<D>? {
                         try {
                             val model: List<D>? = GsonBuilder().setLenient().create().fromJsonList(json = t.string()?.trim()
                                     ?: "")
@@ -151,8 +152,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(com
                 })
                 .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
                 .timeout(1000, TimeUnit.MILLISECONDS)
-                .toBlocking()
-                .single()
+                .blockingSingle()
     } catch (ex: RuntimeException) {
         if (ex.cause is IOException) {
             // handle IOException
@@ -166,8 +166,8 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(com
 inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context) {
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
             .observeOn(Schedulers.io())         //请求完成后在io线程中执行
-            .map(object : Func1<T, List<D>?> {
-                override fun call(t: T): List<D>? {
+            .map(object : Function<T, List<D>?> {
+                override fun apply(t: T): List<D>? {
                     try {
                         val model: List<D>? = GsonBuilder().setLenient().create().fromJsonList(json = t.string()?.trim()
                                 ?: "")
@@ -180,48 +180,25 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(cla
                 }
             })
             .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
-            .subscribe(object : Subscriber<List<D>?>() {
-                /**
-                 * Provides the Observer with a new item to observe.
-                 *
-                 *
-                 * The [Observable] may call this method 0 or more times.
-                 *
-                 *
-                 * The `Observable` will not call this method again after it calls either [.onCompleted] or
-                 * [.onError].
-                 *
-                 * @param t
-                 * the item emitted by the Observable
-                 */
-                override fun onNext(t: List<D>?) {
+            .subscribe(object : Observer<List<D>?> {
+                override fun onComplete() {
+
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                }
+
+                override fun onNext(t: List<D>) {
                     //请求成功
                 }
 
-                /**
-                 * Notifies the Observer that the [Observable] has finished sending push-based notifications.
-                 *
-                 *
-                 * The [Observable] will not call this method if it calls [.onError].
-                 */
-                override fun onCompleted() {
+                override fun onError(e: Throwable) {
+                    //请求失败
+                    Debuger.printMsg(this, e.message ?: "null")
                 }
 
-                /**
-                 * Notifies the Observer that the [Observable] has experienced an error condition.
-                 *
-                 *
-                 * If the [Observable] calls this method, it will not thereafter call [.onNext] or
-                 * [.onCompleted].
-                 *
-                 * @param e
-                 * the exception encountered by the Observable
-                 */
-                override fun onError(e: Throwable?) {
-                    //请求失败
-                    Debuger.printMsg(this, e?.message ?: "null")
-                }
             })
+
     Debuger.printMsg(this, "开始异步")
 }
 
@@ -235,31 +212,36 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
     (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
             .observeOn(Schedulers.io())//在io线程中进行Gson解析
-            .map(Func1<T1, D1?> { t ->
-                try {
-                    return@Func1 GsonBuilder().setLenient().create().fromJson<D1?>(json = t.string()?.trim()
-                            ?: "")
-                } catch (e: IOException) {
-                    e.printStackTrace()
+            .map(object : Function<T1, D1?> {
+                override fun apply(t: T1): D1? {
+                    try {
+                        return GsonBuilder().setLenient().create().fromJson<D1?>(json = t.string()?.trim()
+                                ?: "")
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                    return null
                 }
-                null
             })
             .observeOn(AndroidSchedulers.mainThread())//在主线程拦截嵌套请求
-            .map(Func1<D1?, D1?> { t ->
-                if (t == null) return@Func1 null
+            .map(Function<D1?, D1?>
+            { t ->
+                if (t == null) return@Function null
                 val flag: Boolean = (component.viewModel as? BaseObservable)?.appendingRequest(ld, t)
                         ?: true
                 if (flag) t else null
             })
             .observeOn(Schedulers.newThread())//然后再到新的线程中执行请求
-            .flatMap(Func1<D1?, Observable<T2>?> { t ->
-                if (t == null) return@Func1 null
+            .flatMap(Function<D1?, Observable<T2>?>
+            { t ->
+                if (t == null) return@Function null
                 fun1(t)
             })
             .observeOn(Schedulers.io())
-            .map(Func1<T2?, D2?> { t ->
+            .map(Function<T2?, D2?>
+            { t ->
                 try {
-                    return@Func1 GsonBuilder().setLenient().create().fromJson<D2?>(json = t?.string()?.trim()
+                    return@Function GsonBuilder().setLenient().create().fromJson<D2?>(json = t?.string()?.trim()
                             ?: "")
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -267,52 +249,27 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
                 null
             })
             .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
-            .subscribe(object : Subscriber<D2?>() {
-                /**
-                 * Provides the Observer with a new item to observe.
-                 *
-                 *
-                 * The [Observable] may call this method 0 or more times.
-                 *
-                 *
-                 * The `Observable` will not call this method again after it calls either [.onCompleted] or
-                 * [.onError].
-                 *
-                 * @param t
-                 * the item emitted by the Observable
-                 */
-                override fun onNext(t: D2?) {
+            .subscribe(object : Observer<D2?> {
+                override fun onComplete() {
+
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                }
+
+                override fun onNext(t: D2) {
                     //请求成功
-                    //在你代码中合适的位置调用反馈
+//                        //在你代码中合适的位置调用反馈
                     (component.viewModel as? BaseObservable)?.requestSuccess(ld, t)
                 }
 
-                /**
-                 * Notifies the Observer that the [Observable] has finished sending push-based notifications.
-                 *
-                 *
-                 * The [Observable] will not call this method if it calls [.onError].
-                 */
-                override fun onCompleted() {
-                }
-
-                /**
-                 * Notifies the Observer that the [Observable] has experienced an error condition.
-                 *
-                 *
-                 * If the [Observable] calls this method, it will not thereafter call [.onNext] or
-                 * [.onCompleted].
-                 *
-                 * @param e
-                 * the exception encountered by the Observable
-                 */
-                override fun onError(e: Throwable?) {
+                override fun onError(e: Throwable) {
                     (component.viewModel as? BaseObservable)?.requestFailed(ld, e)
-                    //请求失败
-                    Debuger.printMsg(this, e?.message ?: "null")
+//                        //请求失败
+                    Debuger.printMsg(this, e.message ?: "null")
                 }
-            })
 
+            })
 }
 
 inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context) {
@@ -320,8 +277,8 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
     (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
             .observeOn(Schedulers.io())         //请求完成后在io线程中执行
-            .map(object : Func1<T, D?> {
-                override fun call(t: T): D? {
+            .map(object : Function<T, D?> {
+                override fun apply(t: T): D? {
                     try {
                         val model: D? = GsonBuilder().setLenient().create().fromJson(json = t.string()?.trim()
                                 ?: "")
@@ -332,52 +289,30 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                     }
                     return null
                 }
+
             })
             .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
-            .subscribe(object : Subscriber<D?>() {
-                /**
-                 * Provides the Observer with a new item to observe.
-                 *
-                 *
-                 * The [Observable] may call this method 0 or more times.
-                 *
-                 *
-                 * The `Observable` will not call this method again after it calls either [.onCompleted] or
-                 * [.onError].
-                 *
-                 * @param t
-                 * the item emitted by the Observable
-                 */
-                override fun onNext(t: D?) {
+            .subscribe(object : Observer<D?> {
+                override fun onComplete() {
+
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                }
+
+                override fun onNext(t: D) {
                     //请求成功
                     //在你代码中合适的位置调用反馈
                     (component.viewModel as? BaseObservable)?.requestSuccess(ld, t)
                 }
 
-                /**
-                 * Notifies the Observer that the [Observable] has finished sending push-based notifications.
-                 *
-                 *
-                 * The [Observable] will not call this method if it calls [.onError].
-                 */
-                override fun onCompleted() {
-                }
-
-                /**
-                 * Notifies the Observer that the [Observable] has experienced an error condition.
-                 *
-                 *
-                 * If the [Observable] calls this method, it will not thereafter call [.onNext] or
-                 * [.onCompleted].
-                 *
-                 * @param e
-                 * the exception encountered by the Observable
-                 */
-                override fun onError(e: Throwable?) {
+                override fun onError(e: Throwable) {
                     (component.viewModel as? BaseObservable)?.requestFailed(ld, e)
                     //请求失败
-                    Debuger.printMsg(this, e?.message ?: "null")
+                    Debuger.printMsg(this, e.message ?: "null")
                 }
+
             })
+
     Debuger.printMsg(this, "开始异步")
 }

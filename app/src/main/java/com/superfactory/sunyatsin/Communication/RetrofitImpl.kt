@@ -1,8 +1,8 @@
 package com.superfactory.sunyatsin.Communication
 
+import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.*
-import rx.Observable
 
 /**
  * Created by vicky on 2018.01.23.

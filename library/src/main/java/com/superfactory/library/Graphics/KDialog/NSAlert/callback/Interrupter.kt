@@ -1,7 +1,7 @@
 package com.superfactory.library.Graphics.KDialog.callback
 
 import android.view.View
-import com.superfactory.library.Graphics.KDialog.CircleDialog
+import com.superfactory.library.Graphics.KDialog.NSAlert.CircleDialog
 
 /**
  * Created by vicky on 2018.02.01.
@@ -11,5 +11,5 @@ import com.superfactory.library.Graphics.KDialog.CircleDialog
  * @ClassName 这里输入你的类名(或用途)
  */
 interface Interrupter {
-    fun dismissMission(text: String?, dialog: CircleDialog,inputView:View?)
+    fun dismissMission(text: String?, dialog: CircleDialog, inputView:View?)
 }

@@ -2,8 +2,8 @@ package com.superfactory.library.Bridge.Adapt
 
 import android.app.Activity
 import android.content.Intent
+import com.superfactory.library.RxjavaExtensions.ActivityResult.RxActivityResult
 import org.jetbrains.anko.internals.AnkoInternals
-import rx_activity_result2.RxActivityResult
 
 /**
  * Created by vicky on 2018.01.31.

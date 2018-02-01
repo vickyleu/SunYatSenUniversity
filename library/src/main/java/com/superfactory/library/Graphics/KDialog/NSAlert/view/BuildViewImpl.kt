@@ -3,7 +3,7 @@ package com.superfactory.library.Graphics.KDialog.view
 import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
-import com.superfactory.library.Graphics.Circledialog.BuildView
+import com.superfactory.library.Graphics.KDialog.NSAlert.BuildView
 import com.superfactory.library.Graphics.KDialog.params.CircleParams
 
 

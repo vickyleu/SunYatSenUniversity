@@ -4,8 +4,8 @@ import android.content.Context
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Communication.Sender.senderAsync
 import com.superfactory.library.Communication.Sender.senderAsyncMultiple
+import io.reactivex.Observable
 import okhttp3.ResponseBody
-import rx.Observable
 import kotlin.reflect.KClass
 
 /**
@@ -19,9 +19,9 @@ import kotlin.reflect.KClass
  * 异步请求
  */
 inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : ResponseBody> RetrofitImpl.
-        senderAsyncMultiple(fun0: ((RetrofitImpl) -> Observable<T1>),clazzA: KClass<D1>,
+        senderAsyncMultiple(fun0: ((RetrofitImpl) -> Observable<T1>), clazzA: KClass<D1>,
                             component: BindingComponent<*, *>, ctx: Context,
-                            crossinline fun1: ((RetrofitImpl,D1) -> Observable<T2>?),clazzB: KClass<D2> ) {
+                            crossinline fun1: ((RetrofitImpl,D1) -> Observable<T2>?), clazzB: KClass<D2> ) {
     val fun2:(D1)->Observable<T2>? ={
         d1 ->
         fun1(this,d1)

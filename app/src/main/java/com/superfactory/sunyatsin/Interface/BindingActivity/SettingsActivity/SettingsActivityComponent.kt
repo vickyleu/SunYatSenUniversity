@@ -18,7 +18,7 @@ import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
 import com.superfactory.library.Communication.Sender.senderAsync
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Debuger
-import com.superfactory.library.Graphics.KDialog.CircleDialog
+import com.superfactory.library.Graphics.KDialog.NSAlert.CircleDialog
 import com.superfactory.library.Graphics.KDialog.callback.ConfigButton
 import com.superfactory.library.Graphics.KDialog.callback.Interrupter
 import com.superfactory.library.Graphics.KDialog.params.ButtonParams

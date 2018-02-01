@@ -1,8 +1,13 @@
 package com.superfactory.library.Utils
 
-import rx.Subscriber
-import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Func2
+import io.reactivex.*
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.Callable
+
 
 /**
  * Created by vicky on 2018.02.01.
@@ -13,33 +18,31 @@ import rx.functions.Func2
  */
 object RxSorter {
     fun <T> sort(list: List<T>, fun0: (T, T) -> Int, fun1: (List<T>) -> Unit) {
-        rx.Observable.just(list)
-                .flatMap { rx.Observable.from(it) }
-                .toSortedList(object : Func2<T, T, Int> {
-                    override fun call(t1: T?, t2: T?): Int {
-                        if (t1 == null && t2 == null) {
-                            return 0
-                        } else {
-                            if (t1 == null) {
-                                return 0.compareTo(1)
-                            } else if (t2 == null) {
-                                return 1.compareTo(0)
-                            } else
-                                return fun0(t1, t2)
-                        }
+        Observable.fromIterable(list)
+                .toSortedList{ t1, t2 ->Int
+                    if (t1 == null && t2 == null) {
+                        0
+                    } else {
+                        if (t1 == null) {
+                            0.compareTo(1)
+                        } else if (t2 == null) {
+                            1.compareTo(0)
+                        } else
+                            fun0(t1, t2)
                     }
-                })
-                .subscribeOn(rx.schedulers.Schedulers.computation())
+                }
+                .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Subscriber<List<T>?>() {
-                    override fun onNext(t: List<T>?) {
+                .subscribe(object :SingleObserver<List<T>?>{
+                    override fun onSuccess(t: List<T>) {
+                        fun1(t)
+                    }
+                    override fun onSubscribe(d: Disposable) {
                     }
 
-                    override fun onCompleted() {
+                    override fun onError(e: Throwable) {
                     }
 
-                    override fun onError(e: Throwable?) {
-                    }
 
                 })
     }

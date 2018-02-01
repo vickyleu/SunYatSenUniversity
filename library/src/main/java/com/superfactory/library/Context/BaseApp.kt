@@ -5,6 +5,7 @@ import android.content.ComponentCallbacks
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.StrictMode
 import android.support.multidex.MultiDex
 import android.text.TextUtils
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
@@ -17,12 +18,11 @@ import com.superfactory.library.Bridge.Anko.ScreenSizeExtension
 import com.superfactory.library.BuildConfig
 import com.superfactory.library.Communication.RetrofitCenter
 import com.superfactory.library.R
+import com.superfactory.library.RxjavaExtensions.ActivityResult.RxActivityResult
 import com.tencent.bugly.crashreport.CrashReport
 import com.xiasuhuei321.loadingdialog.manager.StyleManager
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 import kotlin.reflect.KClass
-import android.os.StrictMode
-import rx_activity_result2.RxActivityResult
 
 
 //import cn.nekocode.emojix.Emojix
