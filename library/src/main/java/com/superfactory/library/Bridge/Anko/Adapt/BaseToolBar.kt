@@ -258,7 +258,11 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         view.addView(value)
                         value.onClick {
                             if (eventDelegate != null && eventDelegate!!.value != null) {
-                                eventDelegate!!.value.onClick(value)
+                                if ((viewModelSafe as ToolbarBindingModel).rightClickable.value == null) {
+                                    eventDelegate!!.value.onClick(value)
+                                } else {
+                                    (viewModelSafe as ToolbarBindingModel).rightClickable.value!!.invoke(value)
+                                }
                             }
                         }
                     }

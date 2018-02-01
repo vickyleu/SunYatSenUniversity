@@ -49,6 +49,8 @@
         <activity android:name="com.superfactory.sunyatsin.Interface.BindingActivity.CompellationActivity.CompellationActivity" />
         <activity android:name="com.superfactory.sunyatsin.Interface.BindingActivity.GenderActivity.GenderActivity" />
         <activity android:name=".Interface.BindingActivity.PasswordActivity.PasswordActivity" />
+        <activity android:name=".Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity" />
+        <activity android:name="com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireDetailActivity.QuestionnaireDetailActivity" />
     </application>
 
 </manifest>

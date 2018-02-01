@@ -16,23 +16,33 @@ interface RetrofitImpl {
     @GET("{path}")
     fun eraseBadge(@Path("path") path: String): Observable<ResponseBody>
 
-    @Headers("Content-Type: application/json",
-            "Accept: application/json")//需要添加头
+
     @POST("login?__ajax")
     fun login(@Query("username") username: String, @Query("password") password: String,
               @Query("mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
-    @Headers("Content-Type: application/json",
-            "Accept: application/json")//需要添加头
     @GET("sys/user/infoData;JSESSIONID={JSESSIONID}?")
-    fun loginAfter(@Path("JSESSIONID") JSESSIONID: String, @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+    fun loginAfter(@Path("JSESSIONID") JSESSIONID: String,
+                   @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
-    @Headers("Content-Type: application/json",
-            "Accept: application/json")//需要添加头
+
     @POST("sys/user/savePwd;JSESSIONID={JSESSIONID}?")
     fun changePsw(@Path("JSESSIONID") JSESSIONID: String,
                   @Field("oldPassword") oldPassword: String,
                   @Field("newPassword") newPassword: String,
-                  @Query("__ajax=true&mobileLogin") mobileLogin: Boolean)
+                  @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+
+    @POST("api/naire/data;JSESSIONID={JSESSIONID}?")
+    fun questionnaireList(@Path("JSESSIONID") JSESSIONID: String,
+                          @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+
+
+    @POST("api/naire/findQuestionByParentId;JSESSIONID={JSESSIONID}?")
+    fun questionnaireDetail(@Path("JSESSIONID") JSESSIONID: String, @Field("parentId") parentId: String,
+                            @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+
+    @POST("api/naire/save;JSESSIONID={JSESSIONID}?")
+    fun storeQuestionnaire(@Path("JSESSIONID") JSESSIONID: String, @Body() param: String,
+                           @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
 }

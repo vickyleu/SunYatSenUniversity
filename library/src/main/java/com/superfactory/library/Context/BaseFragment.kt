@@ -39,6 +39,8 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
     private var layout: BindingComponent<A, V>? = null
     var viewModel: V? = null
 
+    protected open var binder: BindingComponent<*, *>? = layout
+
     protected var showToolBar: Boolean = false
 
     open var extra: Bundle? = null

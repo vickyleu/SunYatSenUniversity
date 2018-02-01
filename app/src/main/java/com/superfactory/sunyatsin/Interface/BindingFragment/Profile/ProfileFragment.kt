@@ -2,9 +2,12 @@ package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
 import android.os.Bundle
 import com.superfactory.library.Context.BaseToolbarFragment
+import com.superfactory.library.Debuger
 import com.superfactory.sunyatsin.Interface.BindingActivity.MainActivity.MainActivity
+import com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.SettingsActivity.SettingsActivity
 import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.startActivityForResult
 
 
 /**
@@ -21,7 +24,15 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
         return model
     }
 
-    override fun newComponent(v: ProfileFragmentViewModel) = ProfileFragmentComponent(v)
+    override fun newComponent(v: ProfileFragmentViewModel) = ProfileFragmentComponent(v).apply {
+        viewModelSafe.ownerNotifier = { _, any ->
+            if (any == null) {
+                Debuger.printMsg(this, "数据不能为空啊")
+            } else {
+                startActivityForResult<QuestionnaireActivity>(1001, Pair("data", any))
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +66,8 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
 //                    startActivity<MainActivity>()
 //                }
                 3/*"问卷"*/ -> {
-                    startActivity<MainActivity>()
+
+//
                 }
                 4/*"设置"*/ -> {
                     startActivity<SettingsActivity>()
