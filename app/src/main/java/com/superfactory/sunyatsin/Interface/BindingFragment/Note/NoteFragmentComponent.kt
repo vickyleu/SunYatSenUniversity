@@ -12,6 +12,7 @@ import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarColor
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarSize
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getAttrDrawablValue
 import com.superfactory.library.Bridge.Anko.DslView.refresh
+import com.superfactory.library.Bridge.Anko.DslView.themedRefresh
 import com.superfactory.library.Context.Extensions.*
 import com.superfactory.library.Utils.StatusBarUtil
 import com.superfactory.sunyatsin.R
@@ -20,6 +21,7 @@ import org.jetbrains.anko.design.collapsingToolbarLayout
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.themedAppBarLayout
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.support.v4.nestedScrollView
 
 /**
  * Created by vicky on 2018.01.18.
@@ -30,27 +32,24 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
  */
 class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent<NoteFragment, NoteFragmentViewModel>(viewModel) {
     override fun createViewWithBindings(ui: AnkoContext<NoteFragment>): View = with(ui) {
-            coordinatorLayout {
-                fitsSystemWindows=true
+        coordinatorLayout {
             themedAppBarLayout(R.style.ThemeOverlay_AppCompat_Dark_ActionBar) {
-                fitsSystemWindows=true
-                backgroundColor=getActionBarColor(context)
+                backgroundColor = getActionBarColor(context)
                 collapsingToolbarLayout {
-                    expandedTitleMarginEnd=getActionBarSize(context)+dip(164)
-                    expandedTitleMarginStart=getActionBarSize(context)
-                    fitsSystemWindows=true
-                    isTitleEnabled=false
-                    statusBarScrim=ColorDrawable(Color.TRANSPARENT)
-                    contentScrim=getAttrDrawablValue(context,R.attr.colorPrimary)
+                    expandedTitleMarginEnd = getActionBarSize(context) + dip(164)
+                    expandedTitleMarginStart = getActionBarSize(context)
+                    isTitleEnabled = false
+                    statusBarScrim = ColorDrawable(Color.TRANSPARENT)
+                    contentScrim = getAttrDrawablValue(context, R.attr.colorPrimary)
                     verticalLayout {
                         backgroundColor = Color.parseColor("#1688ff")
-                        fitsSystemWindows=true
+                        fitsSystemWindows = true
                     }.lparams {
                         width = matchParent
                         height = dip(64)
-                        collapseMode=COLLAPSE_MODE_PIN
+                        collapseMode = COLLAPSE_MODE_PIN
                     }
-                }.lparams{
+                }.lparams {
                     width = matchParent
                     height = dip(64)
                     scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
@@ -60,48 +59,52 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                 width = matchParent
                 height = wrapContent
             }
-            refresh {
-                backgroundColor = Color.WHITE
-                verticalLayout {
-                    backgroundColor = Color.RED
-                    lparams {
-                        width = matchParent
-                        height = matchParent
-                    }
-                    onClick {
-                        doAsync {
-                            ui.owner.setTitle("1122111")
+
+                refresh{
+                    fitsSystemWindows=true
+                    setEnableNestedScroll(true)
+                    backgroundColor = Color.WHITE
+                    verticalLayout {
+                        backgroundColor = Color.RED
+                        lparams {
+                            width = matchParent
+                            height = matchParent
+                        }
+                        onClick {
+                            doAsync {
+                                ui.owner.setTitle("1122111")
 //                    ui.owner.setBackIcon(R.mipmap.ic_launcher)
-                            ui.owner.setBackTextSize(16)
-                            ui.owner.setBackTextColor(Color.WHITE)
-                            ui.owner.setRightTextSize(16)
-                            ui.owner.setRightTextColor(Color.WHITE)
+                                ui.owner.setBackTextSize(16)
+                                ui.owner.setBackTextColor(Color.WHITE)
+                                ui.owner.setRightTextSize(16)
+                                ui.owner.setRightTextColor(Color.WHITE)
 
 
-                            ui.owner.setBackgroundColor(Color.parseColor("#222222"))
+                                ui.owner.setBackgroundColor(Color.parseColor("#222222"))
 
 //                        val left=TextView(ctx)
 //                        left.text="jbok返回"
 //                        left.textSize=14f
 //                        ui.owner.setBackView(left)
-                            ui.owner.setBackIcon("123")
-                            ui.owner.setRightIcon("返回ojbk")
-                        }
+                                ui.owner.setBackIcon("123")
+                                ui.owner.setRightIcon("返回ojbk")
+                            }
 //                    viewModelSafe.notifyChange()
 
+                        }
                     }
-                }
-                lparams {
+                    lparams {
+                        width = ViewGroup.LayoutParams.MATCH_PARENT
+                        height = ViewGroup.LayoutParams.MATCH_PARENT
+                    }
+                } .lparams {
                     width = ViewGroup.LayoutParams.MATCH_PARENT
                     height = ViewGroup.LayoutParams.MATCH_PARENT
+                    behavior = AppBarLayout.ScrollingViewBehavior()
                 }
-            }
-            lparams {
-                width = ViewGroup.LayoutParams.MATCH_PARENT
-                height = ViewGroup.LayoutParams.MATCH_PARENT
 
-                behavior = AppBarLayout.ScrollingViewBehavior()
-            }
+
+
         }
 
     }

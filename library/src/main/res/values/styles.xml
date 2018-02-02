@@ -22,6 +22,10 @@
 
     </style>
 
+    <!--<style name="refresh" parent="@style/S">-->
+        <!--<item name="srlEnableNestedScrolling">true</item>-->
+    <!--</style>-->
+
     <!--加载dialog的style-->
     <style name="loading_dialog" parent="android:style/Theme.Dialog">
         <item name="android:windowFrame">@null</item>
