@@ -25,7 +25,7 @@ class QuestionnaireActivityViewModel(intent: Intent) : ToolbarBindingModel() {
         toolbarBindingModel.title.value = "问卷"
         toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
         val ctx = getStaticsContextRef()
-        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.avatar_icon)
+        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.back_stack_icon)
     }
 
     override fun requestFailed(ld: LoadingDialog, error: Throwable?) {

@@ -51,6 +51,13 @@ fun BindingComponent<*, *>.getAppOverSize(ctx: Context?): ScreenSizeExtension {
     return appCtx.mScreenSizeExtension;
 }
 
+fun BindingComponent<*, *>.getAppStatusBarSize(ctx: Context?): Int {
+    if (ctx == null) {
+        return 0
+    }
+    return  StatusBarUtil.getStatusBarHeight(ctx)
+}
+
 
 fun BindingComponent<*, *>.getAttrSizeValue(context: Context, attr: Int): Int {
     val values = getAttrValue(context, attr)

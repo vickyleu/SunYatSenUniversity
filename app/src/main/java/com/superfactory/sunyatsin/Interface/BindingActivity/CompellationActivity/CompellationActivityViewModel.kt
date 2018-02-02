@@ -18,7 +18,7 @@ class CompellationActivityViewModel : ToolbarBindingModel() {
         toolbarBindingModel.title.value = "个人资料"
         toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
         val ctx = getStaticsContextRef()
-        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.avatar_icon)
+        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.back_stack_icon)
     }
 
     val input=observable("")

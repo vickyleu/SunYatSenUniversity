@@ -45,4 +45,8 @@ interface RetrofitImpl {
     fun storeQuestionnaire(@Path("JSESSIONID") JSESSIONID: String, @Body() param: String,
                            @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
+    @POST("api/workinglog/data;JSESSIONID={JSESSIONID}?")
+    fun queryNoteList(@Path("JSESSIONID") JSESSIONID: String,
+                      @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body data: String): Observable<ResponseBody>
+
 }

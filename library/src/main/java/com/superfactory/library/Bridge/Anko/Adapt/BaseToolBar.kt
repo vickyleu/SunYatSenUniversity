@@ -55,11 +55,13 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
             setContentInsetsRelative(0, 0)
             contentInsetStartWithNavigation = 0
             contentInsetEndWithActions = 0
+
+
             lparams {
                 width = matchParent
                 height = getActionBarSize(ctx)//wrapContent
-//                topPadding = StatusBarUtil.getStatusBarHeightHigherSdk19(ctx)
-                topPadding = StatusBarUtil.getStatusBarHeight(ctx)
+                topPadding = StatusBarUtil.getStatusBarHeightHigherSdk19(ctx)
+//                topPadding = StatusBarUtil.getStatusBarHeight(ctx)
                 backgroundColor = getActionBarColor(ctx)
                 minimumHeight = getActionBarSize(ctx)
             }

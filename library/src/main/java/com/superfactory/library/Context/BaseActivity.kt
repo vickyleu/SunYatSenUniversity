@@ -4,8 +4,11 @@ package com.superfactory.library.Context
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.database.ContentObserver
 import android.os.Bundle
+import android.os.Handler
 import android.os.Parcelable
+import android.provider.Settings
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -36,6 +39,26 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
     protected var toolbar: BaseToolBar<A, V>? = null
     protected var toolbarAnko: View? = null
     private var layout: BindingComponent<A, V>? = null
+
+//    private val mNavigationStatusObserver = object : ContentObserver(Handler()) {
+//        override fun onChange(selfChange: Boolean) {
+//            dealWithHuaWei()
+//            //            int navigationBarIsMin = Settings.System.getInt(getContentResolver(), "navigationbar_is_min", 0);
+//            //            if (navigationBarIsMin == 1) {
+//            //                Log.d(TAG, "onChange: ------------------导航键隐藏了");
+//            //            } else {
+//            //                Log.d(TAG, "onChange: ------------------导航键显示了");
+//            //            }
+//        }
+//    }
+
+//    /**
+//     * 判断是否是华为手机并且是否有虚拟导航键
+//     */
+//    if (DeviceUtil.isHUAWEI() && DeviceUtil.checkDeviceHasNavigationBar(this.getApplicationContext()))
+//    {
+//        contentResolver.registerContentObserver(Settings.System.getUriFor("navigationbar_is_min"), true, mNavigationStatusObserver)
+//    }
 
     private val toolbarClickEvent = observable(View.OnClickListener {
         if (it != null) {
@@ -112,11 +135,12 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
 
                     toolbar = tc.apply {
                         toolbarAnko = createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, false))
-                        // 经测试在代码里直接声明透明状态栏更有效
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                            val localLayoutParams = window.attributes
-                            localLayoutParams.flags = android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or localLayoutParams.flags
-                        }
+                        //状态栏透明和间距处理
+                        StatusBarUtil.immersive(this@BaseActivity) // 经测试在代码里直接声明透明状态栏更有效
+//                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+//                            val localLayoutParams = window.attributes
+//                            localLayoutParams.flags = android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or localLayoutParams.flags
+//                        }
                         notifyChanges()
                     } as BaseToolBar<A, V>
                     toolbar!!.eventDelegate = toolbarClickEvent

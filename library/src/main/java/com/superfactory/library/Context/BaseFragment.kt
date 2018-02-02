@@ -40,6 +40,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
     var viewModel: V? = null
 
     protected open var binder: BindingComponent<*, *>? = layout
+    open var bar:View? = toolbarAnko
 
     protected var showToolBar: Boolean = false
 
@@ -115,7 +116,10 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
                         openTopPadding()
                     }
                 }
-                notifyChanges()
+                try {
+                    notifyChanges()
+                }catch (e:Exception){}
+
             }
         }
 

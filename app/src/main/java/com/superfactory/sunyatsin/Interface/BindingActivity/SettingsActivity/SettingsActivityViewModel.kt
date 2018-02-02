@@ -22,7 +22,7 @@ class SettingsActivityViewModel : ToolbarBindingModel() {
         toolbarBindingModel.title.value = "设置"
         toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
         val ctx = getStaticsContextRef()
-        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.avatar_icon)
+        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.back_stack_icon)
     }
 
     override fun requestSuccess(ld: LoadingDialog, model: Any?) {

@@ -14,6 +14,16 @@ import java.util.*
  */
 object TimeUtil {
 
+    fun takeNowTime(format: String): String? {
+        try {
+            val sdf = SimpleDateFormat(format, Locale.CHINA)
+            return sdf.format(Date())
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
     fun compareNowTime(format: String, startTime: String): String {
         var start: Date? = null
         try {
