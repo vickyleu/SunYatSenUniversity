@@ -1,7 +1,9 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Note
 
 import android.graphics.Color
+import android.support.v4.content.ContextCompat
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
+import com.superfactory.sunyatsin.R
 
 /**
  * Created by vicky on 2018.01.18.
@@ -12,8 +14,11 @@ import com.superfactory.library.Bridge.Model.ToolbarBindingModel
  */
 class NoteFragmentViewModel : ToolbarBindingModel() {
     override fun setToolbar(toolbarBindingModel: ToolbarBindingModel) {
-        toolbarBindingModel.backgroundColor.value = Color.BLUE
-        toolbarBindingModel.title.value = "妈卖批哦1"
+        toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
+        toolbarBindingModel.title.value = "APP"
+        val ctx = getStaticsContextRef()
+        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)
+        toolbarBindingModel.rightIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)
     }
 
 }

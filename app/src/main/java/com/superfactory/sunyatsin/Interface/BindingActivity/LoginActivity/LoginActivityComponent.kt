@@ -199,6 +199,7 @@ class LoginActivityComponent(viewModel: LoginActivityViewModel) : BindingCompone
                         id = R.id.account
                         hint = "请输入您的账号"
                         textSize = 14f
+                        setText("admin")
                         singleLine = true
                         bottomPadding = dip(20)
                         compoundDrawablePadding = dip(30)
@@ -263,6 +264,8 @@ class LoginActivityComponent(viewModel: LoginActivityViewModel) : BindingCompone
                         hint = "请输入您的密码"
                         textSize = 14f
                         maxLength = 20
+
+                        setText("admin")
                         singleLine = true
                         bottomPadding = dip(20)
                         compoundDrawablePadding = dip(30)

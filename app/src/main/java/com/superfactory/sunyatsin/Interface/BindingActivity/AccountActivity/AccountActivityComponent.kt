@@ -27,8 +27,6 @@ class AccountActivityComponent(viewModel: AccountActivityViewModel) :
         BindingComponent<AccountActivity, AccountActivityViewModel>(viewModel) {
     override fun createViewWithBindings(ui: AnkoContext<AccountActivity>) = with(ui) {
         refresh {
-            isEnableRefresh = false
-            isEnableLoadmore = false
             backgroundColor = Color.parseColor("#f8f8f8")
 
             recyclerView {

@@ -2,6 +2,9 @@ package com.superfactory.sunyatsin.Interface.BindingFragment.Note
 
 import com.superfactory.library.Context.BaseFragment
 import com.superfactory.library.Context.BaseToolbarFragment
+import com.superfactory.library.Debuger
+import com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity
+import org.jetbrains.anko.support.v4.startActivityForResult
 
 /**
  * Created by vicky on 2018.01.18.
@@ -14,6 +17,14 @@ class NoteFragment : BaseToolbarFragment<NoteFragmentViewModel, NoteFragment>() 
 
     override fun newViewModel() = NoteFragmentViewModel()
 
-    override fun newComponent(v: NoteFragmentViewModel) = NoteFragmentComponent(v)
+    override fun newComponent(v: NoteFragmentViewModel) = NoteFragmentComponent(v).apply {
+        viewModelSafe.ownerNotifier = { _, any ->
+            if (any == null) {
+                Debuger.printMsg(this, "数据不能为空啊")
+            } else {
+                startActivityForResult<QuestionnaireActivity>(1001, Pair("data", any))
+            }
+        }
+    }
 
 }

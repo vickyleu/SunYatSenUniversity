@@ -43,8 +43,6 @@ class SettingsActivityComponent(viewModel: SettingsActivityViewModel) : BindingC
     override fun createViewWithBindings(ui: AnkoContext<SettingsActivity>) = with(ui) {
         coordinatorLayout {
             refresh {
-                isEnableRefresh = false
-                isEnableLoadmore = false
                 backgroundColor = Color.parseColor("#f8f8f8")
                 bindSelf(SettingsActivityViewModel::tips) { it.tips.value }.toView(this) { view, value ->
                     if (!TextUtils.isEmpty(value)) {

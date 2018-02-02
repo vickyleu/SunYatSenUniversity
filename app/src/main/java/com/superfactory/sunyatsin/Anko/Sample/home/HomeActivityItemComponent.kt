@@ -45,8 +45,6 @@ class HomeActivityLayout(viewModel: HomeActivityViewModel)
                 setTitleTextColor(Color.parseColor("#222222"))
             }
             refresh {
-                setEnableRefresh(true)
-                setEnableLoadmore(false)
                 recyclerView {
                     val bindAdapter = AutoBindAdapter { viewGroup, _ ->
                         AnkoViewHolder(viewGroup, HomeActivityItemComponent())

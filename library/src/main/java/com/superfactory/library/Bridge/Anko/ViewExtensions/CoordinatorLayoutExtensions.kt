@@ -12,9 +12,9 @@ import android.view.View
  * @Date 2018年01月20日  17:31:41
  * @ClassName 这里输入你的类名(或用途)
  */
-fun CoordinatorLayout.parseBehavior(context: Context, attrs: AttributeSet, name: String): CoordinatorLayout.Behavior<View>? {
-    return null
-}
+//fun CoordinatorLayout.parseBehavior(context: Context, attrs: AttributeSet, name: String): CoordinatorLayout.Behavior<View>? {
+//    return null
+//}
 
 
 

@@ -13,7 +13,8 @@ import org.jetbrains.anko.custom.ankoView
 internal object `$$Anko$Factories$SmartRefreshLayout` {
     val SMART_REFRESH_LAYOUT = { ctx: Context -> _SmartRefreshLayout(ctx).apply {
         isEnableRefresh = false
-        isEnableLoadmore = false
+        isEnableAutoLoadMore = false
+        isEnableLoadMore=false
     } }
 }
 

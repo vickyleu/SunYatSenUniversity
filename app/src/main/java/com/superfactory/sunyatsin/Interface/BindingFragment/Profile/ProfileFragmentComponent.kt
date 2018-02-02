@@ -126,9 +126,6 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                 }
                 refresh {
                     backgroundColor = Color.parseColor("#f8f8f8")
-                    isEnableRefresh = false
-                    isEnableLoadmore = false
-
                     nestedScrollView {
                         fitsSystemWindows = true
                         verticalLayout {
@@ -142,14 +139,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                 }.apply {
                                     onItemClickListener = { i, viewModel, _ ->
                                         Debuger.printMsg(this, "invoke  1  " + viewModelSafe.onItemClicked)
-                                        if (viewModel.index == 3) {
-                                            takeApi(RetrofitImpl::class)?.questionnaireList(ConfigXmlAccessor.restoreValue(
-                                                    context, Const.SignInInfo, Const.SignInSession, "")
-                                                    ?: "", true)?.senderAsync(QuestionnaireStruct::class,
-                                                    this@ProfileFragmentComponent,
-                                                    context)
-                                        } else
-                                            this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+                                        this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
                                     }
                                 }.assignment { holder, _, position ->
                                             when (position) {
@@ -231,10 +221,15 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                         }
                                         v.apply {
                                             onClick {
-                                                //                                            viewModel?.notificationTotalObserva?.value = 5
-//                                            viewModel?.profileNo?.value = "12530"
                                                 Debuger.printMsg(this, "invoke  2  ")
-                                                this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(component.viewModelSafe.index, component.viewModelSafe)
+                                                if (component.viewModel?.index == 3) {
+                                                    takeApi(RetrofitImpl::class)?.questionnaireList(ConfigXmlAccessor.restoreValue(
+                                                            v.context, Const.SignInInfo, Const.SignInSession, "")
+                                                            ?: "", true)?.senderAsync(QuestionnaireStruct::class,
+                                                            this@ProfileFragmentComponent,
+                                                            v.context)
+                                                } else
+                                                    this@ProfileFragmentComponent.viewModelSafe.onItemClicked?.invoke(component.viewModelSafe.index, component.viewModelSafe)
                                             }
                                         }
                                     }

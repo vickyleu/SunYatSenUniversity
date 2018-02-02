@@ -60,8 +60,8 @@ dependencies {
     /***********************************************************************
      todo *****************仿iOS bounce 果冻效果******************
      ***********************************************************************/
-    api "com.scwang.smartrefresh:SmartRefreshLayout:1.0.4-7"
-    api "com.scwang.smartrefresh:SmartRefreshHeader:1.0.4-7"//没有使用特殊Header，可以不加这行
+    api "com.scwang.smartrefresh:SmartRefreshLayout:1.0.5-alpha-3"
+    api "com.scwang.smartrefresh:SmartRefreshHeader:1.0.5-alpha-3"//没有使用特殊Header，可以不加这行
 
     /***********************************************************************
      todo *******************Emoji全局插件*************************
