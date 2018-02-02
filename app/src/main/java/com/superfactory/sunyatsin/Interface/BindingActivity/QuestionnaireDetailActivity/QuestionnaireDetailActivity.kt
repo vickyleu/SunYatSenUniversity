@@ -25,7 +25,16 @@ class QuestionnaireDetailActivity : BaseToolBarActivity<QuestionnaireDetailActiv
     override fun performToolbarClickEvent(view: View, event: BaseToolBar.Companion.ToolbarEvent) {
         super.performToolbarClickEvent(view, event)
         when (event) {
-//    todo 接口定义有问题,应该为      [ String params ：[{"questionId":"ss","optionId":"aa","score":"1","remark":""}] ； String parentId 问卷编号]
+//    todo 接口定义有问题,应该为      [
+
+
+
+// todo String params ：[{"questionId":"ss","optionId":"aa","score":"1","remark":""}] ； String parentId 问卷编号
+//
+//
+//
+//
+// ]
 //            [String params ：[{"questionId":"ss","optionId":"aa","score":"1","remark":""}] ； String parentId 问卷编号]
             BaseToolBar.Companion.ToolbarEvent.RIGHT -> {
 

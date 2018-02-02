@@ -325,8 +325,8 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                         rightChild.backgroundColor = Color.TRANSPARENT
                         rightChild.imageResource = R.drawable.right_arrow_icon
                         rightChild.scaleType = ImageView.ScaleType.FIT_XY
-                        lp.width = dip(20)
-                        lp.height = dip(20)
+                        lp.width = wrapContent
+                        lp.height = wrapContent
                         lp.alignParentRight()
                         lp.centerVertically()
                         addView(rightChild, lp)

@@ -30,7 +30,7 @@ class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : To
         toolbarBindingModel.title.value = "妈卖批"
     }
 
-    private var selected = 0
+    val selected = observable(0)
     private val fragmentList = observable(ArrayList<Fragment>())
 
     var fragments = observable(FragmentContainer())
@@ -38,23 +38,23 @@ class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : To
     val clickListener = observable(View.OnClickListener {
         when (it.id) {
             R.id.ctrl_button -> {
-                if (selected == 2) return@OnClickListener
-                selected = 2
+//                if (selected.value == 2) return@OnClickListener
+//                selected.value = 2
             }
             R.id.ctrl_text_left -> {
-                if (selected == 0) return@OnClickListener
-                selected = 0
+                if (selected.value == 0) return@OnClickListener
+                selected.value = 0
             }
             R.id.ctrl_text_right -> {
-                if (selected == 1) return@OnClickListener
-                selected = 1
+                if (selected.value == 1) return@OnClickListener
+                selected.value = 1
             }
             else -> {
                 return@OnClickListener
             }
         }
-        if (fragmentList.value.size > 0 && fragmentList.value.size > selected) {
-            selectFragment(fragments, fragmentList, selected)
+        if (fragmentList.value.size > 0 && fragmentList.value.size > selected.value) {
+            selectFragment(fragments, fragmentList, selected.value)
             fragments.notifyChange(MainActivityViewModel::fragments)
         }
     })
@@ -72,14 +72,14 @@ class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : To
 
     init {
         if (intent != null && manager != null) {
-            selected = 0
+            selected.value = 0
             val list = ArrayList<Fragment>()
             list.add(NoteFragment())
             list.add(ProfileFragment())
             fragmentList.value.clear()
             fragmentList.value.addAll(list)
             fragments.value.manager = manager
-            selectFragment(fragments, fragmentList, selected)
+            selectFragment(fragments, fragmentList, selected.value)
         }
     }
 
@@ -90,8 +90,8 @@ class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : To
         list.add(ProfileFragment())
         fragmentList.value.clear()
         fragmentList.value.addAll(list)
-        if (fragmentList.value.size > 0 && fragmentList.value.size > selected) {
-            selectFragment(fragments, fragmentList, selected)
+        if (fragmentList.value.size > 0 && fragmentList.value.size > selected.value) {
+            selectFragment(fragments, fragmentList, selected.value)
             fragments.notifyChange(MainActivityViewModel::fragments)
         }
     }

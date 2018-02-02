@@ -161,24 +161,30 @@ class QuestionnaireDetailActivityComponent(viewModel: QuestionnaireDetailActivit
     }
 
     private fun @AnkoViewDslMarker _RecyclerView.doStoreQuestionnaire() {
-        val arrary = JSONArray()
+        val obj = JSONObject()
+//        val arrary = JSONArray()
+        val arr = JSONArray()
+//        String params ：[{"questionId":"ss","optionId":"aa","score":"1","remark":""}] ； String parentId 问卷编号
         for (i in 0 until viewModel!!.itemList.value.size) {
             val entity = viewModel!!.itemList.value[i]
-            val obj = JSONObject()
-            val arr = JSONArray()
+//            val obj = JSONObject()
+
             for (j in 0 until (entity.answerList?.size ?: 0)) {
                 val answer = entity.answerList!![j]
                 val obj2 = JSONObject()
                 obj2.put("optionId", answer.optionId)
+                obj2.put("remark", "")
                 obj2.put("scope", answer.scope)
                 obj2.put("questionId", entity.questionId)
                 arr.put(obj2)
             }
-            obj.put("params", arr)
-            obj.put("parentId", entity.parentId)
-            arrary.put(obj)
+
+
+//            arrary.put(obj)
         }
-        val params = arrary.toString()
+        obj.put("params", arr)
+        obj.put("parentId",viewModel?.parentId)
+        val params = obj.toString()
         takeApi(RetrofitImpl::class)?.storeQuestionnaire(ConfigXmlAccessor.restoreValue(
                 context, Const.SignInInfo, Const.SignInSession, "")
                 ?: "", params, true)?.senderAsync(BaseStruct::class, this@QuestionnaireDetailActivityComponent, context)

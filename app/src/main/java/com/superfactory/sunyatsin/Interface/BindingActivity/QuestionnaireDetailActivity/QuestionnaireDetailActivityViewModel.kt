@@ -57,6 +57,7 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
     val tips = observable("")
 
 
+    var parentId:String?=null
     val questionnaireTitle = observable("")
     val questionnaireAmount = observable("")
 
@@ -68,6 +69,7 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
         questionnaireTitle.setStableValue(struct.body.qNaire.title)
         questionnaireAmount.setStableValue("共${struct.body.questionList.size}小题")
 
+        parentId=struct.body.qNaire.id
         RxSorter.sort<Question>(struct.body.questionList, { value1, value2 ->
             value1.sort.compareTo(value2.sort)
         }, {

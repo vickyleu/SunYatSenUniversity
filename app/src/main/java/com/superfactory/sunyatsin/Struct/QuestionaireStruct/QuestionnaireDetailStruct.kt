@@ -65,7 +65,7 @@ data class QuestionnaireDetailBody(
 }
 
 data class QNaire(
-        val id: String,
+        val id: String,//
         val createBy: CreateByIn,
         val createDate: String,
         val updateDate: String,

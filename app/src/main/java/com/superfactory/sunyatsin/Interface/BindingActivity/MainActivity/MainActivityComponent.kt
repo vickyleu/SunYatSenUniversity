@@ -49,7 +49,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                 }.toFragment(this)
             }.lparams {
                 width = matchParent
-                weight = 0.9f
+                weight = 0.92f
                 height = 0
             }
 
@@ -60,7 +60,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                 val buttonHeight = ctx.resources.getDimension(R.dimen.size_button_height)
                 val btw = ctx.resources.getDimension(R.dimen.size_button_btw).toInt()
                 val dividerPercent = (0.4).toFloat()
-                val screenGap = (screenSizeWidth * 0.1).toInt()
+                val screenGap = (screenSizeWidth * 0.08).toInt()
 
                 frameLayout {
                     id = R.id.ctrl_shadow
@@ -143,7 +143,16 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
                     }
                     imageView {
                         isDuplicateParentStateEnabled = true
-                        backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.note_selector)
+                        bindSelf(MainActivityViewModel::selected){it.selected.value}.toView(this){
+                            view,value->
+                            if (value!=null){
+                                if (value==0){
+                                    setImageDrawable(ContextCompat.getDrawable(context, R.drawable.left_note_highlight_icon))
+                                }else{
+                                    setImageDrawable(ContextCompat.getDrawable(context, R.drawable.note_selector))
+                                }
+                            }
+                        }
                         backgroundColor = Color.TRANSPARENT
                         scaleType = ImageView.ScaleType.FIT_XY
                         adjustViewBounds = true
@@ -190,7 +199,18 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
 
                     imageView {
                         isDuplicateParentStateEnabled = true
-                        backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.profile_selector)
+                        setImageDrawable(ContextCompat.getDrawable(context, R.drawable.profile_selector))
+
+                        bindSelf(MainActivityViewModel::selected){it.selected.value}.toView(this){
+                            view,value->
+                            if (value!=null){
+                                if (value==1){
+                                    setImageDrawable(ContextCompat.getDrawable(context, R.drawable.right_profile_highlight_icon))
+                                }else{
+                                    setImageDrawable(ContextCompat.getDrawable(context, R.drawable.profile_selector))
+                                }
+                            }
+                        }
                         backgroundColor = Color.TRANSPARENT
                         scaleType = ImageView.ScaleType.FIT_XY
                         adjustViewBounds = true
@@ -266,7 +286,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
         val elementsCentral = StateListDrawable()
 
 
-        val press = ContextCompat.getDrawable(ctx, R.drawable.new_note_hignlight_icon) as BitmapDrawable
+        val press = ContextCompat.getDrawable(ctx, R.drawable.new_note_highlight_icon) as BitmapDrawable
         val normal = ContextCompat.getDrawable(ctx, R.drawable.new_note_icon) as BitmapDrawable
         press.paint.isAntiAlias = true
         normal.paint.isAntiAlias = true
