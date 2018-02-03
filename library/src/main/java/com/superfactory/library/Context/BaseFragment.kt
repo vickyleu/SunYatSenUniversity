@@ -40,7 +40,8 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
     var viewModel: V? = null
 
     protected open var binder: BindingComponent<*, *>? = layout
-    open var bar:View? = toolbarAnko
+    open var bar: View? = null
+        get() = toolbarAnko
 
     protected var showToolBar: Boolean = false
 
@@ -49,11 +50,24 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
 
     private val toolbarClickEvent = observable(View.OnClickListener {
         if (it != null) {
-            performToolbarClickEvent(it)
+            var event: BaseToolBar.Companion.ToolbarEvent? = null
+            when (it.id) {
+                R.id.toolbar_left -> {
+                    event = BaseToolBar.Companion.ToolbarEvent.LEFT
+                }
+                R.id.toolbar_right -> {
+                    event = BaseToolBar.Companion.ToolbarEvent.RIGHT
+                }
+
+                else -> {
+                    event = BaseToolBar.Companion.ToolbarEvent.NONE
+                }
+            }
+            performToolbarClickEvent(it,event)
         }
     })
 
-    protected open fun performToolbarClickEvent(view: View) {
+    protected open fun performToolbarClickEvent(view: View, event: BaseToolBar.Companion.ToolbarEvent) {
         when (view.id) {
             R.id.toolbar_left -> {
 
@@ -118,7 +132,8 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
                 }
                 try {
                     notifyChanges()
-                }catch (e:Exception){}
+                } catch (e: Exception) {
+                }
 
             }
         }

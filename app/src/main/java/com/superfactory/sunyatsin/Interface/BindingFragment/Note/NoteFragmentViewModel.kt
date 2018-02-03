@@ -5,6 +5,7 @@ import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
+import com.superfactory.library.Utils.TimeUtil
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.Struct.Note.NoteStruct
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
@@ -21,14 +22,19 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
         toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
         toolbarBindingModel.title.value = "APP"
         val ctx = getStaticsContextRef()
-        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)
+        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)//todo 缺icon
         toolbarBindingModel.rightIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)
     }
+    var pageNo=0
+    var pageSize=20
 
     val itemList = observable<ArrayList<NoteItemDataViewModel>>(arrayListOf())
 
+    var onItemClicked: ((Int, Any) -> Unit)? = null
 
-    val isEditToday=observable(false)
+
+    val currDate = observable(TimeUtil.takeNowTime("yyyy年MM月dd日"))
+    val isEditToday = observable(false)
     val tips = observable("")
 
     override fun requestFailed(ld: LoadingDialog, error: Throwable?) {
@@ -55,23 +61,45 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
         }
     }
 
-    data class NoteItemDataViewModel(val titleBody: TitleBody, val noteSnapShot: List<NoteSnapShot>?)
-
-    data class TitleBody(val image: Int, var startData: String, var desc: String)
-
-    data class NoteSnapShot(val image: Int, val title: String, var content: String, val startData: String, val endDate: String, val createDate: String)
 
     fun updateItemList(noteStruct: NoteStruct) {
         itemList.value.clear()
         val rows = noteStruct.body.rows
 
-//        for (i in 0 until rows.size) {
-//            val row = rows[i]
-//            row.
-//            val body1 = TitleBody(R.drawable.note_start_time_icon, "", "")
-//            val list = arrayListOf<NoteSnapShot>()
-//            list.add(NoteSnapShot(R.drawable.projection_icon, row., "", row.startTime, row.endTime, row.createDate))
-//            itemList.value.add(NoteItemDataViewModel(body1, list))
-//        }
+        for (i in 0 until rows.size) {
+            val row = rows[i]
+
+            R.drawable.note_start_time_icon//todo
+
+            val body1 = TitleBody(R.drawable.date_icon, TimeUtil.takeNowTime("yyyy年MM月dd",
+                    "yyyy-MM-dd HH:mm:ss",
+                    row.startTime), "1条日志")
+            val list = arrayListOf<NoteSnapShot>()
+
+            row.dutyName = "12121"
+            row.matterContent = "121212121212111111111111111111111111111111111111111111111111111111133333333333333333332"
+
+
+            list.add(NoteSnapShot(R.drawable.projection_icon__,
+                    row.dutyName, row.matterContent,
+                    "${TimeUtil.takeNowTime("HH:mm",
+                            "yyyy-MM-dd HH:mm:ss",
+                            row.startTime)}-${
+                    TimeUtil.takeNowTime("HH:mm",
+                            "yyyy-MM-dd HH:mm:ss",
+                            row.endTime)}",
+                    TimeUtil.takeNowTime("HH:mm",
+                            "yyyy-MM-dd HH:mm:ss",
+                            row.createDate) ?: "")
+            )
+            itemList.value.add(NoteItemDataViewModel(body1, list))
+        }
     }
 }
+
+data class NoteItemDataViewModel(val titleBody: TitleBody, val noteSnapShot: List<NoteSnapShot>?)
+
+
+data class TitleBody(val leftImage: Int, var startData: String?, var desc: String, val rightImage: Int? = R.drawable.right_arrow_icon)
+
+data class NoteSnapShot(val image: Int, var title: String = "无标题", var content: String = "无内容", val dateRange: String, val createDate: String)

@@ -1,6 +1,7 @@
 package com.superfactory.library.Utils
 
 import android.text.TextUtils
+import java.security.CodeSource
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -18,6 +19,18 @@ object TimeUtil {
         try {
             val sdf = SimpleDateFormat(format, Locale.CHINA)
             return sdf.format(Date())
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    fun takeNowTime(format: String,sourceFormat: String,time:String): String? {
+        try {
+            val sdf = SimpleDateFormat(format, Locale.CHINA)
+            val sdfSource = SimpleDateFormat(sourceFormat, Locale.CHINA)
+            val date = sdfSource.parse(time)
+            return sdf.format(date)
         } catch (e: ParseException) {
             e.printStackTrace()
         }

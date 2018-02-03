@@ -66,7 +66,7 @@ class QuestionnaireActivityViewModel(intent: Intent) : ToolbarBindingModel() {
             val rows = struct.body.rows
             for (i in 0 until rows.size) {
                 val row = rows.get(i)
-                list.value.add(QuestionnaireItem(row.title, TimeUtil.compareNowTime("yyyy-MM-dd hh:mm:ss", row.createDate),
+                list.value.add(QuestionnaireItem(row.title, TimeUtil.compareNowTime("yyyy-MM-dd HH:mm:ss", row.createDate),
                         row,
                         haveToSee = if (row.status == 0) true else false))
             }

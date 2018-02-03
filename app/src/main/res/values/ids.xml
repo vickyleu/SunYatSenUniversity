@@ -14,4 +14,5 @@
     <item name="right_arrow" type="id" />
     <item name="settings_layout" type="id" />
     <item name="account" type="id" />
+    <item name="left_text" type="id" />
 </resources>

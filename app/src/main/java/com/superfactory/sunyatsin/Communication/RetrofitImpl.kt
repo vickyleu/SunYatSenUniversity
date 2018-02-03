@@ -49,4 +49,10 @@ interface RetrofitImpl {
     fun queryNoteList(@Path("JSESSIONID") JSESSIONID: String,
                       @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body data: String): Observable<ResponseBody>
 
+    @POST("api/pushrecord/data;JSESSIONID={JSESSIONID}?")
+    fun loadMsg(@Path("JSESSIONID") JSESSIONID: String,
+                @Query("__ajax=true&mobileLogin") mobileLogin: Boolean,
+                @Body pageNo: Int, @Body pageSize: Int,
+                @Body orderBy: String = "createDate desc"): Observable<ResponseBody>
+
 }

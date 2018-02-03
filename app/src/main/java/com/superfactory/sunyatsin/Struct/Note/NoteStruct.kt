@@ -72,6 +72,8 @@ data class Row(
         val createDate: String,
         val updateDate: String,
         val jobType: String,
+        var matterContent: String,//事项内容
+        var dutyName: String,//事项名称
         val itemType: String,
         val startTime: String,
         val endTime: String
@@ -79,6 +81,8 @@ data class Row(
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readParcelable(CreateBy::class.java.classLoader),
+            parcel.readString(),
+            parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -93,6 +97,8 @@ data class Row(
         parcel.writeString(createDate)
         parcel.writeString(updateDate)
         parcel.writeString(jobType)
+        parcel.writeString(matterContent)
+        parcel.writeString(dutyName)
         parcel.writeString(itemType)
         parcel.writeString(startTime)
         parcel.writeString(endTime)
@@ -111,9 +117,7 @@ data class Row(
             return arrayOfNulls(size)
         }
     }
-
 }
-
 
 data class CreateBy(
         val id: String,
@@ -149,3 +153,5 @@ data class CreateBy(
         }
     }
 }
+
+

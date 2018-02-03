@@ -372,23 +372,27 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                             .setBadgeTextColor(Color.parseColor("#ffffff"))
                             .setBadgeTextSize(10f, true)
                             .setBadgeBackground(ContextCompat.getDrawable(context, R.drawable.badge_shape))
-                            .setBadgeText(attachValue)
-                            .setOnDragStateChangedListener({ dragState, badge, _ ->
-                                when (dragState) {
-                                    STATE_START/*拖拽开始*/ -> {
-                                    }
-                                    STATE_DRAGGING /*拖拽中*/ -> {
-                                    }
-                                    STATE_DRAGGING_OUT_OF_RANGE /*拖拽区域超出所属ViewParent*/ -> {
-                                    }
-                                    STATE_SUCCEED /*拖拽完成,气泡消失*/ -> {
-                                        viewModelSafe.notificationTotal.value = 0
-                                        viewModelSafe.dragging.value = true
-                                    }
-                                    STATE_CANCELED/*拖拽取消*/ -> {
-                                    }
-                                }
-                            })
+                    if (value > 0) {
+                        (viewModelSafe.badge.value as? BadgeView)?.setBadgeText(attachValue)
+                    } else {
+                        (viewModelSafe.badge.value as? BadgeView)?.setBadgeNumber(0)
+                    }
+                    (viewModelSafe.badge.value as? BadgeView)?.setOnDragStateChangedListener({ dragState, badge, _ ->
+                        when (dragState) {
+                            STATE_START/*拖拽开始*/ -> {
+                            }
+                            STATE_DRAGGING /*拖拽中*/ -> {
+                            }
+                            STATE_DRAGGING_OUT_OF_RANGE /*拖拽区域超出所属ViewParent*/ -> {
+                            }
+                            STATE_SUCCEED /*拖拽完成,气泡消失*/ -> {
+                                viewModelSafe.notificationTotal.value = 0
+                                viewModelSafe.dragging.value = true
+                            }
+                            STATE_CANCELED/*拖拽取消*/ -> {
+                            }
+                        }
+                    })
                 }
                 register.assignmentHolder { holder, item, position ->
                     //                    when (position) {

@@ -48,7 +48,7 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAwait(component: Bi
             } else {
                 body = exe.errorBody()
             }
-            any = GsonBuilder().setLenient().create().fromJson(body?.toString()?.trim() ?: "")
+            any = GsonBuilder().serializeNulls().setLenient().create().fromJson(body?.toString()?.trim() ?: "")
             Debuger.printMsg(this, any?.toString()?.trim() ?: "null")
         } catch (e: IOException) {
             e.printStackTrace()
@@ -79,7 +79,7 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass
          */
         override fun onResponse(call: Call<T>?, response: Response<T>?) {
             try {
-                val model: D? = GsonBuilder().setLenient().create().fromJson(json = response?.body()?.string()?.trim()
+                val model: D? = GsonBuilder().serializeNulls().setLenient().create().fromJson(json = response?.body()?.string()?.trim()
                         ?: "")
                 Debuger.printMsg("tags", model ?: "null")
                 (viewModel as? BaseObservable)?.requestSuccess(ld, model)
@@ -110,7 +110,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAwait(compone
                 .map(object : Function<T, D?> {
                     override fun apply(t: T): D? {
                         try {
-                            val model: D? = GsonBuilder().setLenient().create().fromJson(json = t.string()?.trim()
+                            val model: D? = GsonBuilder().serializeNulls().setLenient().create().fromJson(json = t.string()?.trim()
                                     ?: "")
                             Debuger.printMsg(this, model ?: "null")
                             return model
@@ -140,7 +140,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(com
                 .map(object : Function<T, List<D>?> {
                     override fun apply(t: T): List<D>? {
                         try {
-                            val model: List<D>? = GsonBuilder().setLenient().create().fromJsonList(json = t.string()?.trim()
+                            val model: List<D>? = GsonBuilder().serializeNulls().setLenient().create().fromJsonList(json = t.string()?.trim()
                                     ?: "")
                             Debuger.printMsg(this, model ?: "null")
                             return model
@@ -169,7 +169,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(cla
             .map(object : Function<T, List<D>?> {
                 override fun apply(t: T): List<D>? {
                     try {
-                        val model: List<D>? = GsonBuilder().setLenient().create().fromJsonList(json = t.string()?.trim()
+                        val model: List<D>? = GsonBuilder().serializeNulls().setLenient().create().fromJsonList(json = t.string()?.trim()
                                 ?: "")
                         Debuger.printMsg(this, model ?: "null")
                         return model
@@ -215,7 +215,7 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
             .map(object : Function<T1, D1?> {
                 override fun apply(t: T1): D1? {
                     try {
-                        return GsonBuilder().setLenient().create().fromJson<D1?>(json = t.string()?.trim()
+                        return GsonBuilder().serializeNulls().setLenient().create().fromJson<D1?>(json = t.string()?.trim()
                                 ?: "")
                     } catch (e: IOException) {
                         e.printStackTrace()
@@ -241,7 +241,7 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
             .map(Function<T2?, D2?>
             { t ->
                 try {
-                    return@Function GsonBuilder().setLenient().create().fromJson<D2?>(json = t?.string()?.trim()
+                    return@Function GsonBuilder().serializeNulls().setLenient().create().fromJson<D2?>(json = t?.string()?.trim()
                             ?: "")
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -280,7 +280,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
             .map(object : Function<T, D?> {
                 override fun apply(t: T): D? {
                     try {
-                        val model: D? = GsonBuilder().setLenient().create().fromJson(json = t.string()?.trim()
+                        val model: D? = GsonBuilder().serializeNulls().setLenient().create().fromJson(json = t.string()?.trim()
                                 ?: "")
                         Debuger.printMsg(this, model ?: "null")
                         return model

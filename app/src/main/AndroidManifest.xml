@@ -45,6 +45,7 @@
         <activity android:name=".Interface.BindingActivity.PasswordActivity.PasswordActivity" />
         <activity android:name=".Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity" />
         <activity android:name=".Interface.BindingActivity.QuestionnaireDetailActivity.QuestionnaireDetailActivity" />
+        <activity android:name=".Interface.BindingActivity.MessageActivity.MessageActivity" />
     </application>
 
 </manifest>
