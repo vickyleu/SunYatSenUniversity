@@ -28,6 +28,7 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
     val itemList = observable<ArrayList<NoteItemDataViewModel>>(arrayListOf())
 
 
+    val isEditToday=observable(false)
     val tips = observable("")
 
     override fun requestFailed(ld: LoadingDialog, error: Throwable?) {

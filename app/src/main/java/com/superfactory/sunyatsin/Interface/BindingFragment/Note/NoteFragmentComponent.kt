@@ -12,13 +12,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import com.scwang.smartrefresh.layout.util.DensityUtil
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getAppNoStatusBarSize
+import com.superfactory.library.Bridge.Anko.BindingExtensions.getAppStatusBarSize
 import com.superfactory.library.Bridge.Anko.BindingExtensions.getAttrDrawablValue
+import com.superfactory.library.Bridge.Anko.DslView.classicsHeader
 import com.superfactory.library.Bridge.Anko.DslView.refresh
+import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Communication.Sender.senderAsync
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Utils.ConfigXmlAccessor
@@ -31,6 +35,8 @@ import com.superfactory.sunyatsin.Struct.Note.NoteStruct
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.collapsingToolbarLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.sdk25.coroutines.onTouch
 import org.jetbrains.anko.support.v4.nestedScrollView
 
 /**
@@ -46,21 +52,47 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
     internal var toolBarPositionY = 0
     override fun createViewWithBindings(ui: AnkoContext<NoteFragment>): View = with(ui) {
         frameLayout {
+            backgroundColor = Color.parseColor("#f8f8f8")
             var parallax: LinearLayout? = null
+            val screenHeight = getAppNoStatusBarSize(context).height
+            val barSize = getAppStatusBarSize(context)
 
+
+            val normalCollapsing = (screenHeight / 2.0).toInt()//默认日志未填写,完全展开的可折叠高度
+
+            val topMarginHidden = -(normalCollapsing * 0.3).toInt()//顶部隐藏的空间,固定值
+
+            val hoverCollapsing = observable((normalCollapsing * 0.5).toInt())
+
+            val pinAreaCollapsing = dip(60)//悬停区域可折叠高度
+            val totalCollapsing = observable(normalCollapsing)
+            var count=0
             parallax = verticalLayout {
                 backgroundColor = Color.parseColor("#1688FF")
-                val lp = CollapsingToolbarLayout.LayoutParams(matchParent, (getAppNoStatusBarSize(context).height / 2.4).toInt())
+                val lp = CollapsingToolbarLayout.LayoutParams(matchParent, normalCollapsing)
                 lp.collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
-                lp.topMargin = -(getAppNoStatusBarSize(context).height / 6.4).toInt()
+                lp.topMargin = topMarginHidden
                 layoutParams = lp
+                bindSelf(NoteFragmentViewModel::isEditToday) { it.isEditToday.value }.toView(this) { view, value ->
+                    if (value != null) {
+                        view.visibility=if (value){
+                            hoverCollapsing.value=barSize
+                            count=0
+                            View.GONE
+                        } else {
+                            hoverCollapsing.value=(normalCollapsing * 0.5).toInt()
+                            View.VISIBLE
+                        }
+                    }
+                }
 
                 verticalLayout {
                     textView {
                         text = "121212"
                     }
                 }.lparams {
-                    topMargin = (getAppNoStatusBarSize(context).height / 6.4).toInt()
+                    setHorizontalGravity(Gravity.CENTER_HORIZONTAL)
+                    setVerticalGravity(Gravity.CENTER_VERTICAL)
                 }
             }
 
@@ -68,18 +100,20 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
             refresh {
                 setEnableNestedScroll(false)
                 isEnableRefresh = true
-
-
-//                <com.scwang.smartrefresh.layout.header.ClassicsHeader
-//                android:layout_width="match_parent"
-//                android:layout_height="wrap_content"
-//                app:srlAccentColor="@android:color/white"/>
+//                classicsHeader {
+//                    setAccentColor(Color.WHITE)
+//                }.lparams{
+//                    width= wrapContent
+//                    height= matchParent
+//                }
 
 
                 nestedScrollView {
                     overScrollMode = View.OVER_SCROLL_NEVER
+
                     verticalLayout {
                         verticalLayout {
+                            backgroundColor = Color.TRANSPARENT
                             collapsingToolbarLayout {
                                 isTitleEnabled = false
                                 contentScrim = getAttrDrawablValue(context, R.attr.colorPrimary)
@@ -92,14 +126,38 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                                     backgroundColor = Color.parseColor("#222222")
                                 }.lparams {
                                     width = matchParent
-                                    height = dip(100)
-                                    topMargin = dip(200)
+                                    height = pinAreaCollapsing
+                                    topMargin = totalCollapsing.value - (pinAreaCollapsing - topMarginHidden)
                                     gravity = Gravity.BOTTOM
                                 }
+                                bindSelf(NoteFragmentViewModel::isEditToday) { it.isEditToday.value }.toView(this) { view, value ->
+                                    if (value != null) {
+                                        view.visibility=if (value){
+                                            View.GONE
+                                        } else {
+                                            View.VISIBLE
+                                        }
+                                    }
+                                }
+
+                            }.lparams {
+                                width = matchParent
+                                height = wrapContent
+                                gravity = Gravity.FILL_VERTICAL
                             }
+
+
 
                             recyclerView {
                                 backgroundColor = Color.RED
+                                onTouch { v, event ->
+                                    if (count<1){
+                                        viewModelSafe.isEditToday.value=!viewModelSafe.isEditToday.value
+                                        count++
+                                    }else{
+                                        count=-1
+                                    }
+                                }
                             }.lparams {
                                 width = matchParent
                                 height = dip(550)
@@ -111,7 +169,13 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                     }
                     val lp = CoordinatorLayout.LayoutParams(matchParent, matchParent)
                     lp.behavior = AppBarLayout.ScrollingViewBehavior()
-                    lp.topMargin = -(getAppNoStatusBarSize(context).height / 8.4).toInt()
+                    lp.topMargin = (hoverCollapsing.value)
+                    bindSelf(hoverCollapsing::value) {hoverCollapsing.value }.toView(this) { view, value ->
+                        if (value != null) {
+                            (view.layoutParams as SmartRefreshLayout.LayoutParams).topMargin=value
+                        }
+                    }
+                    lp.gravity = Gravity.FILL_VERTICAL
                     layoutParams = lp
                 }.apply {
                     this.setOnScrollChangeListener(object : NestedScrollView.OnScrollChangeListener {
