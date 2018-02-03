@@ -1,7 +1,5 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Note
 
-import android.app.Activity
-import android.content.Context
 import android.graphics.Color
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -26,8 +24,6 @@ import com.superfactory.library.Bridge.Anko.DslView.classicsHeader
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Communication.Sender.senderAsync
-import com.superfactory.library.Context.BaseActivity
-import com.superfactory.library.Context.BaseFragment
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.library.Utils.TimeUtil
@@ -62,11 +58,11 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
             val barSize = getAppStatusBarSize(context)
 
 
-            val normalCollapsing = (screenHeight / 2.5).toInt()//默认日志未填写,完全展开的可折叠高度
+            val normalCollapsing = (screenHeight / 2.0).toInt()//默认日志未填写,完全展开的可折叠高度
 
-            val topMarginHidden = -(normalCollapsing * 0.4).toInt()//顶部隐藏的空间,固定值
+            val topMarginHidden = -(normalCollapsing * 0.3).toInt()//顶部隐藏的空间,固定值
 
-            val hoverCollapsing = observable((normalCollapsing * 0.45).toInt())
+            val hoverCollapsing = observable((normalCollapsing * 0.5).toInt())
 
             val pinAreaCollapsing = dip(60)//悬停区域可折叠高度
             val totalCollapsing = observable(normalCollapsing)
@@ -80,7 +76,7 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                 bindSelf(NoteFragmentViewModel::isEditToday) { it.isEditToday.value }.toView(this) { view, value ->
                     if (value != null) {
                         view.visibility=if (value){
-                            hoverCollapsing.value=0
+                            hoverCollapsing.value=barSize
                             count=0
                             View.GONE
                         } else {
@@ -128,15 +124,6 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
 
                                 verticalLayout {
                                     backgroundColor = Color.parseColor("#222222")
-//                                    bindSelf(NoteFragmentViewModel::isEditToday) { it.isEditToday.value }.toView(this) { view, value ->
-//                                        if (value != null) {
-//                                            (view.layoutParams as CollapsingToolbarLayout.LayoutParams).topMargin=if (value){
-//                                                totalCollapsing.value - (pinAreaCollapsing - topMarginHidden)
-//                                            } else {
-//                                                totalCollapsing.value - (pinAreaCollapsing - topMarginHidden)
-//                                            }
-//                                        }
-//                                    }
                                 }.lparams {
                                     width = matchParent
                                     height = pinAreaCollapsing
@@ -145,10 +132,7 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                                 }
                                 bindSelf(NoteFragmentViewModel::isEditToday) { it.isEditToday.value }.toView(this) { view, value ->
                                     if (value != null) {
-                                        val lp=(view.layoutParams as LinearLayout.LayoutParams)
-//                                        lp.gravity=Gravity.FILL_VERTICAL
                                         view.visibility=if (value){
-
                                             View.GONE
                                         } else {
                                             View.VISIBLE
@@ -189,19 +173,42 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                     bindSelf(hoverCollapsing::value) {hoverCollapsing.value }.toView(this) { view, value ->
                         if (value != null) {
                             (view.layoutParams as SmartRefreshLayout.LayoutParams).topMargin=value
-                            parallax.translationY=0f
-                            this.setOnScrollChangeListener(getListener(context,owner,parallax))
-                            this@refresh.setOnMultiPurposeListener(getListenerPurpose(parallax,owner))
                         }
                     }
                     lp.gravity = Gravity.FILL_VERTICAL
                     layoutParams = lp
                 }.apply {
-                    this.setOnScrollChangeListener(getListener(context,owner,parallax))
+                    this.setOnScrollChangeListener(object : NestedScrollView.OnScrollChangeListener {
+                        var lastScrollY = 0
+                        val h = DensityUtil.dp2px(170f)
+                        val color = ContextCompat.getColor(context, R.color.colorPrimary) and 0x00ffffff
+                        override fun onScrollChange(v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int) {
+                            if (lastScrollY < h) {
+                                val scrollY2 = Math.min(h, scrollY)
+                                mScrollY = if (scrollY2 > h) h else scrollY2
+//                                toolbar_header.setAlpha(1f * mScrollY / h)
+                                owner.bar?.setBackgroundColor(255 * mScrollY / h shl 24 or color)
+                                parallax.translationY = (mOffset - mScrollY).toFloat()
+                            }
+                            lastScrollY = scrollY;
+                        }
+                    })
                 }
 
 
-                setOnMultiPurposeListener(getListenerPurpose(parallax,owner))
+                setOnMultiPurposeListener(object : SimpleMultiPurposeListener() {
+                    override fun onHeaderPulling(header: RefreshHeader?, percent: Float, offset: Int, headerHeight: Int, extendHeight: Int) {
+                        mOffset = offset / 2
+                        parallax.translationY = (mOffset - mScrollY).toFloat()
+                        owner.bar?.alpha = 1 - Math.min(percent, 1f)
+                    }
+
+                    override fun onHeaderReleasing(header: RefreshHeader?, percent: Float, offset: Int, footerHeight: Int, extendHeight: Int) {
+                        mOffset = offset / 2
+                        parallax.translationY = (mOffset - mScrollY).toFloat()
+                        owner.bar?.alpha = 1 - Math.min(percent, 1f)
+                    }
+                })
 //                toolbar_header.setAlpha(0f)
                 owner.bar?.setBackgroundColor(0)
             }
@@ -219,43 +226,7 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
 
     }
 
-    private fun getListener(context:Context,owner:BaseFragment<*,*>,parallax:View): NestedScrollView.OnScrollChangeListener {
-        return object : NestedScrollView.OnScrollChangeListener {
-            var lastScrollY = 0
-            val h = DensityUtil.dp2px(170f)
-            val color = ContextCompat.getColor(context, R.color.colorPrimary) and 0x00ffffff
-            override fun onScrollChange(v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int) {
-                if (lastScrollY < h) {
-                    val scrollY2 = Math.min(h, scrollY)
-                    mScrollY = if (scrollY2 > h) h else scrollY2
-//                                toolbar_header.setAlpha(1f * mScrollY / h)
-                    owner.bar?.setBackgroundColor(255 * mScrollY / h shl 24 or color)
-                    parallax.translationY = (mOffset - mScrollY).toFloat()
-                }
-                lastScrollY = scrollY;
-            }
-        }
-    }
-
-    private fun getListenerPurpose(parallax: View,owner: BaseFragment<*, *>): SimpleMultiPurposeListener {
-        return object : SimpleMultiPurposeListener() {
-            override fun onHeaderPulling(header: RefreshHeader?, percent: Float, offset: Int, headerHeight: Int, extendHeight: Int) {
-                mOffset = offset / 2
-                parallax.translationY = (mOffset - mScrollY).toFloat()
-                owner.bar?.alpha = 1 - Math.min(percent, 1f)
-            }
-
-            override fun onHeaderReleasing(header: RefreshHeader?, percent: Float, offset: Int, footerHeight: Int, extendHeight: Int) {
-                mOffset = offset / 2
-                parallax.translationY = (mOffset - mScrollY).toFloat()
-                owner.bar?.alpha = 1 - Math.min(percent, 1f)
-            }
-        }
-    }
-
 }
-
-
 
 class NoteItemViewComponent : BindingComponent<ViewGroup, QuestionnaireItem>() {
     override fun createViewWithBindings(ui: AnkoContext<ViewGroup>) = with(ui) {
