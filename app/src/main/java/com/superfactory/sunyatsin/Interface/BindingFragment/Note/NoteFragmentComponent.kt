@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.CoordinatorLayout
+import android.support.design.widget.Snackbar
+import android.support.design.widget.Snackbar.LENGTH_SHORT
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.NestedScrollView
 import android.text.TextUtils
@@ -59,6 +61,7 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
 
 
             val normalCollapsing = (screenHeight / 2.0).toInt()//默认日志未填写,完全展开的可折叠高度
+            val backgroundCollapsing = (screenHeight / 1.0).toInt()//默认日志未填写,完全展开的可折叠高度
 
             val topMarginHidden = -(normalCollapsing * 0.3).toInt()//顶部隐藏的空间,固定值
 
@@ -69,7 +72,7 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
             var count=0
             parallax = verticalLayout {
                 backgroundColor = Color.parseColor("#1688FF")
-                val lp = CollapsingToolbarLayout.LayoutParams(matchParent, normalCollapsing)
+                val lp = CollapsingToolbarLayout.LayoutParams(matchParent, backgroundCollapsing)
                 lp.collapseMode = CollapsingToolbarLayout.LayoutParams.COLLAPSE_MODE_PARALLAX
                 lp.topMargin = topMarginHidden
                 layoutParams = lp
@@ -127,7 +130,8 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                                 }.lparams {
                                     width = matchParent
                                     height = pinAreaCollapsing
-                                    topMargin = totalCollapsing.value - (pinAreaCollapsing - topMarginHidden)
+                                   val margins= totalCollapsing.value - (pinAreaCollapsing - topMarginHidden)
+                                    topMargin =margins
                                     gravity = Gravity.BOTTOM
                                 }
                                 bindSelf(NoteFragmentViewModel::isEditToday) { it.isEditToday.value }.toView(this) { view, value ->
@@ -170,11 +174,6 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                     val lp = CoordinatorLayout.LayoutParams(matchParent, matchParent)
                     lp.behavior = AppBarLayout.ScrollingViewBehavior()
                     lp.topMargin = (hoverCollapsing.value)
-                    bindSelf(hoverCollapsing::value) {hoverCollapsing.value }.toView(this) { view, value ->
-                        if (value != null) {
-                            (view.layoutParams as SmartRefreshLayout.LayoutParams).topMargin=value
-                        }
-                    }
                     lp.gravity = Gravity.FILL_VERTICAL
                     layoutParams = lp
                 }.apply {
