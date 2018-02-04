@@ -28,6 +28,7 @@ abstract class ToolbarBindingModel : BaseObservable() {
     val rightPadding = observable(16)
     val rightIcon = observableNullable<Any?>(null)
     val rightText = observable("")
+    val eraseRight=observable(false)
     val rightClickable :ObservableFieldImpl<((View?)->Unit)?> = observableNullable<(View?)->Unit>(null)
     val leftClickable :ObservableFieldImpl<((View?)->Unit)?> = observableNullable<(View?)->Unit>(null)
     val rightTextSize = observable(0)

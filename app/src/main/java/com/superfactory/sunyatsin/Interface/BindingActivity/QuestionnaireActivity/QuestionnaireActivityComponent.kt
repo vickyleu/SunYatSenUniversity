@@ -118,13 +118,13 @@ class QuestionnaireActivityItemComponent : BindingComponent<ViewGroup, Questionn
                 addRule(RelativeLayout.RIGHT_OF, iv.id)
                 addRule(RelativeLayout.ALIGN_TOP, iv.id)
                 alignParentRight()
-                leftMargin = dip(5)
+                leftMargin = dip(10)
             }
 
             textView {
                 singleLine = true
                 ellipsize = TextUtils.TruncateAt.valueOf(TextUtils.TruncateAt.END.name)
-                bindSelf(QuestionnaireItem::msg) { it.msg }.toView(this) { view, value ->
+                bindSelf(QuestionnaireItem::date) { it.date }.toView(this) { view, value ->
                     if (!TextUtils.isEmpty(value)) {
                         view.text = value
                     }

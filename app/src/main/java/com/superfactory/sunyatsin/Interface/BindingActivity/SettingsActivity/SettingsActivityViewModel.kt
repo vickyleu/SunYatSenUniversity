@@ -25,7 +25,7 @@ class SettingsActivityViewModel : ToolbarBindingModel() {
         toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.back_stack_icon)
     }
 
-    override fun requestSuccess(ld: LoadingDialog, model: Any?) {
+    override fun requestSuccess(ld: LoadingDialog, model: Any?, witch: Int?) {
         if (model == null) {
             ld.close()
             tips.value = "无法解析数据"
@@ -42,7 +42,7 @@ class SettingsActivityViewModel : ToolbarBindingModel() {
         }
     }
 
-    override fun requestFailed(ld: LoadingDialog, error: Throwable?) {
+    override fun requestFailed(ld: LoadingDialog, error: Throwable?, witch: Int?) {
         ld.close()
         if (!TextUtils.isEmpty(error?.message)) {
             tips.value = error?.message!!

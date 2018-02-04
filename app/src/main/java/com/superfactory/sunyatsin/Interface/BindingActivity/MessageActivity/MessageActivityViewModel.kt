@@ -2,11 +2,14 @@ package com.superfactory.sunyatsin.Interface.BindingActivity.MessageActivity
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Parcel
+import android.os.Parcelable
 import android.support.v4.content.ContextCompat
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Utils.TimeUtil
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.Base.BaseBody
 import com.superfactory.sunyatsin.Struct.BaseStructImpl
 import com.superfactory.sunyatsin.Struct.Message.MessageStruct
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
@@ -40,7 +43,7 @@ open class MessageActivityViewModel(val intent: Intent) : ToolbarBindingModel() 
     }
 
     val tips = observable("")
-    override fun requestSuccess(ld: LoadingDialog, model: Any?) {
+    override fun requestSuccess(ld: LoadingDialog, model: Any?, witch: Int?) {
         if (model == null) {
             ld.close()
             tips.value = "无法解析数据"
@@ -61,4 +64,32 @@ open class MessageActivityViewModel(val intent: Intent) : ToolbarBindingModel() 
 }
 
 data class MessageItemView(val title: String, val content: String, val date: String,
-                           val image: Int? = R.drawable.message_notification_icon)
+                           val image: Int? = R.drawable.message_notification_icon):BaseBody() {
+    constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readValue(Int::class.java.classLoader) as? Int) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(title)
+        parcel.writeString(content)
+        parcel.writeString(date)
+        parcel.writeValue(image)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<MessageItemView> {
+        override fun createFromParcel(parcel: Parcel): MessageItemView {
+            return MessageItemView(parcel)
+        }
+
+        override fun newArray(size: Int): Array<MessageItemView?> {
+            return arrayOfNulls(size)
+        }
+    }
+}

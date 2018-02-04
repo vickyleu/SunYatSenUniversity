@@ -31,7 +31,7 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
         toolbarBindingModel.rightIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)
     }
 
-    override fun requestFailed(ld: LoadingDialog, error: Throwable?) {
+    override fun requestFailed(ld: LoadingDialog, error: Throwable?, witch: Int?) {
         ld.close()
         if (!TextUtils.isEmpty(error?.message)) {
             tips.value = error?.message!!
@@ -40,7 +40,7 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
 
     val tips = observable("")
 
-    override fun requestSuccess(ld: LoadingDialog, model: Any?) {
+    override fun requestSuccess(ld: LoadingDialog, model: Any?, witch: Int?) {
         ld.close()
         if (model != null) {
             if (model is QuestionnaireStruct) {

@@ -61,8 +61,18 @@ object TimeUtil {
         val isSameYear = calendarStart.get(Calendar.YEAR) == calendarEnd.get(Calendar.YEAR)
         val isSameMonth = isSameYear && calendarStart.get(Calendar.MONTH) == calendarEnd.get(Calendar.MONTH)
         val isSameDate = isSameMonth && calendarStart.get(Calendar.DAY_OF_MONTH) == calendarEnd.get(Calendar.DAY_OF_MONTH)
-        val hour = calendarStart.get(Calendar.HOUR_OF_DAY)
-        val minute = calendarStart.get(Calendar.MINUTE)
+        var hour:Any  = calendarStart.get(Calendar.HOUR_OF_DAY)
+        var minute:Any = calendarStart.get(Calendar.MINUTE)
+
+        if((minute as Int)<10&&minute!=0){
+            minute="0"+ (minute)
+        }
+
+        if((hour as Int)<10&&hour!=0){
+            hour="0"+ (hour)
+        }
+
+
         if (isSameDate) {
             return "今天" + " ${hour}:${minute}"
         }

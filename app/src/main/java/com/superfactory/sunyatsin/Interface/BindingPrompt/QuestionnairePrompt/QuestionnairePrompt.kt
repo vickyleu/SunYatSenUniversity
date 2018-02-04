@@ -1,12 +1,13 @@
-package com.superfactory.sunyatsin.Interface.BindingPrompt
+package com.superfactory.sunyatsin.Interface.BindingPrompt.QuestionnairePrompt
 
 import android.content.Context
 import com.superfactory.library.Context.BasePrompt
+import com.superfactory.sunyatsin.R
 
 /**
  * Created by vicky on 2018/2/1.
  */
-class QuestionPrompt(ctx: Context) : BasePrompt<QuestionPromptViewModel, QuestionPrompt>(ctx) {
+class QuestionnairePrompt(ctx: Context) : BasePrompt<QuestionPromptViewModel, QuestionnairePrompt>(ctx, R.style.Dialog_FS) {
 
     override fun newViewModel() = QuestionPromptViewModel()
 

@@ -32,6 +32,7 @@ class SimpleDividerItemDecoration() : RecyclerView.ItemDecoration() {
         val childCount = parent.childCount
         if (mDivider == null) return
         for (i in 0 until childCount) {
+            if (i == childCount-1)return
             val child = parent.getChildAt(i)
 
             val params = child.layoutParams as RecyclerView.LayoutParams

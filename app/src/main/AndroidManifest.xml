@@ -46,6 +46,19 @@
         <activity android:name=".Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity" />
         <activity android:name=".Interface.BindingActivity.QuestionnaireDetailActivity.QuestionnaireDetailActivity" />
         <activity android:name=".Interface.BindingActivity.MessageActivity.MessageActivity" />
+        <activity android:name=".Interface.BindingActivity.MessageDetailActivity.MessageDetailActivity" />
+        <activity android:name=".Interface.BindingActivity.NoteByDayActivity.NoteByDayActivity" />
+        <activity android:name=".Interface.BindingActivity.NoteDetailOrAddActivity.NoteDetailOrAddActivity" />
+
+        <!--<provider-->
+            <!--android:name="android.support.v4.content.FileProvider"-->
+            <!--android:authorities="${applicationId}.provider"-->
+            <!--android:exported="false"-->
+            <!--android:grantUriPermissions="true">-->
+            <!--<meta-data-->
+                <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
+                <!--android:resource="@xml/file_paths" />-->
+        <!--</provider>-->
     </application>
 
 </manifest>

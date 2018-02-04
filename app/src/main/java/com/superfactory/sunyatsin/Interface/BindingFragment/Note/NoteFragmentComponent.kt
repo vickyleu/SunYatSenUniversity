@@ -29,6 +29,7 @@ import com.superfactory.library.Bridge.Anko.bindings.toText
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
 import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
+import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Communication.Sender.senderAsync
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Debuger
@@ -175,7 +176,9 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                             }.apply {
                                 onItemClickListener = { i, viewModel, _ ->
                                     Debuger.printMsg(this, "invoke  1  " + viewModelSafe.onItemClicked)
-                                    this@NoteFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+//                                    this@NoteFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+                                    (this@NoteFragmentComponent.viewModel as? ToolbarBindingModel)?.
+                                            ownerNotifier?.invoke(103,viewModel)
                                 }
                             }
                             bindSelf(NoteFragmentViewModel::itemList) { it.itemList.value }
@@ -271,7 +274,7 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                     takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
                             context, Const.SignInInfo, Const.SignInSession, "")
                             ?: "", true, TimeUtil.takeNowTime("yyyy-MM-dd", "yyyy-MM-dd", "$year-$month-$day")
-                            ?: "")?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context)
+                            ?: "")?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context,witch = 1)
                 })
                 picker.show()
             }

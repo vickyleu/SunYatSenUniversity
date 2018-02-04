@@ -1,13 +1,15 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Note
 
 import android.graphics.Color
+import android.os.Parcel
+import android.os.Parcelable
 import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Utils.TimeUtil
 import com.superfactory.sunyatsin.R
-import com.superfactory.sunyatsin.Struct.BaseStructImpl
+import com.superfactory.sunyatsin.Struct.Base.BaseBody
 import com.superfactory.sunyatsin.Struct.Message.MessageStruct
 import com.superfactory.sunyatsin.Struct.Note.NoteStruct
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
@@ -27,8 +29,9 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
         toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)//todo 缺icon
         toolbarBindingModel.rightIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)
     }
-    var pageNo=0
-    var pageSize=20
+
+    var pageNo = 0
+    var pageSize = 20
 
     val itemList = observable<ArrayList<NoteItemDataViewModel>>(arrayListOf())
 
@@ -39,14 +42,14 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
     val isEditToday = observable(false)
     val tips = observable("")
 
-    override fun requestFailed(ld: LoadingDialog, error: Throwable?) {
+    override fun requestFailed(ld: LoadingDialog, error: Throwable?, witch: Int?) {
         ld.close()
         if (!TextUtils.isEmpty(error?.message)) {
             tips.value = error?.message!!
         }
     }
 
-    override fun requestSuccess(ld: LoadingDialog, model: Any?) {
+    override fun requestSuccess(ld: LoadingDialog, model: Any?, witch: Int?) {
         if (model == null) {
             ld.close()
             tips.value = "无法解析数据"
@@ -60,7 +63,7 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
                 ld.close()
                 tips.value = model.msg ?: "未知错误"
             }
-        }else if (model is MessageStruct){
+        } else if (model is MessageStruct) {
             if (model.success) {
                 ld.close()
                 ownerNotifier?.invoke(102, model)
@@ -81,7 +84,7 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
 
             R.drawable.note_start_time_icon//todo
 
-            val body1 = TitleBody(R.drawable.date_icon, TimeUtil.takeNowTime("yyyy年MM月dd",
+            val body1 = TitleBody(R.drawable.date_icon, TimeUtil.takeNowTime("yyyy年MM月dd日",
                     "yyyy-MM-dd HH:mm:ss",
                     row.startTime), "1条日志")
             val list = arrayListOf<NoteSnapShot>()
@@ -97,19 +100,109 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
                             row.startTime)}-${
                     TimeUtil.takeNowTime("HH:mm",
                             "yyyy-MM-dd HH:mm:ss",
-                            row.endTime)}",
+                            row.endTime)}", row.startTime, row.endTime,
+                    row.createDate,
                     TimeUtil.takeNowTime("HH:mm",
                             "yyyy-MM-dd HH:mm:ss",
                             row.createDate) ?: "")
             )
             itemList.value.add(NoteItemDataViewModel(body1, list))
         }
+        itemList.notifyChange(NoteFragmentViewModel::itemList)
     }
 }
 
-data class NoteItemDataViewModel(val titleBody: TitleBody, val noteSnapShot: List<NoteSnapShot>?)
+data class NoteItemDataViewModel(val titleBody: TitleBody, val noteSnapShot: List<NoteSnapShot>?) : BaseBody() {
+    constructor(parcel: Parcel) : this(
+            parcel.readParcelable(TitleBody::class.java.classLoader),
+            parcel.createTypedArrayList(NoteSnapShot)) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeParcelable(titleBody, flags)
+        parcel.writeTypedList(noteSnapShot)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<NoteItemDataViewModel> {
+        override fun createFromParcel(parcel: Parcel): NoteItemDataViewModel {
+            return NoteItemDataViewModel(parcel)
+        }
+
+        override fun newArray(size: Int): Array<NoteItemDataViewModel?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
 
 
-data class TitleBody(val leftImage: Int, var startData: String?, var desc: String, val rightImage: Int? = R.drawable.right_arrow_icon)
+data class TitleBody(val leftImage: Int, var startData: String?, var desc: String, val rightImage: Int? = R.drawable.right_arrow_icon) : BaseBody() {
+    constructor(parcel: Parcel) : this(
+            parcel.readInt(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readValue(Int::class.java.classLoader) as? Int) {
+    }
 
-data class NoteSnapShot(val image: Int, var title: String = "无标题", var content: String = "无内容", val dateRange: String, val createDate: String)
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(leftImage)
+        parcel.writeString(startData)
+        parcel.writeString(desc)
+        parcel.writeValue(rightImage)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<TitleBody> {
+        override fun createFromParcel(parcel: Parcel): TitleBody {
+            return TitleBody(parcel)
+        }
+
+        override fun newArray(size: Int): Array<TitleBody?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
+
+data class NoteSnapShot(val image: Int, var title: String = "无标题", var content: String = "无内容", val dateRange: String, val startData: String, val endData: String, val createOrigin: String, val createDate: String) : BaseBody() {
+    constructor(parcel: Parcel) : this(
+            parcel.readInt(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString()) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(image)
+        parcel.writeString(title)
+        parcel.writeString(content)
+        parcel.writeString(dateRange)
+        parcel.writeString(startData)
+        parcel.writeString(endData)
+        parcel.writeString(createOrigin)
+        parcel.writeString(createDate)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<NoteSnapShot> {
+        override fun createFromParcel(parcel: Parcel): NoteSnapShot {
+            return NoteSnapShot(parcel)
+        }
+
+        override fun newArray(size: Int): Array<NoteSnapShot?> {
+            return arrayOfNulls(size)
+        }
+    }
+}

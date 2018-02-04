@@ -5,6 +5,8 @@ import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Context.BaseActivity
+import com.superfactory.sunyatsin.Interface.BindingActivity.NoteDetailOrAddActivity.NoteDetailOrAddActivity
+import org.jetbrains.anko.startActivityForResult
 
 class MainActivity : BaseActivity<MainActivityViewModel, MainActivity>() {
 
@@ -15,7 +17,12 @@ class MainActivity : BaseActivity<MainActivityViewModel, MainActivity>() {
     override fun newViewModel() = MainActivityViewModel(intent, supportFragmentManager)
 
 
-    override fun newComponent(v: MainActivityViewModel) = MainActivityComponent(v)
+    override fun newComponent(v: MainActivityViewModel) = MainActivityComponent(v).apply {
+        viewModel?.ownerNotifier={
+            i,any->
+            startActivityForResult<NoteDetailOrAddActivity>(1001,Pair("data", any))
+        }
+    }
 
 
     override fun setToolbarAttribution(toolbarBinder: BaseToolBar<MainActivity, MainActivityViewModel>, actionBar: ActionBar?, toolbarView: Toolbar) {

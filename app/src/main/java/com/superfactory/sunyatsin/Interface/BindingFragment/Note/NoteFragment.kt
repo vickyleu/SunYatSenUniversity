@@ -5,6 +5,8 @@ import com.superfactory.library.Context.BaseToolbarFragment
 import com.superfactory.library.Debuger
 import com.superfactory.library.Utils.TimeUtil
 import com.superfactory.sunyatsin.Interface.BindingActivity.MessageActivity.MessageActivity
+import com.superfactory.sunyatsin.Interface.BindingActivity.NoteByDayActivity.NoteByDayActivity
+import com.superfactory.sunyatsin.Interface.BindingActivity.NoteDetailOrAddActivity.NoteDetailOrAddActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity
 import com.superfactory.sunyatsin.Struct.Note.NoteStruct
 import org.jetbrains.anko.support.v4.startActivity
@@ -28,6 +30,8 @@ class NoteFragment : BaseToolbarFragment<NoteFragmentViewModel, NoteFragment>() 
             } else {
                 if (option == 101) {
                     viewModelSafe.updateItemList(any as NoteStruct)
+                } else if (option == 103) {
+                    startActivityForResult<NoteByDayActivity>(1001, Pair("data", any))
                 } else if (option == 102) {
                     startActivity<MessageActivity>(Pair("data", any))
                 } else
@@ -45,7 +49,7 @@ class NoteFragment : BaseToolbarFragment<NoteFragmentViewModel, NoteFragment>() 
         viewModel.onItemClicked = { i, model ->
             when (i) {
                 -1 -> {
-                    Debuger.printMsg(this, "立即填写")
+                    startActivityForResult<NoteDetailOrAddActivity>(1001)
                 }
                 else -> {
 

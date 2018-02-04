@@ -97,11 +97,11 @@ open class BaseObservable() : Observable, Parcelable {
         return true
     }
 
-    open fun requestSuccess(ld: LoadingDialog, model: Any?) {
+    open fun requestSuccess(ld: LoadingDialog, model: Any?, witch: Int?) {
         ld.loadSuccess()
     }
 
-    open fun requestFailed(ld: LoadingDialog, error: Throwable?) {
+    open fun requestFailed(ld: LoadingDialog, error: Throwable?, witch: Int?) {
         ld.setFailedText(error?.message ?: "异常退出")
         ld.loadFailed()
     }
@@ -128,6 +128,7 @@ class ObservableFieldImpl<T : Any?>(private var _value: T, private val configure
 
     private var configured: Boolean = false
     private var name = convertValue(_value)
+
 
     private fun convertValue(value: T) = if (value == null) "" else {
         if ((value as Any).javaClass is Parcelable) {

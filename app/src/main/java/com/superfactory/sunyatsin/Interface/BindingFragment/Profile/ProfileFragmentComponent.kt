@@ -371,7 +371,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                             .setBadgeBackgroundColor(Color.parseColor("#ff03a9f4"))
                             .setBadgeTextColor(Color.parseColor("#ffffff"))
                             .setBadgeTextSize(10f, true)
-                            .setBadgeBackground(ContextCompat.getDrawable(context, R.drawable.badge_shape))
+                            .setBadgeBackground(ContextCompat.getDrawable(context, R.drawable.badge_shape)!!)
                     if (value > 0) {
                         (viewModelSafe.badge.value as? BadgeView)?.setBadgeText(attachValue)
                     } else {

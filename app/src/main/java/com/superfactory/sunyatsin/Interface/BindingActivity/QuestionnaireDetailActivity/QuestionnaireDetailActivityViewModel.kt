@@ -8,7 +8,6 @@ import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Utils.RxSorter
 import com.superfactory.sunyatsin.R
-import com.superfactory.sunyatsin.Struct.Base.BaseStruct
 import com.superfactory.sunyatsin.Struct.BaseStructImpl
 import com.superfactory.sunyatsin.Struct.QuestionaireStruct.Question
 import com.superfactory.sunyatsin.Struct.QuestionaireStruct.QuestionnaireDetailStruct
@@ -31,14 +30,14 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
         toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.back_stack_icon)
         toolbarBindingModel.rightText.value = "提交"
     }
-    override fun requestFailed(ld: LoadingDialog, error: Throwable?) {
+    override fun requestFailed(ld: LoadingDialog, error: Throwable?, witch: Int?) {
         ld.close()
         if (!TextUtils.isEmpty(error?.message)) {
             tips.value = error?.message!!
         }
     }
 
-    override fun requestSuccess(ld: LoadingDialog, model: Any?) {
+    override fun requestSuccess(ld: LoadingDialog, model: Any?, witch: Int?) {
         if (model == null) {
             ld.close()
             tips.value = "无法解析数据"

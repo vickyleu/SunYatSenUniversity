@@ -1,9 +1,10 @@
-package com.superfactory.sunyatsin.Interface.BindingPrompt
+package com.superfactory.sunyatsin.Interface.BindingPrompt.QuestionnairePrompt
 
 import android.graphics.Color
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.superfactory.library.Bridge.Anko.BindingComponent
+import com.superfactory.library.Context.takeRoundRectShape
 import com.superfactory.sunyatsin.R
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -11,10 +12,12 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 /**
  * Created by vicky on 2018/2/1.
  */
-class QuestionPromptComponent(viewModel: QuestionPromptViewModel) : BindingComponent<QuestionPrompt, QuestionPromptViewModel>(viewModel) {
-    override fun createViewWithBindings(ui: AnkoContext<QuestionPrompt>) = with(ui) {
+class QuestionPromptComponent(viewModel: QuestionPromptViewModel) :
+        BindingComponent<QuestionnairePrompt, QuestionPromptViewModel>(viewModel) {
+    override fun createViewWithBindings(ui: AnkoContext<QuestionnairePrompt>) = with(ui) {
         relativeLayout {
 
+            backgroundDrawable= takeRoundRectShape(dip(5))
             val iv = imageView {
                 id = R.id.image
                 backgroundColor = Color.TRANSPARENT

@@ -173,6 +173,16 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                     setRightIcon((viewModel as? ToolbarBindingModel)?.rightText?.value, context, viewModel)
                 }
 
+                bindSelf(ToolbarBindingModel::eraseRight) { (it as? ToolbarBindingModel)?.eraseRight?.value }.toView(this) { view, value ->
+                    if (value != null && value) {
+                        try {
+                            val old = right?.find<View>(R.id.toolbar_right)
+                            view.removeView(old)
+                        } catch (ignored: Exception) {
+                        }
+                        (viewModelSafe as ToolbarBindingModel).eraseRight.setStableValue(false)
+                    }
+                }
 
                 if (!TextUtils.isEmpty((viewModel as? ToolbarBindingModel)?.leftText?.value)) {
                     setBackIcon((viewModel as? ToolbarBindingModel)?.leftText?.value, context, viewModel)

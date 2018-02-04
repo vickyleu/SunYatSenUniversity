@@ -42,6 +42,10 @@ open class MessageActivityComponent(viewModel: MessageActivityViewModel) :
                     leftPadding = dip(15)
                     val bindAdapter = AutoBindAdapter { viewGroup, _ ->
                         AnkoViewHolder(viewGroup, MessageActivityItemComponent())
+                    }.apply {
+                        onItemClickListener={i,v,h->
+                            viewModel?.ownerNotifier?.invoke(i,v)
+                        }
                     }
                     bindSelf(MessageActivityViewModel::itemList) { it.itemList.value }
                             .toView(this) { _, value ->
@@ -82,7 +86,7 @@ class MessageActivityItemComponent : BindingComponent<ViewGroup, MessageItemView
             topPadding = dip(10)
             bottomPadding = dip(10)
             relativeLayout {
-                val iv = imageView {
+                imageView {
                     id = R.id.left_icon
                     backgroundColor = Color.TRANSPARENT
                     bindSelf(MessageItemView::image) { it.image }.toView(this) { view, value ->
@@ -102,9 +106,10 @@ class MessageActivityItemComponent : BindingComponent<ViewGroup, MessageItemView
                     bindSelf(MessageItemView::title) { it.title }.toText(this)
                     textSize = 15f
                     textColor = Color.parseColor("#222222")
+                    leftPadding = dip(25)
                 }.lparams {
                     alignParentLeft()
-                    leftMargin = dip(40)
+
                     centerVertically()
                 }
 
@@ -112,7 +117,7 @@ class MessageActivityItemComponent : BindingComponent<ViewGroup, MessageItemView
                     bindSelf(MessageItemView::date) { it.date }.toText(this)
                 }.lparams {
                     alignParentRight()
-                    rightMargin = dip(40)
+                    rightMargin = dip(10)
                     centerVertically()
                 }
 
@@ -120,7 +125,7 @@ class MessageActivityItemComponent : BindingComponent<ViewGroup, MessageItemView
             textView {
                 bindSelf(MessageItemView::content) { it.content }.toText(this)
             }.lparams {
-                leftMargin = dip(15)
+                leftMargin = dip(25)
             }
 
 

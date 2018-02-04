@@ -48,7 +48,7 @@ interface RetrofitImpl {
 
     @POST("api/workinglog/data;JSESSIONID={JSESSIONID}?")
     fun queryNoteList(@Path("JSESSIONID") JSESSIONID: String,
-                      @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body data: String): Observable<ResponseBody>
+                      @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body data: String?=""): Observable<ResponseBody>
 
     @POST("api/pushrecord/data;JSESSIONID={JSESSIONID}?")
     fun loadMsg(@Path("JSESSIONID") JSESSIONID: String,
@@ -56,6 +56,10 @@ interface RetrofitImpl {
 
     @POST("api/pushrecord/deleteAll;JSESSIONID={JSESSIONID}?")
     fun eraseMsg(@Path("JSESSIONID") JSESSIONID: String,
+                 @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+
+    @POST("api/workinglog/findDutyList;JSESSIONID={JSESSIONID}?")
+    fun dutyList(@Path("JSESSIONID") JSESSIONID: String,
                  @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
 }

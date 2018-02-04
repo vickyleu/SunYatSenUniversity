@@ -78,7 +78,7 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass
     senderAsync(clazz, component, ctx, true)
 }
 
-inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, flags: Boolean) {
+inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, flags: Boolean,witch:Int?=0) {
     val viewModel = component.viewModel
     val ld = LoadingDialog(ctx)
     (viewModel as? BaseObservable)?.startRequest(ld)
@@ -98,17 +98,17 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass
                         .setLenient().create().fromJson(json = response?.body()?.string()?.trim()
                         ?: "")
                 Debuger.printMsg("tags", model ?: "null")
-                (viewModel as? BaseObservable)?.requestSuccess(ld, model)
+                (viewModel as? BaseObservable)?.requestSuccess(ld, model, witch)
             } catch (e: Exception) {
                 e.printStackTrace()
-                (viewModel as? BaseObservable)?.requestFailed(ld, e)
+                (viewModel as? BaseObservable)?.requestFailed(ld, e, witch)
             }
         }
 
 
         override fun onFailure(call: Call<T>, t: Throwable) {
             Debuger.printMsg(this, t.message ?: "null")
-            (viewModel as? BaseObservable)?.requestFailed(ld, t)
+            (viewModel as? BaseObservable)?.requestFailed(ld, t, witch)
         }
     })
     Debuger.printMsg(this, "开始异步")
@@ -232,7 +232,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(cla
  * 异步请求
  */
 inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : ResponseBody> Observable<T1>.senderAsyncMultiple(clazz: KClass<D1>, component: BindingComponent<*, *>, ctx: Context,
-                                                                                                                         clazzB: KClass<D2>, crossinline fun1: ((D1) -> Observable<T2>?)) {
+                                                                                                                         clazzB: KClass<D2>, crossinline fun1: ((D1) -> Observable<T2>?),witch:Int?=0) {
     val ld = LoadingDialog(ctx)
     (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
@@ -291,11 +291,11 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
                 override fun onNext(t: D2) {
                     //请求成功
 //                        //在你代码中合适的位置调用反馈
-                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t)
+                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t, witch)
                 }
 
                 override fun onError(e: Throwable) {
-                    (component.viewModel as? BaseObservable)?.requestFailed(ld, e)
+                    (component.viewModel as? BaseObservable)?.requestFailed(ld, e, witch)
 //                        //请求失败
                     Debuger.printMsg(this, e.message ?: "null")
                 }
@@ -338,7 +338,7 @@ open class NullStringToEmptyAdapterFactory : TypeAdapterFactory {
 }
 
 
-inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, refresh: RefreshLayout? = null) {
+inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, refresh: RefreshLayout? = null,witch:Int?=0) {
     val ld = LoadingDialog(ctx)
     (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
@@ -373,12 +373,12 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                     refresh?.finishRefresh()
                     //请求成功
                     //在你代码中合适的位置调用反馈
-                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t)
+                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t,witch)
                 }
 
                 override fun onError(e: Throwable) {
                     refresh?.finishRefresh()
-                    (component.viewModel as? BaseObservable)?.requestFailed(ld, e)
+                    (component.viewModel as? BaseObservable)?.requestFailed(ld, e,witch)
                     //请求失败
                     Debuger.printMsg(this, e.message ?: "null")
                 }
