@@ -72,7 +72,7 @@ abstract class BindingComponent<in T, V>
                 var useCoordinatorLayout = false
 
                 if (owner is Activity) {
-                    useCoordinatorLayout = true
+                    useCoordinatorLayout = false
                 }
                 if (!useCoordinatorLayout) {
                     verticalLayout {

@@ -9,6 +9,7 @@ import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Utils.RxSorter
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.Struct.Base.BaseStruct
+import com.superfactory.sunyatsin.Struct.BaseStructImpl
 import com.superfactory.sunyatsin.Struct.QuestionaireStruct.Question
 import com.superfactory.sunyatsin.Struct.QuestionaireStruct.QuestionnaireDetailStruct
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
@@ -43,7 +44,7 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
             tips.value = "无法解析数据"
             return
         }
-        if (model is BaseStruct) {
+        if (model is BaseStructImpl) {
             if (model.success) {
                 ld.close()
                 ownerNotifier?.invoke(0, model)

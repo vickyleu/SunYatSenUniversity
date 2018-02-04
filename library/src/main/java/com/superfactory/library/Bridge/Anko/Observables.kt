@@ -182,7 +182,7 @@ class ObservableFieldImpl<T : Any?>(private var _value: T, private val configure
 //    override fun writeToParcel(parcel: Parcel, flags: Int) {
 //        super.writeToParcel(parcel, flags)
 //        parcel.writeByte(if (configured) 1 else 0)
-//        parcel.writeString(name)
+//        parcel.writeStringNotNull(name)
 //    }
 //
 //    override fun describeContents(): Int {

@@ -4,11 +4,8 @@ package com.superfactory.library.Context
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.database.ContentObserver
 import android.os.Bundle
-import android.os.Handler
 import android.os.Parcelable
-import android.provider.Settings
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -102,7 +99,8 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
     }
 
 
-    protected open var binder: BindingComponent<*, *>? = layout
+    protected open var binder: BindingComponent<*, *>? = null
+        get() = layout
 
     protected var showToolBar: Boolean = false
 
@@ -136,7 +134,7 @@ abstract class BaseActivity<V : Parcelable, A : BaseActivity<V, A>> : AppCompatA
                     toolbar = tc.apply {
                         toolbarAnko = createView(AnkoContextImpl(this@BaseActivity, this@BaseActivity as A, false))
                         //状态栏透明和间距处理
-                        StatusBarUtil.immersive(this@BaseActivity) // 经测试在代码里直接声明透明状态栏更有效
+//                        StatusBarUtil.immersive(this@BaseActivity) // 经测试在代码里直接声明透明状态栏更有效
 //                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
 //                            val localLayoutParams = window.attributes
 //                            localLayoutParams.flags = android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or localLayoutParams.flags

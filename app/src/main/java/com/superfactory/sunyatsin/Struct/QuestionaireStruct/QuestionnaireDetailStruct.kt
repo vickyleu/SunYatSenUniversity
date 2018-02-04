@@ -2,6 +2,7 @@ package com.superfactory.sunyatsin.Struct.QuestionaireStruct
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.superfactory.library.Context.Extensions.writeStringNotNull
 import com.superfactory.sunyatsin.Struct.Base.BaseStruct
 
 /**
@@ -90,16 +91,16 @@ data class QNaire(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
+        parcel.writeStringNotNull(id)
         parcel.writeParcelable(createBy, flags)
-        parcel.writeString(createDate)
-        parcel.writeString(updateDate)
-        parcel.writeString(title)
-        parcel.writeString(direction)
+        parcel.writeStringNotNull(createDate)
+        parcel.writeStringNotNull(updateDate)
+        parcel.writeStringNotNull(title)
+        parcel.writeStringNotNull(direction)
         parcel.writeInt(operate)
-        parcel.writeString(deptTypeId)
-        parcel.writeString(officId)
-        parcel.writeString(jobType)
+        parcel.writeStringNotNull(deptTypeId)
+        parcel.writeStringNotNull(officId)
+        parcel.writeStringNotNull(jobType)
     }
 
     override fun describeContents(): Int {
@@ -131,10 +132,10 @@ data class CreateByIn(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(loginFlag)
+        parcel.writeStringNotNull(id)
+        parcel.writeStringNotNull(loginFlag)
         parcel.writeByte(if (admin) 1 else 0)
-        parcel.writeString(roleNames)
+        parcel.writeStringNotNull(roleNames)
     }
 
     override fun describeContents(): Int {
@@ -172,12 +173,12 @@ data class Question(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(parentId)
-        parcel.writeString(title)
-        parcel.writeString(type)
+        parcel.writeStringNotNull(id)
+        parcel.writeStringNotNull(parentId)
+        parcel.writeStringNotNull(title)
+        parcel.writeStringNotNull(type)
         parcel.writeInt(sort)
-        parcel.writeString(normId)
+        parcel.writeStringNotNull(normId)
         parcel.writeTypedList(qOptionsList)
     }
 
@@ -216,11 +217,11 @@ data class QOptions(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(parentParentId)
-        parcel.writeString(optionName)
-        parcel.writeString(content)
-        parcel.writeString(score)
+        parcel.writeStringNotNull(id)
+        parcel.writeStringNotNull(parentParentId)
+        parcel.writeStringNotNull(optionName)
+        parcel.writeStringNotNull(content)
+        parcel.writeStringNotNull(score)
         parcel.writeInt(sort)
         parcel.writeInt(anwserNum)
     }

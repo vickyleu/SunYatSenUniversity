@@ -1,7 +1,15 @@
 package com.superfactory.library.Communication.Sender
 
 import android.content.Context
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
+import com.google.gson.TypeAdapterFactory
+import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
+import com.google.gson.stream.JsonWriter
+import com.scwang.smartrefresh.layout.api.RefreshLayout
 import com.superfactory.library.Bridge.Anko.BaseObservable
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Communication.Responder.fromJson
@@ -48,7 +56,12 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAwait(component: Bi
             } else {
                 body = exe.errorBody()
             }
-            any = GsonBuilder().serializeNulls().setLenient().create().fromJson(body?.toString()?.trim() ?: "")
+            any = GsonBuilder()
+                    .serializeNulls()
+                    .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
+                    .setLenient()
+                    .create().fromJson(body?.toString()?.trim()
+                    ?: "")
             Debuger.printMsg(this, any?.toString()?.trim() ?: "null")
         } catch (e: IOException) {
             e.printStackTrace()
@@ -79,7 +92,10 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass
          */
         override fun onResponse(call: Call<T>?, response: Response<T>?) {
             try {
-                val model: D? = GsonBuilder().serializeNulls().setLenient().create().fromJson(json = response?.body()?.string()?.trim()
+                val model: D? = GsonBuilder()
+                        .serializeNulls()
+                        .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
+                        .setLenient().create().fromJson(json = response?.body()?.string()?.trim()
                         ?: "")
                 Debuger.printMsg("tags", model ?: "null")
                 (viewModel as? BaseObservable)?.requestSuccess(ld, model)
@@ -110,7 +126,10 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAwait(compone
                 .map(object : Function<T, D?> {
                     override fun apply(t: T): D? {
                         try {
-                            val model: D? = GsonBuilder().serializeNulls().setLenient().create().fromJson(json = t.string()?.trim()
+                            val model: D? = GsonBuilder()
+                                    .serializeNulls()
+                                    .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
+                                    .setLenient().create().fromJson(json = t.string()?.trim()
                                     ?: "")
                             Debuger.printMsg(this, model ?: "null")
                             return model
@@ -140,7 +159,10 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(com
                 .map(object : Function<T, List<D>?> {
                     override fun apply(t: T): List<D>? {
                         try {
-                            val model: List<D>? = GsonBuilder().serializeNulls().setLenient().create().fromJsonList(json = t.string()?.trim()
+                            val model: List<D>? = GsonBuilder()
+                                    .serializeNulls()
+                                    .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
+                                    .setLenient().create().fromJsonList(json = t.string()?.trim()
                                     ?: "")
                             Debuger.printMsg(this, model ?: "null")
                             return model
@@ -169,7 +191,10 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(cla
             .map(object : Function<T, List<D>?> {
                 override fun apply(t: T): List<D>? {
                     try {
-                        val model: List<D>? = GsonBuilder().serializeNulls().setLenient().create().fromJsonList(json = t.string()?.trim()
+                        val model: List<D>? = GsonBuilder()
+                                .serializeNulls()
+                                .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
+                                .setLenient().create().fromJsonList(json = t.string()?.trim()
                                 ?: "")
                         Debuger.printMsg(this, model ?: "null")
                         return model
@@ -215,7 +240,10 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
             .map(object : Function<T1, D1?> {
                 override fun apply(t: T1): D1? {
                     try {
-                        return GsonBuilder().serializeNulls().setLenient().create().fromJson<D1?>(json = t.string()?.trim()
+                        return GsonBuilder()
+                                .serializeNulls()
+                                .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
+                                .setLenient().create().fromJson<D1?>(json = t.string()?.trim()
                                 ?: "")
                     } catch (e: IOException) {
                         e.printStackTrace()
@@ -241,7 +269,10 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
             .map(Function<T2?, D2?>
             { t ->
                 try {
-                    return@Function GsonBuilder().serializeNulls().setLenient().create().fromJson<D2?>(json = t?.string()?.trim()
+                    return@Function GsonBuilder()
+                            .serializeNulls()
+                            .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
+                            .setLenient().create().fromJson<D2?>(json = t?.string()?.trim()
                             ?: "")
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -272,7 +303,42 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
             })
 }
 
-inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context) {
+open class NullStringToEmptyAdapterFactory : TypeAdapterFactory {
+    /**
+     * Returns a type adapter for `type`, or null if this factory doesn't
+     * support `type`.
+     */
+    override fun <T : Any?> create(gson: Gson?, type: TypeToken<T>?): TypeAdapter<T>? {
+        val rawType = type?.rawType as? Class<T>
+        val strClazz = String::class.java
+        if (rawType != strClazz) {
+            return null
+        }
+        return StringNullAdapter() as TypeAdapter<T>
+    }
+
+    class StringNullAdapter : TypeAdapter<String>() {
+        override fun write(out: JsonWriter?, value: String?) {
+            if (value == null) {
+                out?.nullValue()
+                return;
+            }
+            out?.value(value)
+        }
+
+        override fun read(`in`: JsonReader?): String? {
+            if (`in`?.peek() == JsonToken.NULL) {
+                `in`.nextNull()
+                return ""
+            }
+            return `in`?.nextString()
+        }
+    }
+
+}
+
+
+inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, refresh: RefreshLayout? = null) {
     val ld = LoadingDialog(ctx)
     (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
@@ -280,7 +346,10 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
             .map(object : Function<T, D?> {
                 override fun apply(t: T): D? {
                     try {
-                        val model: D? = GsonBuilder().serializeNulls().setLenient().create().fromJson(json = t.string()?.trim()
+                        val model: D? = GsonBuilder()
+                                .serializeNulls()
+                                .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
+                                .setLenient().create().fromJson(json = t.string()?.trim()
                                 ?: "")
                         Debuger.printMsg(this, model ?: "null")
                         return model
@@ -301,12 +370,14 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                 }
 
                 override fun onNext(t: D) {
+                    refresh?.finishRefresh()
                     //请求成功
                     //在你代码中合适的位置调用反馈
                     (component.viewModel as? BaseObservable)?.requestSuccess(ld, t)
                 }
 
                 override fun onError(e: Throwable) {
+                    refresh?.finishRefresh()
                     (component.viewModel as? BaseObservable)?.requestFailed(ld, e)
                     //请求失败
                     Debuger.printMsg(this, e.message ?: "null")

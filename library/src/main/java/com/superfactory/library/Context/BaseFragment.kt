@@ -39,7 +39,8 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
     private var layout: BindingComponent<A, V>? = null
     var viewModel: V? = null
 
-    protected open var binder: BindingComponent<*, *>? = layout
+    protected open var binder: BindingComponent<*, *>? = null
+        get() = layout
     open var bar: View? = null
         get() = toolbarAnko
 
@@ -63,7 +64,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
                     event = BaseToolBar.Companion.ToolbarEvent.NONE
                 }
             }
-            performToolbarClickEvent(it,event)
+            performToolbarClickEvent(it, event)
         }
     })
 

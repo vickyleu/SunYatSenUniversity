@@ -8,6 +8,7 @@ import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.observableNullable
 import com.superfactory.library.Context.BaseApp
 import com.superfactory.library.R
+import kotlinx.coroutines.experimental.async
 import kotlin.reflect.full.memberProperties
 
 /**
@@ -28,13 +29,14 @@ abstract class ToolbarBindingModel : BaseObservable() {
     val rightIcon = observableNullable<Any?>(null)
     val rightText = observable("")
     val rightClickable :ObservableFieldImpl<((View?)->Unit)?> = observableNullable<(View?)->Unit>(null)
+    val leftClickable :ObservableFieldImpl<((View?)->Unit)?> = observableNullable<(View?)->Unit>(null)
     val rightTextSize = observable(0)
     val rightTextColor = observable(0)
     val rightView = observableNullable<View?>(null)
     val leftView = observableNullable<View?>(null)
 
     init {
-        apply {
+        async {
             setToolbar(this@ToolbarBindingModel)
         }
     }

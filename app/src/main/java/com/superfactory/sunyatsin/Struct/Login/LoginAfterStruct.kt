@@ -2,6 +2,7 @@ package com.superfactory.sunyatsin.Struct.Login
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.superfactory.library.Context.Extensions.writeStringNotNull
 import com.superfactory.sunyatsin.Struct.Base.BaseBody
 import com.superfactory.sunyatsin.Struct.Base.BaseStruct
 
@@ -125,34 +126,34 @@ data class Data(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(remarks)
+        parcel.writeStringNotNull(id)
+        parcel.writeStringNotNull(remarks)
         parcel.writeParcelable(createBy, flags)
-        parcel.writeString(createDate)
+        parcel.writeStringNotNull(createDate)
         parcel.writeParcelable(updateBy, flags)
-        parcel.writeString(updateDate)
+        parcel.writeStringNotNull(updateDate)
         parcel.writeParcelable(office, flags)
-        parcel.writeString(loginName)
-        parcel.writeString(no)
-        parcel.writeString(name)
-        parcel.writeString(email)
-        parcel.writeString(phone)
-        parcel.writeString(mobile)
-        parcel.writeString(loginIp)
-        parcel.writeString(loginDate)
-        parcel.writeString(loginFlag)
-        parcel.writeString(photo)
-        parcel.writeString(qrCode)
-        parcel.writeString(sign)
-        parcel.writeString(oldLoginIp)
-        parcel.writeString(oldLoginDate)
-        parcel.writeString(regId)
-        parcel.writeString(jobType)
-        parcel.writeString(jobTypeName)
-        parcel.writeString(deptTypeId)
-        parcel.writeString(deptTypeName)
-        parcel.writeString(sex)
-        parcel.writeString(roleNames)
+        parcel.writeStringNotNull(loginName)
+        parcel.writeStringNotNull(no)
+        parcel.writeStringNotNull(name)
+        parcel.writeStringNotNull(email)
+        parcel.writeStringNotNull(phone)
+        parcel.writeStringNotNull(mobile)
+        parcel.writeStringNotNull(loginIp)
+        parcel.writeStringNotNull(loginDate)
+        parcel.writeStringNotNull(loginFlag)
+        parcel.writeStringNotNull(photo)
+        parcel.writeStringNotNull(qrCode)
+        parcel.writeStringNotNull(sign)
+        parcel.writeStringNotNull(oldLoginIp)
+        parcel.writeStringNotNull(oldLoginDate)
+        parcel.writeStringNotNull(regId)
+        parcel.writeStringNotNull(jobType)
+        parcel.writeStringNotNull(jobTypeName)
+        parcel.writeStringNotNull(deptTypeId)
+        parcel.writeStringNotNull(deptTypeName)
+        parcel.writeStringNotNull(sex)
+        parcel.writeStringNotNull(roleNames)
         parcel.writeByte(if (admin) 1 else 0)
     }
 
@@ -185,9 +186,9 @@ data class CreateBy(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(loginFlag)
-        parcel.writeString(roleNames)
+        parcel.writeStringNotNull(id)
+        parcel.writeStringNotNull(loginFlag)
+        parcel.writeStringNotNull(roleNames)
         parcel.writeByte(if (admin) 1 else 0)
     }
 
@@ -220,9 +221,9 @@ data class UpdateBy(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(loginFlag)
-        parcel.writeString(roleNames)
+        parcel.writeStringNotNull(id)
+        parcel.writeStringNotNull(loginFlag)
+        parcel.writeStringNotNull(roleNames)
         parcel.writeByte(if (admin) 1 else 0)
     }
 
@@ -259,12 +260,12 @@ data class Office(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(name)
+        parcel.writeStringNotNull(id)
+        parcel.writeStringNotNull(name)
         parcel.writeInt(sort)
         parcel.writeByte(if (hasChildren) 1 else 0)
-        parcel.writeString(type)
-        parcel.writeString(parentId)
+        parcel.writeStringNotNull(type)
+        parcel.writeStringNotNull(parentId)
     }
 
     override fun describeContents(): Int {

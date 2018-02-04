@@ -7,6 +7,7 @@ import android.support.annotation.DrawableRes
 import android.text.Layout
 import android.text.TextUtils
 import android.view.View
+import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Bridge.Anko.ObservableField
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Graphics.TextDrawable
@@ -99,6 +100,42 @@ class ToolbarExtensions {
          * 设置文字会转化成图形,所以必须在转换之前设置好文字大小和颜色,否则将使用默认颜色和字体大小
          */
         fun <V> setRightIcon(res: String?, context: Context, viewModel: V) {
+            if (TextUtils.isEmpty(res)) return
+            setToolbarProperty(ToolbarBindingModel::rightText, res!!, viewModel)
+            val td = TextDrawable(context)
+            td.text = res
+            val vm = (viewModel as ToolbarBindingModel)
+            val color = vm.rightTextColor.value
+            if (color > 0)
+                td.setTextColor(color)
+            val size = vm.rightTextSize.value
+            if (size > 0)
+                td.textSize = size.toFloat()
+            td.textAlign = Layout.Alignment.ALIGN_CENTER
+            setToolbarProperty(ToolbarBindingModel::rightIcon, td, viewModel)
+        }
+
+
+        fun <V> BaseToolBar<*,*>.setBackIcon(res: String?, context: Context, viewModel: V) {
+            if (TextUtils.isEmpty(res)) return
+            setToolbarProperty(ToolbarBindingModel::leftText, res!!, viewModel)
+            val td = TextDrawable(context)
+            td.text = res
+            val vm = (viewModel as ToolbarBindingModel)
+            val color = vm.leftTextColor.value
+            if (color > 0)
+                td.setTextColor(color)
+            val size = vm.leftTextSize.value
+            if (size > 0)
+                td.textSize = size.toFloat()
+            td.textAlign = Layout.Alignment.ALIGN_CENTER
+            setToolbarProperty(ToolbarBindingModel::leftIcon, td, viewModel)
+        }
+
+ /**
+         * 设置文字会转化成图形,所以必须在转换之前设置好文字大小和颜色,否则将使用默认颜色和字体大小
+         */
+        fun <V> BaseToolBar<*,*>.setRightIcon(res: String?, context: Context, viewModel: V) {
             if (TextUtils.isEmpty(res)) return
             setToolbarProperty(ToolbarBindingModel::rightText, res!!, viewModel)
             val td = TextDrawable(context)

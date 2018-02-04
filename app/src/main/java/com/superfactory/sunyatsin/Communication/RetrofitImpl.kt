@@ -1,5 +1,7 @@
 package com.superfactory.sunyatsin.Communication
 
+import com.superfactory.sunyatsin.Bean.LoginBean
+import com.superfactory.sunyatsin.Bean.MsgBean
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.*
@@ -28,8 +30,7 @@ interface RetrofitImpl {
 
     @POST("sys/user/savePwd;JSESSIONID={JSESSIONID}?")
     fun changePsw(@Path("JSESSIONID") JSESSIONID: String,
-                  @Field("oldPassword") oldPassword: String,
-                  @Field("newPassword") newPassword: String,
+                  @Body loginBean: LoginBean,
                   @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
     @POST("api/naire/data;JSESSIONID={JSESSIONID}?")
@@ -38,7 +39,7 @@ interface RetrofitImpl {
 
 
     @POST("api/naire/findQuestionByParentId;JSESSIONID={JSESSIONID}?")
-    fun questionnaireDetail(@Path("JSESSIONID") JSESSIONID: String, @Field("parentId") parentId: String,
+    fun questionnaireDetail(@Path("JSESSIONID") JSESSIONID: String, @Body parentId: String,
                             @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
     @POST("api/naire/save;JSESSIONID={JSESSIONID}?")
@@ -51,8 +52,10 @@ interface RetrofitImpl {
 
     @POST("api/pushrecord/data;JSESSIONID={JSESSIONID}?")
     fun loadMsg(@Path("JSESSIONID") JSESSIONID: String,
-                @Query("__ajax=true&mobileLogin") mobileLogin: Boolean,
-                @Body pageNo: Int, @Body pageSize: Int,
-                @Body orderBy: String = "createDate desc"): Observable<ResponseBody>
+                @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body msgBean: MsgBean): Observable<ResponseBody>
+
+    @POST("api/pushrecord/deleteAll;JSESSIONID={JSESSIONID}?")
+    fun eraseMsg(@Path("JSESSIONID") JSESSIONID: String,
+                 @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
 }

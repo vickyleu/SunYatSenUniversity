@@ -2,6 +2,7 @@ package com.superfactory.sunyatsin.Struct.Note
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.superfactory.library.Context.Extensions.writeStringNotNull
 import com.superfactory.sunyatsin.Struct.Base.BaseBody
 import com.superfactory.sunyatsin.Struct.Base.BaseStruct
 
@@ -92,16 +93,16 @@ data class Row(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
+        parcel.writeStringNotNull(id)
         parcel.writeParcelable(createBy, flags)
-        parcel.writeString(createDate)
-        parcel.writeString(updateDate)
-        parcel.writeString(jobType)
-        parcel.writeString(matterContent)
-        parcel.writeString(dutyName)
-        parcel.writeString(itemType)
-        parcel.writeString(startTime)
-        parcel.writeString(endTime)
+        parcel.writeStringNotNull(createDate)
+        parcel.writeStringNotNull(updateDate)
+        parcel.writeStringNotNull(jobType)
+        parcel.writeStringNotNull(matterContent)
+        parcel.writeStringNotNull(dutyName)
+        parcel.writeStringNotNull(itemType)
+        parcel.writeStringNotNull(startTime)
+        parcel.writeStringNotNull(endTime)
     }
 
     override fun describeContents(): Int {
@@ -133,9 +134,9 @@ data class CreateBy(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(loginFlag)
-        parcel.writeString(roleNames)
+        parcel.writeStringNotNull(id)
+        parcel.writeStringNotNull(loginFlag)
+        parcel.writeStringNotNull(roleNames)
         parcel.writeByte(if (admin) 1 else 0)
     }
 

@@ -20,6 +20,7 @@ import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.Struct.Base.BaseStruct
+import com.superfactory.sunyatsin.Struct.BaseStructImpl
 import com.superfactory.sunyatsin.Struct.Const
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
@@ -187,7 +188,7 @@ class QuestionnaireDetailActivityComponent(viewModel: QuestionnaireDetailActivit
         val params = obj.toString()
         takeApi(RetrofitImpl::class)?.storeQuestionnaire(ConfigXmlAccessor.restoreValue(
                 context, Const.SignInInfo, Const.SignInSession, "")
-                ?: "", params, true)?.senderAsync(BaseStruct::class, this@QuestionnaireDetailActivityComponent, context)
+                ?: "", params, true)?.senderAsync(BaseStructImpl::class, this@QuestionnaireDetailActivityComponent, context)
     }
 }
 

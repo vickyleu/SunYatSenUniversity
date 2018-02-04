@@ -14,6 +14,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import cn.qqtheme.framework.picker.DatePicker
+import cn.qqtheme.framework.util.ConvertUtils
 import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import com.scwang.smartrefresh.layout.util.DensityUtil
@@ -32,10 +34,11 @@ import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Debuger
 import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.library.Utils.TimeUtil
+import com.superfactory.sunyatsin.Bean.MsgBean
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.R
-import com.superfactory.sunyatsin.Struct.Base.BaseStruct
 import com.superfactory.sunyatsin.Struct.Const
+import com.superfactory.sunyatsin.Struct.Message.MessageStruct
 import com.superfactory.sunyatsin.Struct.Note.NoteStruct
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.collapsingToolbarLayout
@@ -103,6 +106,7 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
 
             refresh {
                 isEnableRefresh = true
+
                 val ch = classicsHeader {
                     setAccentColor(Color.WHITE)
                     bindSelf(NoteFragmentViewModel::isEditToday) { it.isEditToday.value }.toView(this) { view, value ->
@@ -117,10 +121,12 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                 removeView(ch)
                 setRefreshHeader(ch)
 
+
                 nestedScrollView {
                     overScrollMode = View.OVER_SCROLL_NEVER
                     isNestedScrollingEnabled = false
                     backgroundColor = Color.TRANSPARENT
+                    fitsSystemWindows = true
                     verticalLayout {
                         backgroundColor = Color.TRANSPARENT
                         collapsingToolbarLayout {
@@ -160,9 +166,9 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                             height = wrapContent
                             gravity = Gravity.FILL_VERTICAL
                         }
-
                         recyclerView {
                             isNestedScrollingEnabled = false
+                            fitsSystemWindows = true
                             backgroundColor = Color.parseColor("#f8f8f8")
                             val bindAdapter = AutoBindAdapter { viewGroup, _ ->
                                 AnkoViewHolder(viewGroup, NoteItemViewComponent())
@@ -181,9 +187,8 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                         }.lparams {
                             bottomPadding = (screenHeight * 0.06).toInt()
                             width = matchParent
-                            height = wrapContent
+                            height = matchParent
                         }
-
 
                     }
                     val lp = CoordinatorLayout.LayoutParams(matchParent, matchParent)
@@ -229,6 +234,13 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                         }
                     }
                 })
+
+                setOnRefreshListener {
+                    takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
+                            context, Const.SignInInfo, Const.SignInSession, "")
+                            ?: "", true, TimeUtil.takeNowTime("yyyy-MM-dd")
+                            ?: "")?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context, it)
+                }
             }
 
             lparams {
@@ -236,10 +248,32 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                 height = matchParent
             }
             viewModel?.rightClickable?.value = {
+                val msgBean = MsgBean()
                 takeApi(RetrofitImpl::class)?.loadMsg(ConfigXmlAccessor.restoreValue(
                         context, Const.SignInInfo, Const.SignInSession, "")
-                        ?: "", true, 0, 20)?.
-                        senderAsync(BaseStruct::class, this@NoteFragmentComponent, context)
+                        ?: "", true, msgBean)?.senderAsync(MessageStruct::class, this@NoteFragmentComponent, context)
+            }
+
+
+            viewModel?.leftClickable?.value = {
+                val picker = DatePicker(owner.activity)
+                picker.setCanceledOnTouchOutside(false)
+                picker.setUseWeight(false)
+                picker.setTitleText("日期筛选")
+                picker.setTopPadding(ConvertUtils.toPx(context, 10f))
+                picker.setRangeEnd(2111, 1, 11)
+                picker.setRangeStart(2016, 8, 29)
+                picker.setSelectedItem(2050, 10, 14)
+                picker.setResetWhileWheel(false)
+                picker.setCancelTextColor(Color.parseColor("#222222"))
+                picker.setAnimationStyle(R.style.Animation_CustomPopup)
+                picker.setOnDatePickListener(DatePicker.OnYearMonthDayPickListener { year, month, day ->
+                    takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
+                            context, Const.SignInInfo, Const.SignInSession, "")
+                            ?: "", true, TimeUtil.takeNowTime("yyyy-MM-dd", "yyyy-MM-dd", "$year-$month-$day")
+                            ?: "")?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context)
+                })
+                picker.show()
             }
 
 

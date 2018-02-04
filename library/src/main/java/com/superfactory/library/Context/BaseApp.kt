@@ -42,20 +42,20 @@ abstract class BaseApp : Application() {
         //static 代码段可以防止内存泄露
         init {
             //设置全局的Header构建器
-            SmartRefreshLayout.setDefaultRefreshHeaderCreater { context, layout ->
+            SmartRefreshLayout.setDefaultRefreshHeaderCreator { context, layout ->
                 layout.setPrimaryColorsId(R.color.colorPrimary, android.R.color.white)//全局设置主题颜色
                 if (appDelegate != null) {
-                    return@setDefaultRefreshHeaderCreater appDelegate!!.loadBaseHeader(context, layout)
+                    return@setDefaultRefreshHeaderCreator appDelegate!!.loadBaseHeader(context, layout)
                 } else {
-                    return@setDefaultRefreshHeaderCreater ClassicsHeader(context);
+                    return@setDefaultRefreshHeaderCreator ClassicsHeader(context);
                 }
             }
             //设置全局的Footer构建器
-            SmartRefreshLayout.setDefaultRefreshFooterCreater { context, layout ->
+            SmartRefreshLayout.setDefaultRefreshFooterCreator { context, layout ->
                 if (appDelegate != null) {
-                    return@setDefaultRefreshFooterCreater appDelegate!!.loadBaseFooter(context, layout)
+                    return@setDefaultRefreshFooterCreator appDelegate!!.loadBaseFooter(context, layout)
                 } else {
-                    return@setDefaultRefreshFooterCreater ClassicsFooter(context).setDrawableSize(20f)
+                    return@setDefaultRefreshFooterCreator ClassicsFooter(context).setDrawableSize(20f)
                 }
             }
 

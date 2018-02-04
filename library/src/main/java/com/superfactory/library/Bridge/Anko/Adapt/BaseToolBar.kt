@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Parcelable
 import android.support.v7.app.ActionBar
 import android.support.v7.widget.Toolbar
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,8 @@ import com.superfactory.library.Bridge.Anko.ViewExtensions.themedToolbar_v7
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Context.BaseActivity
 import com.superfactory.library.Context.BaseFragment
+import com.superfactory.library.Context.Extensions.ToolbarExtensions.Companion.setBackIcon
+import com.superfactory.library.Context.Extensions.ToolbarExtensions.Companion.setRightIcon
 import com.superfactory.library.R
 import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.*
@@ -166,7 +169,14 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                 }
 
 
+                if (!TextUtils.isEmpty((viewModel as? ToolbarBindingModel)?.rightText?.value)) {
+                    setRightIcon((viewModel as? ToolbarBindingModel)?.rightText?.value, context, viewModel)
+                }
 
+
+                if (!TextUtils.isEmpty((viewModel as? ToolbarBindingModel)?.leftText?.value)) {
+                    setBackIcon((viewModel as? ToolbarBindingModel)?.leftText?.value, context, viewModel)
+                }
 
                 bindSelf {
                     (it as ToolbarBindingModel).leftIcon
@@ -236,7 +246,11 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                         view.addView(value)
                         value.onClick {
                             if (eventDelegate != null && eventDelegate!!.value != null) {
-                                eventDelegate!!.value.onClick(value)
+                                if ((viewModelSafe as ToolbarBindingModel).leftClickable.value == null) {
+                                    eventDelegate!!.value.onClick(value)
+                                } else {
+                                    (viewModelSafe as ToolbarBindingModel).leftClickable.value!!.invoke(value)
+                                }
                             }
                         }
                     }

@@ -7,6 +7,8 @@ import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Utils.TimeUtil
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.BaseStructImpl
+import com.superfactory.sunyatsin.Struct.Message.MessageStruct
 import com.superfactory.sunyatsin.Struct.Note.NoteStruct
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 
@@ -54,6 +56,14 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
             if (model.success) {
                 ld.close()
                 ownerNotifier?.invoke(101, model)
+            } else {
+                ld.close()
+                tips.value = model.msg ?: "未知错误"
+            }
+        }else if (model is MessageStruct){
+            if (model.success) {
+                ld.close()
+                ownerNotifier?.invoke(102, model)
             } else {
                 ld.close()
                 tips.value = model.msg ?: "未知错误"
