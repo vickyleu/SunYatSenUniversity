@@ -22,6 +22,7 @@ import com.superfactory.library.RxjavaExtensions.ActivityResult.RxActivityResult
 import com.tencent.bugly.crashreport.CrashReport
 import com.xiasuhuei321.loadingdialog.manager.StyleManager
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
+import com.yayandroid.theactivitymanager.TheActivityManager
 import kotlin.reflect.KClass
 
 
@@ -149,10 +150,17 @@ abstract class BaseApp : Application() {
     override fun onCreate() {
         appDelegate = this
         super.onCreate()
+        TheActivityManager.getInstance().setLogEnabled(true);
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build())
             StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build())
         }
+        // If only your application targets minSdkVersion=14
+        // CAUTION: If you call this method, DO NOT extend your activities from TAMBaseActivity
+         TheActivityManager.getInstance().configure(this);
+
+//        LeakCanary.install(this)
+
         RxActivityResult.register(this);
         val dm = appDelegate!!.resources.displayMetrics
         mScreenSizeExtension.width = dm.widthPixels;

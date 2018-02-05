@@ -41,9 +41,6 @@ class SettingsActivity : BaseToolBarActivity<SettingsActivityViewModel, Settings
 
                     })
                 }
-                1/*密码修改*/ -> {
-
-                }
                 2/*清除缓存*/ -> {
 
                 }

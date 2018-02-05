@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RelativeLayout
 import com.superfactory.library.Bridge.Anko.BindingComponent
+import com.superfactory.library.Bridge.Anko.BindingExtensions.dipValue
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Bridge.Anko.ViewExtensions.getLineDividerItemDecoration
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
@@ -20,15 +21,22 @@ import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Debuger
 import com.superfactory.library.Graphics.KDialog.NSAlert.CircleDialog
 import com.superfactory.library.Graphics.KDialog.callback.ConfigButton
+import com.superfactory.library.Graphics.KDialog.callback.ConfigText
+import com.superfactory.library.Graphics.KDialog.callback.ConfigTitle
 import com.superfactory.library.Graphics.KDialog.callback.Interrupter
 import com.superfactory.library.Graphics.KDialog.params.ButtonParams
+import com.superfactory.library.Graphics.KDialog.params.TextParams
+import com.superfactory.library.Graphics.KDialog.params.TitleParams
 import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
+import com.superfactory.sunyatsin.Interface.BindingActivity.LoginActivity.LoginActivity
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.Struct.Const
 import com.superfactory.sunyatsin.Struct.Login.LoginStruct
+import com.yayandroid.theactivitymanager.TheActivityManager
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
+import org.jetbrains.anko.recyclerview.v7._RecyclerView
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -49,103 +57,129 @@ class SettingsActivityComponent(viewModel: SettingsActivityViewModel) : BindingC
                         Snackbar.make(view, value!!, Snackbar.LENGTH_SHORT).show()
                     }
                 }
-                recyclerView {
-                    backgroundResource = R.drawable.profile_recycle_shader
-                    leftPadding = dip(10)
-                    val bindAdapter = AutoBindAdapter { viewGroup, _ ->
-                        AnkoViewHolder(viewGroup, SettingsActivityItemComponent())
-                    }.assignment { holder, _, position ->
-                        when (position) {
-                            2 -> {
-                                Debuger.printMsg(this, "2")
-                                holder.component.viewModel?.description = viewModel?.cacheSize?.value ?: ""
-                            }
-                            3 -> {
-                                Debuger.printMsg(this, "3")
-                                holder.component.viewModel?.description = viewModel?.version?.value ?: ""
-                            }
-                            else -> {
-                                return@assignment
-                            }
-                        }
-                        holder.component.notifyChanges()
-                    }.apply {
-                                onItemClickListener = { i, viewModel, _ ->
-                                    if (viewModel.index == 1) {
-                                        CircleDialog.Builder(owner)
-                                                .setCanceledOnTouchOutside(false)
-                                                .setCancelable(true)
-                                                .setTitle("验证原密码")
-                                                .setTitleColor(Color.BLUE)
-                                                .setText("为保障您的数据安全,修改密码前请填写原密码")
-                                                .setInputHint("请输入原密码")
-                                                .setPositive("确定", null, object : Interrupter {
-                                                    override fun dismissMission(text: String?, dialog: CircleDialog, inputView: View?) {
-                                                        if (TextUtils.isEmpty(text)) {
-                                                            if (inputView != null && inputView is EditText) {
-                                                                inputView.error = "字符长度不足"
-                                                            }
-                                                            return
-                                                        }
-                                                        if (inputView != null && inputView is EditText) {
-                                                            inputView.error = null
-                                                        }
-                                                        dialog.dismiss()
-                                                        val account = ConfigXmlAccessor.restoreValue(context, Const.SignInInfo, Const.SignInAccount, "")
-                                                        takeApi(RetrofitImpl::class)?.login(account!!, text!!, true)?.senderAsync(LoginStruct::class,
-                                                                this@SettingsActivityComponent,
-                                                                context)
-                                                    }
-                                                }
-                                                )
-                                                .configPositive(object : ConfigButton() {
-                                                    override fun onConfig(params: ButtonParams) {
-                                                        //取消按钮字体颜色
-                                                        params.textColor = Color.parseColor("#1688ff")
-                                                        params.dismiss()
-                                                    }
-                                                })
-                                                .setNegative("取消", null)
-                                                .configNegative(object : ConfigButton() {
-                                                    override fun onConfig(params: ButtonParams) {
-                                                        //取消按钮字体颜色
-                                                        params.textColor = Color.parseColor("#1688ff")
-                                                    }
-                                                })
-                                                .show()
-                                    } else {
-                                        this@SettingsActivityComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
-                                    }
+                verticalLayout {
+                    backgroundColor = Color.TRANSPARENT
+                    recyclerView {
+                        backgroundResource = R.drawable.profile_recycle_shader
+                        leftPadding = dip(10)
+                        val bindAdapter = AutoBindAdapter { viewGroup, _ ->
+                            AnkoViewHolder(viewGroup, SettingsActivityItemComponent())
+                        }.assignment { holder, _, position ->
+                            when (position) {
+                                2 -> {
+                                    Debuger.printMsg(this, "2")
+                                    holder.component.viewModel?.description = viewModel?.cacheSize?.value ?: ""
+                                }
+                                3 -> {
+                                    Debuger.printMsg(this, "3")
+                                    holder.component.viewModel?.description = viewModel?.version?.value ?: ""
+                                }
+                                else -> {
+                                    return@assignment
                                 }
                             }
-                    bindSelf(SettingsActivityViewModel::settingsItemsList) { it.settingsItemsList }
-                            .toView(this) { _, value ->
-                                bindAdapter.setItemsList(value)
-                            }
-                    layoutManager = LinearLayoutManager(context)
-                    addItemDecoration(getLineDividerItemDecoration(1, ContextCompat.getColor(context, R.color.gray)))
-                    adapter = bindAdapter
+                            holder.component.notifyChanges()
+                        }.apply {
+                                    onItemClickListener = { i, viewModel, _ ->
+                                        if (viewModel.index == 1) {
+                                            CircleDialog.Builder(owner)
+                                                    .setCanceledOnTouchOutside(false)
+                                                    .setCancelable(true)
+                                                    .setTitle("验证原密码")
+                                                    .setTitleColor(Color.BLUE)
+                                                    .setText("为保障您的数据安全,修改密码前请填写原密码。")
+                                                    .configTitle(object : ConfigTitle() {
+                                                        override fun onConfig(params: TitleParams) {
+                                                            params.textSize = sp(14)
+                                                            params.textColor = Color.parseColor("#222222")
+                                                        }
+
+                                                    }).configText(object : ConfigText() {
+                                                override fun onConfig(params: TextParams) {
+                                                    params.textSize = sp(10)
+                                                    params.textColor = Color.parseColor("#222222")
+                                                }
+
+                                            })
+                                                    .setInputHint("请输入原密码")
+                                                    .setInputHeight(dip(20))
+                                                    .setPositive("确定", null, object : Interrupter {
+                                                        override fun dismissMission(text: String?, dialog: CircleDialog, inputView: View?) {
+                                                            if (TextUtils.isEmpty(text)) {
+                                                                if (inputView != null && inputView is EditText) {
+                                                                    inputView.error = "字符长度不足"
+                                                                }
+                                                                return
+                                                            }
+                                                            if (inputView != null && inputView is EditText) {
+                                                                inputView.error = null
+                                                            }
+                                                            dialog.dismiss()
+                                                            val account = ConfigXmlAccessor.restoreValue(context, Const.SignInInfo, Const.SignInAccount, "")
+                                                            takeApi(RetrofitImpl::class)?.login(account!!, text!!, true)?.senderAsync(LoginStruct::class,
+                                                                    this@SettingsActivityComponent,
+                                                                    context)
+                                                        }
+                                                    }
+                                                    )
+                                                    .configPositive(object : ConfigButton() {
+                                                        override fun onConfig(params: ButtonParams) {
+                                                            //取消按钮字体颜色
+                                                            params.textColor = Color.parseColor("#1688ff")
+                                                            params.textSize = 14
+                                                        }
+                                                    })
+                                                    .setNegative("取消", null)
+                                                    .configNegative(object : ConfigButton() {
+                                                        override fun onConfig(params: ButtonParams) {
+                                                            //取消按钮字体颜色
+                                                            params.textColor = Color.parseColor("#1688ff")
+                                                            params.textSize = 14
+                                                        }
+                                                    })
+                                                    .show()
+                                        } else {
+                                            this@SettingsActivityComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
+                                        }
+                                    }
+                                }
+                        bindSelf(SettingsActivityViewModel::settingsItemsList) { it.settingsItemsList }
+                                .toView(this) { _, value ->
+                                    bindAdapter.setItemsList(value)
+                                }
+                        layoutManager = LinearLayoutManager(context)
+                        addItemDecoration(getLineDividerItemDecoration(1, ContextCompat.getColor(context, R.color.gray)))
+                        adapter = bindAdapter
+                    }.lparams {
+                        topMargin = dip(10)
+                        width = matchParent
+                        height = matchParent
+                    }
+
+                    button {
+                        text = "退出登录"
+                        backgroundResource = R.drawable.profile_recycle_shader
+                        textColor = Color.BLACK
+                        textSize = 16f
+                        topPadding = dip(10)
+                        bottomPadding = dip(10)
+                        gravity = Gravity.CENTER
+                        onClick {
+                            TheActivityManager.getInstance().finishAll()
+                            owner.startActivity<LoginActivity>()
+                            Debuger.printMsg(this, "退出登录")
+                        }
+                    }.lparams {
+                        topMargin = dip(10)
+                        width = matchParent
+                        height = wrapContent
+                    }
+
                 }.lparams {
-                    topMargin = dip(10)
                     width = matchParent
-                    height = wrapContent
+                    height = matchParent
                 }
 
-                button {
-                    text = "退出登录"
-                    backgroundResource = R.drawable.profile_recycle_shader
-                    textColor = Color.BLACK
-                    textSize = 16f
-                    topPadding = dip(10)
-                    bottomPadding = dip(10)
-                    gravity = Gravity.CENTER
-                    onClick {
-                        Debuger.printMsg(this, "退出登录")
-                    }
-                }.lparams {
-                    width = matchParent
-                    height = wrapContent
-                }
                 lparams {
                     width = matchParent
                     height = matchParent
@@ -154,12 +188,16 @@ class SettingsActivityComponent(viewModel: SettingsActivityViewModel) : BindingC
         }
 
     }
+
 }
 
 class SettingsActivityItemComponent : BindingComponent<ViewGroup, SettingsActivityViewModel.SettingsItemViewModel>() {
     override fun createViewWithBindings(ui: AnkoContext<ViewGroup>) = with(ui) {
         relativeLayout {
 
+            topPadding = dip(5)
+            bottomPadding = dip(5)
+            rightPadding = dip(10)
             textView {
                 textSize = 14f
                 textColor = Color.parseColor("#222222")
