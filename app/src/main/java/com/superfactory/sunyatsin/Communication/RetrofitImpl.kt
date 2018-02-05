@@ -33,7 +33,7 @@ interface RetrofitImpl {
 
     @POST("api/naire/data;JSESSIONID={JSESSIONID}?")
     fun questionnaireList(@Path("JSESSIONID") JSESSIONID: String,
-                          @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+                          @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body abc: Holder? = Holder()): Observable<ResponseBody>
 
     @POST("api/naire/findQuestionByParentId;JSESSIONID={JSESSIONID}?")
     fun questionnaireDetail(@Path("JSESSIONID") JSESSIONID: String, @Body bean: QuestionnaireQueryBean,
