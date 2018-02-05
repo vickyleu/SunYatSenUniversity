@@ -1,6 +1,7 @@
 package com.superfactory.sunyatsin.Interface.BindingActivity.NoteDetailOrAddActivity
 
 import android.graphics.Color
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
@@ -95,13 +96,12 @@ class NoteDetailOrAddComponent(viewModel: NoteDetailOrAddViewModel) :
 
                             textView {
                                 textSize = 14f
-                                bindSelf(NoteDetailOrAddViewModel::dutyText) { it.dutyText.value }.toView(this){
-                                    view,value->
-                                    if(value!=null){
-                                        if (TextUtils.isEmpty(value)){
-                                            view.text="请点击进行选择"
-                                        }else
-                                        view.text=value
+                                bindSelf(NoteDetailOrAddViewModel::dutyText) { it.dutyText.value }.toView(this) { view, value ->
+                                    if (value != null) {
+                                        if (TextUtils.isEmpty(value)) {
+                                            view.text = "请点击进行选择"
+                                        } else
+                                            view.text = value
                                     }
                                 }
 
@@ -147,13 +147,12 @@ class NoteDetailOrAddComponent(viewModel: NoteDetailOrAddViewModel) :
                                 id = R.id.text
                                 textColor = Color.parseColor("#222222")
                                 textSize = 14f
-                                bindSelf(NoteDetailOrAddViewModel::mattersType) { it.mattersType.value }.toView(this){
-                                    view,value->
-                                    if(value!=null){
-                                        if (TextUtils.isEmpty(value)){
-                                            view.text="请点击进行选择"
-                                        }else
-                                            view.text=value
+                                bindSelf(NoteDetailOrAddViewModel::mattersType) { it.mattersType.value }.toView(this) { view, value ->
+                                    if (value != null) {
+                                        if (TextUtils.isEmpty(value)) {
+                                            view.text = "请点击进行选择"
+                                        } else
+                                            view.text = value
                                     }
                                 }
                             }.lparams {
@@ -271,7 +270,7 @@ class NoteDetailOrAddComponent(viewModel: NoteDetailOrAddViewModel) :
                 height = matchParent
             }
             viewModelSafe.rightClickable.value = {
-                if (viewModelSafe.canCommitData.value){
+                if (viewModelSafe.canCommitData.value) {
 
                 }
             }
@@ -283,6 +282,14 @@ class NoteDetailOrAddComponent(viewModel: NoteDetailOrAddViewModel) :
                         viewModelSafe.rightTextColor.value = Color.parseColor("#469ced")
                     } else {
                         viewModelSafe.rightTextColor.value = Color.parseColor("#ffffff")
+                    }
+                }
+            }
+
+            bindSelf(NoteDetailOrAddViewModel::tips) { it.tips.value }.toView(this) { view, value ->
+                if (value != null) {
+                    if(!TextUtils.isEmpty(value)){
+                        Snackbar.make(view, value, Snackbar.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -342,13 +349,12 @@ class NoteItemSelectViewComponent : BindingComponent<ViewGroup, DateSelectItem>(
             }
 
             textView {
-                bindSelf(DateSelectItem::content) { it.content }.toView(this){
-                    view,value->
-                    if(value!=null){
-                        if (TextUtils.isEmpty(value)){
-                            view.text="请点击进行选择"
-                        }else
-                            view.text=value
+                bindSelf(DateSelectItem::content) { it.content }.toView(this) { view, value ->
+                    if (value != null) {
+                        if (TextUtils.isEmpty(value)) {
+                            view.text = "请点击进行选择"
+                        } else
+                            view.text = value
                     }
                 }
             }.lparams {

@@ -75,6 +75,7 @@ abstract class BasePrompt<V : BasePromptParams, A : BasePrompt<V, A>> : Dialog {
         return view
     }
 
+
     private fun getAppNoStatusBarSize(ctx: Context): ScreenSizeExtension {
         val noStatusSize = ScreenSizeExtension()
         val height = StatusBarUtil.getStatusBarHeight(ctx)
@@ -172,6 +173,7 @@ abstract class BasePrompt<V : BasePromptParams, A : BasePrompt<V, A>> : Dialog {
     }
 
     override fun show() {
+
         super.show()
     }
 

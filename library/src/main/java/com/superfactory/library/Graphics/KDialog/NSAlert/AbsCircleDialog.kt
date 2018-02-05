@@ -52,13 +52,15 @@ class AbsCircleDialog : BaseCircleDialog() {
         setY(dialogParams.yOff)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState!!.putParcelable(SAVED_PARAMS, mParams)
+        outState.putParcelable(SAVED_PARAMS, mParams)
     }
 
     override fun createView(context: Context, inflater: LayoutInflater?, container: ViewGroup?): View? {
-        mController = Controller(getContext(), mParams!!)
+        mController = Controller(getContext()!!, mParams!!)
         mParams!!.dialogFragment = this
         return mController!!.createView()
     }

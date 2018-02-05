@@ -14,7 +14,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.superfactory.library.Bridge.Anko.BindingComponent
@@ -44,7 +47,6 @@ import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.support.v4.nestedScrollView
-import java.lang.Exception
 
 
 /**
@@ -75,29 +77,35 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                         borderWidth = dip(2)
                         imageResource = R.drawable.normal_avatar
                         bindSelf(ProfileFragmentViewModel::avatar) { it.avatar.value }.toView(this) { view, value ->
-                            Glide.with(context).load(value)
+                            Glide.with(context)
                                     .asBitmap()
-                                    .centerCrop()
-                                    .placeholder(R.drawable.normal_avatar)
-                                    .listener(object : RequestListener<String, Bitmap> {
-                                        override fun onException(e: Exception?, model: String?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+                                    .load(value)
+                                    .apply(RequestOptions.centerCropTransform()
+                                            .placeholder(R.drawable.normal_avatar)
+                                    )
+                                    .listener(object : RequestListener<Bitmap> {
+                                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
                                             Debuger.printMsg("onLoadFailed = %s", e?.message?.toString()
                                                     ?: "null")
-                                            return false;
+                                            return false
                                         }
 
-                                        override fun onResourceReady(resource: Bitmap?, model: String?, target: Target<Bitmap>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
+                                        override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?,
+                                                                     isFirstResource: Boolean): Boolean {
                                             return false
                                         }
 
                                     })
                                     .into(object : BitmapImageViewTarget(view) {
-                                        override fun setResource(resource: Bitmap) {
-                                            val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
-                                            circularBitmapDrawable.isCircular = true
-                                            view.setImageDrawable(circularBitmapDrawable)
+                                        override fun setResource(resource: Bitmap?) {
+                                            if (resource!=null){
+                                                val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
+                                                circularBitmapDrawable.isCircular = true
+                                                view.setImageDrawable(circularBitmapDrawable)
+                                            }
                                         }
                                     })
+
                         }
 
                         onClick {

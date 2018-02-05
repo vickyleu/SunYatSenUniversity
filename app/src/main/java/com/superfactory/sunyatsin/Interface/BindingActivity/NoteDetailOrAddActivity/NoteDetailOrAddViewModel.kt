@@ -23,10 +23,12 @@ class NoteDetailOrAddViewModel(val intent: Intent) : ToolbarBindingModel() {
         toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.back_stack_icon)
     }
 
+    val tips=observable("")
     val dutyImage = R.drawable.duty_big_icon
     val rightImage = R.drawable.right_arrow_icon
     val dutyType = observable("职责类型")
     val dutyText = observable("")
+    val dutyID = observable("")
 
     val mattersImage = R.drawable.matters_icon
     val mattersType = observable("事项类型")
@@ -52,6 +54,7 @@ class NoteDetailOrAddViewModel(val intent: Intent) : ToolbarBindingModel() {
             title.value="日志详情"
             eraseRight.value=true
         }
+//        snap?.id
 
         createDate.value = TimeUtil.takeNowTime("yyyy-MM-dd",
                 "yyyy-MM-dd HH:mm:ss", snap?.createOrigin ?: "") ?: ""

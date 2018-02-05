@@ -1,7 +1,6 @@
 package com.superfactory.library.Utils
 
 import android.text.TextUtils
-import java.security.CodeSource
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,15 +24,16 @@ object TimeUtil {
         return null
     }
 
-    fun takeNowTime(format: String,sourceFormat: String,time:String): String? {
-        try {
-            val sdf = SimpleDateFormat(format, Locale.CHINA)
-            val sdfSource = SimpleDateFormat(sourceFormat, Locale.CHINA)
-            val date = sdfSource.parse(time)
-            return sdf.format(date)
-        } catch (e: ParseException) {
-            e.printStackTrace()
-        }
+    fun takeNowTime(format: String, sourceFormat: String, time: String): String? {
+        if (!TextUtils.isEmpty(time))
+            try {
+                val sdf = SimpleDateFormat(format, Locale.CHINA)
+                val sdfSource = SimpleDateFormat(sourceFormat, Locale.CHINA)
+                val date = sdfSource.parse(time)
+                return sdf.format(date)
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
         return null
     }
 
@@ -61,15 +61,15 @@ object TimeUtil {
         val isSameYear = calendarStart.get(Calendar.YEAR) == calendarEnd.get(Calendar.YEAR)
         val isSameMonth = isSameYear && calendarStart.get(Calendar.MONTH) == calendarEnd.get(Calendar.MONTH)
         val isSameDate = isSameMonth && calendarStart.get(Calendar.DAY_OF_MONTH) == calendarEnd.get(Calendar.DAY_OF_MONTH)
-        var hour:Any  = calendarStart.get(Calendar.HOUR_OF_DAY)
-        var minute:Any = calendarStart.get(Calendar.MINUTE)
+        var hour: Any = calendarStart.get(Calendar.HOUR_OF_DAY)
+        var minute: Any = calendarStart.get(Calendar.MINUTE)
 
-        if((minute as Int)<10&&minute!=0){
-            minute="0"+ (minute)
+        if ((minute as Int) < 10 && minute != 0) {
+            minute = "0" + (minute)
         }
 
-        if((hour as Int)<10&&hour!=0){
-            hour="0"+ (hour)
+        if ((hour as Int) < 10 && hour != 0) {
+            hour = "0" + (hour)
         }
 
 

@@ -36,6 +36,7 @@ import com.superfactory.library.Debuger
 import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.library.Utils.TimeUtil
 import com.superfactory.sunyatsin.Bean.MsgBean
+import com.superfactory.sunyatsin.Bean.NoteListBean
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.Struct.Const
@@ -167,6 +168,8 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                             height = wrapContent
                             gravity = Gravity.FILL_VERTICAL
                         }
+
+
                         recyclerView {
                             isNestedScrollingEnabled = false
                             fitsSystemWindows = true
@@ -177,16 +180,15 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                                 onItemClickListener = { i, viewModel, _ ->
                                     Debuger.printMsg(this, "invoke  1  " + viewModelSafe.onItemClicked)
 //                                    this@NoteFragmentComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
-                                    (this@NoteFragmentComponent.viewModel as? ToolbarBindingModel)?.
-                                            ownerNotifier?.invoke(103,viewModel)
+                                    (this@NoteFragmentComponent.viewModel as? ToolbarBindingModel)?.ownerNotifier?.invoke(103, viewModel)
                                 }
                             }
-                            bindSelf(NoteFragmentViewModel::itemList) { it.itemList.value }
-                                    .toView(this) { _, value ->
-                                        bindAdapter.setItemsList(value as List<NoteItemDataViewModel>)
-                                    }
                             layoutManager = LinearLayoutManager(context)
                             adapter = bindAdapter
+                            bindSelf(NoteFragmentViewModel::itemList) { it.itemList.value }
+                                    .toView(this) { _, value ->
+                                        bindAdapter.setItemsList(value)
+                                    }
                         }.lparams {
                             bottomPadding = (screenHeight * 0.06).toInt()
                             width = matchParent
@@ -241,8 +243,8 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                 setOnRefreshListener {
                     takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
                             context, Const.SignInInfo, Const.SignInSession, "")
-                            ?: "", true, TimeUtil.takeNowTime("yyyy-MM-dd")
-                            ?: "")?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context, it)
+                            ?: "", true, NoteListBean(TimeUtil.takeNowTime("yyyy-MM-dd")
+                            ?: ""))?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context, it)
                 }
             }
 
@@ -273,8 +275,8 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
                 picker.setOnDatePickListener(DatePicker.OnYearMonthDayPickListener { year, month, day ->
                     takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
                             context, Const.SignInInfo, Const.SignInSession, "")
-                            ?: "", true, TimeUtil.takeNowTime("yyyy-MM-dd", "yyyy-MM-dd", "$year-$month-$day")
-                            ?: "")?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context,witch = 1)
+                            ?: "", true, NoteListBean(TimeUtil.takeNowTime("yyyy-MM-dd", "yyyy-MM-dd", "$year-$month-$day")
+                            ?: ""))?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context, witch = 1)
                 })
                 picker.show()
             }
@@ -294,8 +296,8 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
 
             takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
                     context, Const.SignInInfo, Const.SignInSession, "")
-                    ?: "", true, TimeUtil.takeNowTime("yyyy-MM-dd")
-                    ?: "")?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context)
+                    ?: "", true, NoteListBean(TimeUtil.takeNowTime("yyyy-MM-dd")
+                    ?: ""))?.senderAsync(NoteStruct::class, this@NoteFragmentComponent, context)
         }
 
     }
@@ -372,7 +374,6 @@ class NoteItemViewComponent : BindingComponent<ViewGroup, NoteItemDataViewModel>
     override fun createViewWithBindings(ui: AnkoContext<ViewGroup>) = with(ui) {
         verticalLayout {
             backgroundColor = Color.WHITE
-
 
             relativeLayout {
                 topPadding = dip(5)

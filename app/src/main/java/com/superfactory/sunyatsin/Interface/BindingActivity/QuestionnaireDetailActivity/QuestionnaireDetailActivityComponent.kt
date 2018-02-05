@@ -17,9 +17,9 @@ import com.superfactory.library.Communication.Sender.senderAsync
 import com.superfactory.library.Context.Extensions.setRightTextColor
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Utils.ConfigXmlAccessor
+import com.superfactory.sunyatsin.Bean.QuestionnaireCommitBean
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.R
-import com.superfactory.sunyatsin.Struct.Base.BaseStruct
 import com.superfactory.sunyatsin.Struct.BaseStructImpl
 import com.superfactory.sunyatsin.Struct.Const
 import org.jetbrains.anko.*
@@ -184,11 +184,11 @@ class QuestionnaireDetailActivityComponent(viewModel: QuestionnaireDetailActivit
 //            arrary.put(obj)
         }
         obj.put("params", arr)
-        obj.put("parentId",viewModel?.parentId)
+        obj.put("parentId", viewModel?.parentId)
         val params = obj.toString()
         takeApi(RetrofitImpl::class)?.storeQuestionnaire(ConfigXmlAccessor.restoreValue(
                 context, Const.SignInInfo, Const.SignInSession, "")
-                ?: "", params, true)?.senderAsync(BaseStructImpl::class, this@QuestionnaireDetailActivityComponent, context)
+                ?: "", QuestionnaireCommitBean(params), true)?.senderAsync(BaseStructImpl::class, this@QuestionnaireDetailActivityComponent, context)
     }
 }
 

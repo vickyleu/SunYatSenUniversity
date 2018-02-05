@@ -65,8 +65,8 @@ open class RetrofitCenter<T : Any>(val baseUrl: String, val clazz: KClass<T>) {
         if (BuildConfig.DEBUG) {
             val logger = HttpLoggingInterceptor.Logger { message -> Platform.get().log(Platform.WARN, message, null) }
             val loggingInterceptor = HttpLoggingInterceptor(logger)
-            loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
-//            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+//            loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
+            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
             httpClientBuilder.addInterceptor(loggingInterceptor)
         }
 //每一个Call实例可以同步(call.excute())或者异步(call.enquene(CallBack<?> callBack))的被执行，

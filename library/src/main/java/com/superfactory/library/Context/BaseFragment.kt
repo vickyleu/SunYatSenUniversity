@@ -85,7 +85,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view: View? = null
 //        if (savedInstanceState!=null){
 //            viewModel=savedInstanceState.getParcelable(TAG)
@@ -103,7 +103,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
                 val tc = newToolBarComponent(this)
                 if (tc != null) {
                     toolbar = tc.apply {
-                        toolbarAnko = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
+                        toolbarAnko = createView(AnkoContextImpl(this@BaseFragment.context!!, this@BaseFragment as A, false))
                         notifyChanges()
                     } as BaseToolBar<A, V>
                     toolbar!!.eventDelegate = toolbarClickEvent
@@ -113,9 +113,9 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
                 if (toolbarAnko != null) {
 //                    Debuger.printMsg(this, "妈卖批")
                     view = createView(
-                            AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false),
+                            AnkoContextImpl(this@BaseFragment.context!!, this@BaseFragment as A, false),
                             toolbarAnko,
-                            this@BaseFragment.context,
+                            this@BaseFragment.context!!,
                             this@BaseFragment
                     )
                     if (toolbarAnko is Toolbar && toolbar != null) {
@@ -126,7 +126,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
                                 toolbarAnko!! as Toolbar)
                     }
                 } else {
-                    view = createView(AnkoContextImpl(this@BaseFragment.context, this@BaseFragment as A, false))
+                    view = createView(AnkoContextImpl(this@BaseFragment.context!!, this@BaseFragment as A, false))
                     if (ifNeedTopPadding()) {
                         openTopPadding()
                     }
@@ -145,7 +145,7 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
         if (view == null) {
             throw RuntimeException(javaClass.simpleName + "创建view为空")
         }
-        return view;
+        return view
     }
 
     protected open fun ifNeedTopPadding(): Boolean {
@@ -249,8 +249,8 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
     }
 
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState);
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
         // Save State Here
         saveStateToArguments();
     }

@@ -58,7 +58,7 @@ abstract class BaseCircleDialog : DialogFragment() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState!!.putInt(SAVED_GRAVITY, mGravity)
         outState.putBoolean(SAVED_TOUCH_OUT, mCanceledOnTouchOutside)
@@ -74,8 +74,9 @@ abstract class BaseCircleDialog : DialogFragment() {
         outState.putInt(SAVED_Y, mY)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = createView(context, inflater, container) ?: return null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = createView(context!!, inflater, container) ?: return null
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             view.background = CircleDrawable(mBackgroundColor, mRadius)
         } else {
@@ -84,7 +85,6 @@ abstract class BaseCircleDialog : DialogFragment() {
         view.alpha = mAlpha
         return view
     }
-
 
     override fun onStart() {
         val dialog = dialog
@@ -107,7 +107,7 @@ abstract class BaseCircleDialog : DialogFragment() {
         window!!.setBackgroundDrawableResource(android.R.color.transparent)
         val wlp = window.attributes
         val dm = DisplayMetrics()
-        activity.windowManager.defaultDisplay.getMetrics(dm)//获取屏幕宽
+        activity?.windowManager?.defaultDisplay?.getMetrics(dm)//获取屏幕宽
         wlp.width = (dm.widthPixels * mWidth).toInt()//宽度按屏幕大小的百分比设置
         wlp.gravity = mGravity
         wlp.x = mX
@@ -140,9 +140,10 @@ abstract class BaseCircleDialog : DialogFragment() {
     }
 
     fun remove() {
-        val ft = fragmentManager.beginTransaction()
-        ft.remove(this)
-        ft.addToBackStack(null)
+        val ft = fragmentManager?.beginTransaction()
+        ft?.remove(this)
+        ft?.addToBackStack(null)
+        ft?.commit()
     }
 
     /**

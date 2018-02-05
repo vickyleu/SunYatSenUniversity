@@ -6,16 +6,27 @@ import android.text.TextUtils
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import cn.qqtheme.framework.picker.DatePicker
+import cn.qqtheme.framework.util.ConvertUtils
 import com.superfactory.library.Bridge.Anko.BindingComponent
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Bridge.Anko.bindings.toText
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
 import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
+import com.superfactory.library.Communication.Sender.senderAsync
+import com.superfactory.library.Context.Extensions.takeApi
+import com.superfactory.library.Utils.ConfigXmlAccessor
+import com.superfactory.library.Utils.TimeUtil
+import com.superfactory.sunyatsin.Bean.NoteListBean
+import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.Interface.BindingFragment.Note.NoteSnapShot
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.Const
+import com.superfactory.sunyatsin.Struct.Note.NoteStruct
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.support.v4.nestedScrollView
 
 /**
  * Created by vicky on 2018/2/4.
@@ -28,31 +39,56 @@ class NoteByDayActivityComponent(viewModel: NoteByDayActivityViewModel) :
             refresh {
                 backgroundColor = Color.parseColor("#f8f8f8")
 
-                recyclerView {
-                    backgroundColor = Color.TRANSPARENT
-                    val bindAdapter = AutoBindAdapter { viewGroup, _ ->
-                        AnkoViewHolder(viewGroup, NoteItemViewSnapWithGapComponent())
-                    }.apply {
-                        onItemClickListener = { i, v, h ->
-                            this@NoteByDayActivityComponent.viewModel?.ownerNotifier?.invoke(i, v)
-                        }
-                    }
-                    bindSelf(NoteByDayActivityViewModel::itemList) { it.itemList.value }
-                            .toView(this) { _, value ->
-                                bindAdapter.setItemsList(value as List<NoteSnapShot>)
+                nestedScrollView {
+                    recyclerView {
+                        backgroundColor = Color.TRANSPARENT
+                        val bindAdapter = AutoBindAdapter { viewGroup, _ ->
+                            AnkoViewHolder(viewGroup, NoteItemViewSnapWithGapComponent())
+                        }.apply {
+                            onItemClickListener = { i, v, h ->
+                                this@NoteByDayActivityComponent.viewModel?.ownerNotifier?.invoke(i, v)
                             }
+                        }
+                        bindSelf(NoteByDayActivityViewModel::itemList) { it.itemList.value }
+                                .toView(this) { _, value ->
+                                    bindAdapter.setItemsList(value as List<NoteSnapShot>)
+                                }
 
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = bindAdapter
+                        layoutManager = LinearLayoutManager(context)
+                        adapter = bindAdapter
+                    }.lparams {
+                        width = matchParent
+                        height = matchParent
+                    }
                 }.lparams {
                     width = matchParent
                     height = matchParent
                 }
+
             }.lparams {
                 width = matchParent
                 height = matchParent
             }
-
+            viewModel?.rightClickable?.value = {
+                val picker = DatePicker(owner)
+                picker.setCanceledOnTouchOutside(false)
+                picker.setUseWeight(false)
+                picker.setTitleText("日期筛选")
+                picker.setTopPadding(ConvertUtils.toPx(context, 10f))
+                picker.setRangeEnd(2111, 1, 11)
+                picker.setRangeStart(2016, 8, 29)
+                picker.setSelectedItem(2050, 10, 14)
+                picker.setResetWhileWheel(false)
+                picker.setCancelTextColor(Color.parseColor("#222222"))
+                picker.setAnimationStyle(R.style.Animation_CustomPopup)
+                picker.setOnDatePickListener(DatePicker.OnYearMonthDayPickListener { year, month, day ->
+                    takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
+                            context, Const.SignInInfo, Const.SignInSession, "")
+                            ?: "", true, NoteListBean(TimeUtil.takeNowTime("yyyy-MM-dd", "yyyy-MM-dd", "$year-$month-$day")
+                            ?: ""))?.senderAsync(NoteStruct::class, this@NoteByDayActivityComponent, context, witch = 1)
+                })
+                picker.show()
+            }
         }
     }
 }

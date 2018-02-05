@@ -27,14 +27,13 @@ import kotlin.reflect.KProperty
  * @ClassName 这里输入你的类名(或用途)
  */
 abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragment<V, A>> : BaseFragment<V, A>() {
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         showToolBar = true
         if (activity!=null&&activity is BaseToolBarActivity<*,*>){
             throw ExceptionInInitializerError("nested toolbar controller error")
         }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
-
 
     override fun setToolbarAttribution(toolbarBinder: BaseToolBar<A, V>, actionBar: ActionBar?, toolbarView: Toolbar) {
         if (actionBar != null) {
@@ -48,7 +47,7 @@ abstract class BaseToolbarFragment<V : ToolbarBindingModel, A : BaseToolbarFragm
     override fun performToolbarClickEvent(view: View, event: BaseToolBar.Companion.ToolbarEvent) {
         when(view.id){
             R.id.toolbar_left->{
-                activity.finish()
+                activity?.finish()
             }
             R.id.toolbar_right->{
 

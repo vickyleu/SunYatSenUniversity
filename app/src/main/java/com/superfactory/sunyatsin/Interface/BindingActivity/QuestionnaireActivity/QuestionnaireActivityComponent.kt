@@ -13,9 +13,9 @@ import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
 import com.superfactory.library.Communication.Sender.senderAsync
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Utils.ConfigXmlAccessor
+import com.superfactory.sunyatsin.Bean.QuestionnaireQueryBean
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.R
-import com.superfactory.sunyatsin.Struct.Base.BaseStruct
 import com.superfactory.sunyatsin.Struct.Const
 import com.superfactory.sunyatsin.Struct.QuestionaireStruct.QuestionnaireDetailStruct
 import org.jetbrains.anko.*
@@ -45,7 +45,7 @@ class QuestionnaireActivityComponent(viewModel: QuestionnaireActivityViewModel) 
                     onItemClickListener = { i, viewModel, _ ->
                         takeApi(RetrofitImpl::class)?.questionnaireDetail(ConfigXmlAccessor.restoreValue(
                                 context, Const.SignInInfo, Const.SignInSession, "")
-                                ?: "", viewModel.row.id,true)?.senderAsync(
+                                ?: "", QuestionnaireQueryBean(viewModel.row.id), true)?.senderAsync(
                                 QuestionnaireDetailStruct::class,
                                 this@QuestionnaireActivityComponent,
                                 context)

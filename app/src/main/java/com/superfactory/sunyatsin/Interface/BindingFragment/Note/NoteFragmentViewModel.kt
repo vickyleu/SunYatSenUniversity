@@ -26,14 +26,14 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
         toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
         toolbarBindingModel.title.value = "APP"
         val ctx = getStaticsContextRef()
-        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)//todo 缺icon
+        toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.date_selection_icon)//todo 缺icon
         toolbarBindingModel.rightIcon.value = ContextCompat.getDrawable(ctx, R.drawable.alarm_icon)
     }
 
     var pageNo = 0
     var pageSize = 20
 
-    val itemList = observable<ArrayList<NoteItemDataViewModel>>(arrayListOf())
+    val itemList = observable<List<NoteItemDataViewModel>>(arrayListOf())
 
     var onItemClicked: ((Int, Any) -> Unit)? = null
 
@@ -58,6 +58,31 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
         if (model is NoteStruct) {
             if (model.success) {
                 ld.close()
+                if (witch != null && witch != 0&&model.body.rows.size>=0) {
+                    val row = model.body.rows[0]
+                    val body1 = TitleBody(R.drawable.date_icon, TimeUtil.takeNowTime("yyyy年MM月dd日",
+                            "yyyy-MM-dd HH:mm:ss",
+                            row.startTime), "1条日志")
+                    val list = arrayListOf<NoteSnapShot>()
+                    row.dutyName = "12121"
+                    row.matterContent = "121212121212111111111111111111111111111111111111111111111111111111133333333333333333332"
+                    list.add(NoteSnapShot(row.id, R.drawable.projection_icon__,
+                            row.dutyName, row.matterContent,
+                            "${TimeUtil.takeNowTime("HH:mm",
+                                    "yyyy-MM-dd HH:mm:ss",
+                                    row.startTime)}-${
+                            TimeUtil.takeNowTime("HH:mm",
+                                    "yyyy-MM-dd HH:mm:ss",
+                                    row.endTime)}", row.startTime, row.endTime,
+                            row.createDate,
+                            TimeUtil.takeNowTime("HH:mm",
+                                    "yyyy-MM-dd HH:mm:ss",
+                                    row.createDate) ?: "")
+                    )
+                    val modelIntent = NoteItemDataViewModel(body1, list)
+                    ownerNotifier?.invoke(104, modelIntent)
+                    return
+                }
                 ownerNotifier?.invoke(101, model)
             } else {
                 ld.close()
@@ -76,14 +101,13 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
 
 
     fun updateItemList(noteStruct: NoteStruct) {
-        itemList.value.clear()
+//        (itemList.value as ArrayList<*>).clear()
+//        itemList.notifyChange(NoteFragmentViewModel::itemList)
         val rows = noteStruct.body.rows
 
+        val noteLis: ArrayList<NoteItemDataViewModel> = arrayListOf<NoteItemDataViewModel>()
         for (i in 0 until rows.size) {
             val row = rows[i]
-
-            R.drawable.note_start_time_icon//todo
-
             val body1 = TitleBody(R.drawable.date_icon, TimeUtil.takeNowTime("yyyy年MM月dd日",
                     "yyyy-MM-dd HH:mm:ss",
                     row.startTime), "1条日志")
@@ -93,7 +117,7 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
             row.matterContent = "121212121212111111111111111111111111111111111111111111111111111111133333333333333333332"
 
 
-            list.add(NoteSnapShot(R.drawable.projection_icon__,
+            list.add(NoteSnapShot(row.id, R.drawable.projection_icon__,
                     row.dutyName, row.matterContent,
                     "${TimeUtil.takeNowTime("HH:mm",
                             "yyyy-MM-dd HH:mm:ss",
@@ -106,9 +130,11 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
                             "yyyy-MM-dd HH:mm:ss",
                             row.createDate) ?: "")
             )
-            itemList.value.add(NoteItemDataViewModel(body1, list))
+            noteLis.add(NoteItemDataViewModel(body1, list))
         }
-        itemList.notifyChange(NoteFragmentViewModel::itemList)
+        itemList.value = noteLis
+//        notifyChange(this::itemList)
+//        itemList.notifyChange()
     }
 }
 
@@ -169,8 +195,9 @@ data class TitleBody(val leftImage: Int, var startData: String?, var desc: Strin
     }
 }
 
-data class NoteSnapShot(val image: Int, var title: String = "无标题", var content: String = "无内容", val dateRange: String, val startData: String, val endData: String, val createOrigin: String, val createDate: String) : BaseBody() {
+data class NoteSnapShot(val id: String, val image: Int, var title: String = "无标题", var content: String = "无内容", val dateRange: String, val startData: String, val endData: String, val createOrigin: String, val createDate: String) : BaseBody() {
     constructor(parcel: Parcel) : this(
+            parcel.readString(),
             parcel.readInt(),
             parcel.readString(),
             parcel.readString(),
@@ -182,6 +209,7 @@ data class NoteSnapShot(val image: Int, var title: String = "无标题", var con
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
         parcel.writeInt(image)
         parcel.writeString(title)
         parcel.writeString(content)

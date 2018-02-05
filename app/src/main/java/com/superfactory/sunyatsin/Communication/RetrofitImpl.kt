@@ -1,7 +1,6 @@
 package com.superfactory.sunyatsin.Communication
 
-import com.superfactory.sunyatsin.Bean.LoginBean
-import com.superfactory.sunyatsin.Bean.MsgBean
+import com.superfactory.sunyatsin.Bean.*
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.*
@@ -23,7 +22,7 @@ interface RetrofitImpl {
     fun login(@Query("username") username: String, @Query("password") password: String,
               @Query("mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
-    @GET("sys/user/infoData;JSESSIONID={JSESSIONID}?")
+    @POST("sys/user/infoData;JSESSIONID={JSESSIONID}?")
     fun loginAfter(@Path("JSESSIONID") JSESSIONID: String,
                    @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
@@ -39,16 +38,16 @@ interface RetrofitImpl {
 
 
     @POST("api/naire/findQuestionByParentId;JSESSIONID={JSESSIONID}?")
-    fun questionnaireDetail(@Path("JSESSIONID") JSESSIONID: String, @Body parentId: String,
+    fun questionnaireDetail(@Path("JSESSIONID") JSESSIONID: String, @Body bean: QuestionnaireQueryBean,
                             @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
     @POST("api/naire/save;JSESSIONID={JSESSIONID}?")
-    fun storeQuestionnaire(@Path("JSESSIONID") JSESSIONID: String, @Body() param: String,
+    fun storeQuestionnaire(@Path("JSESSIONID") JSESSIONID: String, @Body bean: QuestionnaireCommitBean,
                            @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
     @POST("api/workinglog/data;JSESSIONID={JSESSIONID}?")
     fun queryNoteList(@Path("JSESSIONID") JSESSIONID: String,
-                      @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body data: String?=""): Observable<ResponseBody>
+                      @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body bean: NoteListBean): Observable<ResponseBody>
 
     @POST("api/pushrecord/data;JSESSIONID={JSESSIONID}?")
     fun loadMsg(@Path("JSESSIONID") JSESSIONID: String,
@@ -61,5 +60,9 @@ interface RetrofitImpl {
     @POST("api/workinglog/findDutyList;JSESSIONID={JSESSIONID}?")
     fun dutyList(@Path("JSESSIONID") JSESSIONID: String,
                  @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
+
+    @POST("api/workinglog/findBzMatterInfo;JSESSIONID={JSESSIONID}?")
+    fun mattersList(@Path("JSESSIONID") JSESSIONID: String,
+                    @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body bean: MattersBean): Observable<ResponseBody>
 
 }

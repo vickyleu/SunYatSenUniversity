@@ -34,6 +34,8 @@ class NoteFragment : BaseToolbarFragment<NoteFragmentViewModel, NoteFragment>() 
                     startActivityForResult<NoteByDayActivity>(1001, Pair("data", any))
                 } else if (option == 102) {
                     startActivity<MessageActivity>(Pair("data", any))
+                } else if (option == 104) {
+                    startActivityForResult<NoteByDayActivity>(1001, Pair("data", any))
                 } else
                     startActivityForResult<QuestionnaireActivity>(1001, Pair("data", any))
             }

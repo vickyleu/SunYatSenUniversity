@@ -20,6 +20,7 @@ import com.superfactory.library.Bridge.Anko.BindingExtensions.getActionBarSize
 import com.superfactory.library.Bridge.Anko.DslView.horizontalLayout
 import com.superfactory.library.Bridge.Anko.ObservableFieldImpl
 import com.superfactory.library.Bridge.Anko.ViewExtensions.themedToolbar_v7
+import com.superfactory.library.Bridge.Anko.bindings.toText
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Context.BaseActivity
 import com.superfactory.library.Context.BaseFragment
@@ -161,12 +162,9 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                     view.setBackgroundColor(value)
                 }
 
-                bindSelf {
-                    (it as ToolbarBindingModel).title
-                }.toView(center!!) { view, value ->
-                    if (value == null) return@toView
-                    view.setText(value)
-                }
+                bindSelf(ToolbarBindingModel::title) {
+                    (it as ToolbarBindingModel).title.value
+                }.toText(center!!)
 
 
                 if (!TextUtils.isEmpty((viewModel as? ToolbarBindingModel)?.rightText?.value)) {

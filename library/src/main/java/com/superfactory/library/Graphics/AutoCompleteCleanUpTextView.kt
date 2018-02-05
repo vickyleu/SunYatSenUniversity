@@ -119,8 +119,8 @@ class AutoCompleteCleanUpTextView(context: Context) : AutoCompleteTextView(conte
                     var right = ContextCompat.getDrawable(context, R.drawable.auto_clean_up_icon)
                     if (compoundDrawables[0] != null) {
                         var height = compoundDrawables[0].intrinsicHeight
-                        var originWidth = right.intrinsicWidth
-                        val originHeight = right.intrinsicWidth
+                        var originWidth = right!!.intrinsicWidth
+                        val originHeight = right!!.intrinsicWidth
                         val scale = height.toFloat() / originHeight.toFloat()
                         originWidth =(originWidth.toFloat()* scale).toInt()
                         // Read your drawable from somewhere
