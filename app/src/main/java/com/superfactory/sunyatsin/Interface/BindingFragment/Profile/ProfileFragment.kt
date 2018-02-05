@@ -1,13 +1,22 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
+import android.content.Intent
+import android.net.Uri
+import com.luck.picture.lib.PictureSelector
+import com.luck.picture.lib.PictureSelectorActivity
+import com.luck.picture.lib.R
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.tools.DoubleUtils
+import com.luck.picture.lib.tools.PictureFileUtils.getPath
 import com.superfactory.library.Bridge.Adapt.startActivity
 import com.superfactory.library.Bridge.Adapt.startActivityForResult
 import com.superfactory.library.Context.BaseToolbarFragment
+import com.superfactory.library.Utils.FileUtil
 import com.superfactory.sunyatsin.Interface.BindingActivity.MessageActivity.MessageActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.SettingsActivity.SettingsActivity
-import me.iwf.photopicker.PhotoPicker
-import me.iwf.photopicker.utils.PermissionsUtils
+import com.yalantis.ucrop.util.FileUtils
 import org.jetbrains.anko.support.v4.startActivity
 
 
@@ -52,56 +61,52 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
         viewModel.onItemClicked = { idx, model ->
             when (idx) {
                 -1/*"头像"*/ -> {
-                    val builder = PhotoPicker.builder()
-                            .setPhotoCount(1)
-                            .setShowCamera(true)
-                            .setShowGif(true)
-                            .setPreviewEnabled(false)
-                    if (PermissionsUtils.checkReadStoragePermission(activity)) {
-                        startActivityForResult(PhotoPicker.REQUEST_CODE, {
-                            if (it != null) {
-                                val photos = it.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS)
-                                if (photos != null && photos.size > 0) {
-                                    val photo = photos[0]
-//                                    val sourceUri = Uri.parse(photo)
-//                                    val destinationUri = Uri.fromFile(File(activity!!.cacheDir, "SampleCropImage.jpeg"))
-//                                    val of = UCrop.of(sourceUri, destinationUri)
-//                                    of.withAspectRatio(16f, 9f).withMaxResultSize(300, 300)
-//                                    startActivityForResult(REQUEST_CROP, {
-//                                        val croppedFileUri = UCrop.getOutput(it!!)
-//                                        //获取默认的下载目录
-//                                        val downloadsDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
-//                                        val filename = String.format("%d_%s", Calendar.getInstance().timeInMillis, croppedFileUri?.lastPathSegment)
-//                                        val saveFile = File(downloadsDirectoryPath, filename)
-//                                        //保存下载的图片
-//                                        var inStream: FileInputStream? = null
-//                                        var outStream: FileOutputStream? = null
-//                                        var inChannel: FileChannel? = null
-//                                        var outChannel: FileChannel? = null
-//                                        try {
-//                                            inStream = FileInputStream(File(croppedFileUri?.path))
-//                                            outStream = FileOutputStream(saveFile)
-//                                            inChannel = inStream.channel
-//                                            outChannel = outStream.channel
-//                                            inChannel!!.transferTo(0, inChannel.size(), outChannel)
-//                                            Toast.makeText(context, "裁切后的图片保存在：" + saveFile.absolutePath, Toast.LENGTH_SHORT).show()
-//                                        } catch (e: Exception) {
-//                                            e.printStackTrace()
-//                                        } finally {
-//                                            try {
-//                                                outChannel!!.close()
-//                                                outStream!!.close()
-//                                                inChannel!!.close()
-//                                                inStream!!.close()
-//                                            } catch (e: Exception) {
-//                                                e.printStackTrace()
-//                                            }
-//
-//                                        }
-//                                    }, of.getIntent(activity!!))
-                                }
-                            }
-                        }, builder.getIntent(activity!!))
+
+                    // 进入相册 以下是例子：用不到的api可以不写
+                    val selector = PictureSelector.create(activity)
+                            .openGallery(PictureMimeType.ofImage())//全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
+//                            .theme()//主题样式(不设置为默认样式) 也可参考demo values/styles下 例如：R.style.picture.white.style
+                            .maxSelectNum(1)// 最大图片选择数量 int
+                            .minSelectNum(1)// 最小选择数量 int
+                            .imageSpanCount(4)// 每行显示个数 int
+//                            .selectionMode()// 多选 or 单选 PictureConfig.MULTIPLE or PictureConfig.SINGLE
+                            .previewImage(true)// 是否可预览图片 true or false
+//                            .previewVideo()// 是否可预览视频 true or false
+//                            .enablePreviewAudio() // 是否可播放音频 true or false
+                            .isCamera(true)// 是否显示拍照按钮 true or false
+                            .imageFormat(PictureMimeType.PNG)// 拍照保存图片格式后缀,默认jpeg
+                            .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
+                            .sizeMultiplier(0.5f)// glide 加载图片大小 0~1之间 如设置 .glideOverride()无效
+                            .setOutputCameraPath("/CustomPath")// 自定义拍照保存路径,可不填
+                            .enableCrop(true)// 是否裁剪 true or false
+                            .compress(true)// 是否压缩 true or false
+//                            .glideOverride()// int glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
+                            .withAspectRatio(16, 9)// int 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
+//                            .hideBottomControls()// 是否显示uCrop工具栏，默认不显示 true or false
+//                            .isGif()// 是否显示gif图片 true or false
+                            .compressSavePath(getPath(context, Uri.fromFile(FileUtil.createTmpFile(context!!))))//压缩图片保存地址
+                            .freeStyleCropEnabled(true)// 裁剪框是否可拖拽 true or false
+                            .circleDimmedLayer(true)// 是否圆形裁剪 true or false
+                            .showCropFrame(false)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false   true or false
+                            .showCropGrid(false)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false    true or false
+                            .openClickSound(false)// 是否开启点击声音 true or false
+//                            .selectionMedia()// 是否传入已选图片 List<LocalMedia> list
+                            .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中) true or false
+//                            .cropCompressQuality()// 裁剪压缩质量 默认90 int
+                            .minimumCompressSize(500)// 小于100kb的图片不压缩
+                            .synOrAsy(false)//同步true或异步false 压缩 默认同步
+//                            .cropWH()// 裁剪宽高比，设置如果大于图片本身宽高则无效 int
+                            .scaleEnabled(true)// 裁剪是否可放大缩小图片 true or false
+//                     .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
+//                    selector.//
+                    if (!DoubleUtils.isFastDoubleClick()) {
+//                        val intent = Intent(activity, PictureSelectorActivity::class.java)
+                        startActivityForResult<PictureSelectorActivity>(PictureConfig.CHOOSE_REQUEST,{
+
+                        })
+                        activity!!.overridePendingTransition(R.anim.a5, 0)
+//                        activity!!.startActivityForResult(intent, PictureConfig.CHOOSE_REQUEST)
+
                     }
                 }
                 4/*"设置"*/ -> {
