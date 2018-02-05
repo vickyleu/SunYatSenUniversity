@@ -12,6 +12,8 @@ import com.superfactory.library.Context.BaseActivity
 class SplashActivity : BaseActivity<SplashActivityViewModel, SplashActivity>() {
     override fun newViewModel() = SplashActivityViewModel()
 
-    override fun newComponent(v: SplashActivityViewModel) = SplashActivityComponent(v)
+    override fun newComponent(v: SplashActivityViewModel) = SplashActivityComponent(v).apply {
+
+    }
 
 }

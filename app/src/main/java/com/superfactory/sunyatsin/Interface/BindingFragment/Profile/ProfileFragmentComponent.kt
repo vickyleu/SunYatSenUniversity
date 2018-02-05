@@ -38,9 +38,11 @@ import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_START
 import com.superfactory.library.Graphics.Badge.Badge.Companion.STATE_SUCCEED
 import com.superfactory.library.Graphics.Badge.BadgeView
 import com.superfactory.library.Utils.ConfigXmlAccessor
+import com.superfactory.sunyatsin.Bean.MsgBean
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.Struct.Const
+import com.superfactory.sunyatsin.Struct.Message.MessageStruct
 import com.superfactory.sunyatsin.Struct.QuestionaireStruct.QuestionnaireStruct
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
@@ -98,7 +100,7 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
                                     })
                                     .into(object : BitmapImageViewTarget(view) {
                                         override fun setResource(resource: Bitmap?) {
-                                            if (resource!=null){
+                                            if (resource != null) {
                                                 val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
                                                 circularBitmapDrawable.isCircular = true
                                                 view.setImageDrawable(circularBitmapDrawable)
@@ -268,6 +270,12 @@ class ProfileFragmentComponent(viewModel: ProfileFragmentViewModel) : BindingCom
             lparams {
                 width = matchParent
                 height = matchParent
+            }
+            viewModelSafe.rightClickable.value = {
+                val msgBean = MsgBean()
+                takeApi(RetrofitImpl::class)?.loadMsg(ConfigXmlAccessor.restoreValue(
+                        context, Const.SignInInfo, Const.SignInSession, "")
+                        ?: "", true, msgBean)?.senderAsync(MessageStruct::class, this@ProfileFragmentComponent, context)
             }
         }
     }

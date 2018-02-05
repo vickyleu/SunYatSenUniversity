@@ -13,6 +13,7 @@ import com.superfactory.library.Graphics.Badge.Badge
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.Struct.Const
 import com.superfactory.sunyatsin.Struct.Login.LoginAfterStruct
+import com.superfactory.sunyatsin.Struct.Message.MessageStruct
 import com.superfactory.sunyatsin.Struct.QuestionaireStruct.QuestionnaireStruct
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 
@@ -47,6 +48,14 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
                 if (model.success) {
                     ld.close()
                     ownerNotifier?.invoke(0, model)
+                } else {
+                    ld.close()
+                    tips.value = model.msg ?: "未知错误"
+                }
+            }else if (model is MessageStruct) {
+                if (model.success) {
+                    ld.close()
+                    ownerNotifier?.invoke(102, model)
                 } else {
                     ld.close()
                     tips.value = model.msg ?: "未知错误"

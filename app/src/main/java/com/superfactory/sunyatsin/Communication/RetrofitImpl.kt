@@ -26,7 +26,6 @@ interface RetrofitImpl {
     fun loginAfter(@Path("JSESSIONID") JSESSIONID: String,
                    @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
-
     @POST("sys/user/savePwd;JSESSIONID={JSESSIONID}?")
     fun changePsw(@Path("JSESSIONID") JSESSIONID: String,
                   @Body loginBean: LoginBean,
@@ -35,7 +34,6 @@ interface RetrofitImpl {
     @POST("api/naire/data;JSESSIONID={JSESSIONID}?")
     fun questionnaireList(@Path("JSESSIONID") JSESSIONID: String,
                           @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
-
 
     @POST("api/naire/findQuestionByParentId;JSESSIONID={JSESSIONID}?")
     fun questionnaireDetail(@Path("JSESSIONID") JSESSIONID: String, @Body bean: QuestionnaireQueryBean,

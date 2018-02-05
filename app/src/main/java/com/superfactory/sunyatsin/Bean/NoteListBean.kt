@@ -1,6 +1,7 @@
 package com.superfactory.sunyatsin.Bean
 
 import com.superfactory.sunyatsin.Bean.BaseBean.MultipartBean
+import retrofit2.http.Field
 
 /**
  * Created by vicky on 2018.02.05.

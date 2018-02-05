@@ -317,7 +317,11 @@ class CircleDialog private constructor() {
                 mCircleParams.positiveParams = object : ButtonParams() {
                     override fun dismiss() {
                         if (positiveInterrupter != null) {
-                            positiveInterrupter?.dismissMission(mCircleDialog?.mDialog?.getInputText(), mCircleDialog!!, mCircleDialog?.mDialog?.getInputView())
+                            try {
+                                positiveInterrupter?.dismissMission(mCircleDialog?.mDialog?.getInputText(), mCircleDialog!!,
+                                        mCircleDialog?.mDialog?.getInputView())
+                            } catch (e: Exception) {
+                            }
                             return
                         }
                         onDismiss()
@@ -350,7 +354,12 @@ class CircleDialog private constructor() {
                 mCircleParams.negativeParams = object : ButtonParams() {
                     override fun dismiss() {
                         if (negativeInterrupter != null) {
-                            negativeInterrupter?.dismissMission(mCircleDialog?.mDialog?.getInputText(), mCircleDialog!!, mCircleDialog?.mDialog?.getInputView())
+                            try {
+                                negativeInterrupter?.dismissMission(mCircleDialog?.mDialog?.getInputText(),
+                                        mCircleDialog!!, mCircleDialog?.mDialog?.getInputView())
+                            } catch (e: Exception) {
+                            }
+
                             return
                         }
                         onDismiss()
