@@ -16,10 +16,7 @@ import com.superfactory.library.Bridge.Anko.ScreenSizeExtension
 import com.superfactory.library.Debuger
 import com.superfactory.library.Graphics.KDialog.Prompt.BasePromptParams
 import com.superfactory.library.Utils.StatusBarUtil
-import org.jetbrains.anko.AnkoContextImpl
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.matchParent
-import org.jetbrains.anko.wrapContent
+import org.jetbrains.anko.*
 
 
 /**
@@ -27,8 +24,23 @@ import org.jetbrains.anko.wrapContent
  */
 abstract class BasePrompt<V : BasePromptParams, A : BasePrompt<V, A>> : Dialog {
 
-    constructor(ctx: Context) : super(ctx)
-    constructor(ctx: Context, theme: Int) : super(ctx, theme)
+    constructor(ctx: Context) : super(ctx) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        doAsync {
+            uiThread {
+                setContentView(createView())
+            }
+        }
+    }
+
+    constructor(ctx: Context, theme: Int) : super(ctx, theme) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        doAsync {
+            uiThread {
+                setContentView(createView())
+            }
+        }
+    }
 
     private val TAG = javaClass.simpleName
     private var layout: BindingComponent<A, V>? = null
@@ -38,11 +50,6 @@ abstract class BasePrompt<V : BasePromptParams, A : BasePrompt<V, A>> : Dialog {
 
     protected open fun onLoadedModel(viewModel: V) {}
 
-
-    init {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(createView())
-    }
 
     private fun createView(): View? {
         var view: View? = null
@@ -62,7 +69,9 @@ abstract class BasePrompt<V : BasePromptParams, A : BasePrompt<V, A>> : Dialog {
                         view = createViewWithBindings(AnkoContextImpl(this@BasePrompt.context, this@BasePrompt as A,
                                 false)).apply {
                             initBaseBinding(this, that, viewModel = viewModelSafe)
-                        }.apply { register.bindAll() }
+                        }.apply {
+                                    register.bindAll()
+                                }
                         notifyChanges()
                     }
                 }
@@ -227,9 +236,17 @@ inline fun takeRoundRectShape(radius: Int): ShapeDrawable {
 }
 
 inline fun takeRoundRectShape(radius: Float): ShapeDrawable {
+    return takeRoundRectShape(radius, Color.WHITE)
+}
+
+inline fun takeRoundRectShape(radius: Int, color: Int): ShapeDrawable {
+    return takeRoundRectShape(radius.toFloat(), color)
+}
+
+inline fun takeRoundRectShape(radius: Float, color: Int): ShapeDrawable {
     val radii = floatArrayOf(radius, radius, radius, radius, radius, radius, radius, radius)
     val shapeDrawable = ShapeDrawable(RoundRectShape(radii, null, null))
-    shapeDrawable.paint.color = Color.WHITE
+    shapeDrawable.paint.color = color
     shapeDrawable.paint.style = Paint.Style.FILL
     shapeDrawable.paint.isAntiAlias = true
     return shapeDrawable

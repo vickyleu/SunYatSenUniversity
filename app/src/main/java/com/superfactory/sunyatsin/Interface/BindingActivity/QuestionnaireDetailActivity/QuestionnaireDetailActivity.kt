@@ -3,7 +3,6 @@ package com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireDetail
 import android.view.View
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Context.BaseToolBarActivity
-import com.superfactory.library.Graphics.KDialog.NSAlert.CircleDialog
 
 /**
  * Created by vicky on 2018.02.01.
@@ -15,18 +14,17 @@ import com.superfactory.library.Graphics.KDialog.NSAlert.CircleDialog
 class QuestionnaireDetailActivity : BaseToolBarActivity<QuestionnaireDetailActivityViewModel, QuestionnaireDetailActivity>() {
     override fun newViewModel() = QuestionnaireDetailActivityViewModel(intent)
     override fun newComponent(v: QuestionnaireDetailActivityViewModel) = QuestionnaireDetailActivityComponent(v).apply {
-        viewModel?.ownerNotifier={
-            i,any->
-            CircleDialog.Builder(this@QuestionnaireDetailActivity)
+        viewModel?.ownerNotifier = { i, any ->
+            //            CircleDialog.Builder(this@QuestionnaireDetailActivity)
 
             finish()
         }
     }
+
     override fun performToolbarClickEvent(view: View, event: BaseToolBar.Companion.ToolbarEvent) {
         super.performToolbarClickEvent(view, event)
         when (event) {
 //    todo 接口定义有问题,应该为      [
-
 
 
 // todo String params ：[{"questionId":"ss","optionId":"aa","score":"1","remark":""}] ； String parentId 问卷编号

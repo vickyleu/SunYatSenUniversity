@@ -9,7 +9,7 @@ import com.superfactory.sunyatsin.R
  * Created by vicky on 2018/2/5.
  */
 class DutyPrompt(ctx: Context, private val transfer: PromptTransfer) :
-        BasePrompt<DutyPromptViewModel, DutyPrompt>(ctx, R.style.Dialog_FS) {
+        BasePrompt<DutyPromptViewModel, DutyPrompt>(ctx, R.style.prompt_style) {
     override fun newViewModel() = DutyPromptViewModel()
 
     override fun newComponent(viewModel: DutyPromptViewModel) = DutyPromptComponent(viewModel)

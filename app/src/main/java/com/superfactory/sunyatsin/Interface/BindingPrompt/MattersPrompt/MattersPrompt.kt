@@ -12,7 +12,7 @@ import com.superfactory.library.Context.PromptTransfer
  * @ClassName 这里输入你的类名(或用途)
  */
 class MattersPrompt(ctx: Context,private val id:String,private val transfer: PromptTransfer) :
-        BasePrompt<MattersPromptViewModel, MattersPrompt>(ctx, R.style.Dialog_FS) {
+        BasePrompt<MattersPromptViewModel, MattersPrompt>(ctx, R.style.prompt_style) {
     override fun newViewModel() = MattersPromptViewModel(id)
 
     override fun newComponent(viewModel: MattersPromptViewModel) = MattersPromptComponent(viewModel)

@@ -16,6 +16,7 @@ import com.superfactory.library.Communication.Responder.fromJson
 import com.superfactory.library.Communication.Responder.fromJsonList
 import com.superfactory.library.Debuger
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -78,7 +79,7 @@ inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass
     senderAsync(clazz, component, ctx, true)
 }
 
-inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, flags: Boolean,witch:Int?=0) {
+inline fun <reified D : Any, T : ResponseBody> Call<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, flags: Boolean, witch: Int? = 0) {
     val viewModel = component.viewModel
     val ld = LoadingDialog(ctx)
     (viewModel as? BaseObservable)?.startRequest(ld)
@@ -123,8 +124,8 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAwait(compone
     try {
         return subscribeOn(Schedulers.newThread())//请求在新的线程中执行
                 .observeOn(Schedulers.io())         //请求完成后在io线程中执行
-                .map(object : Function<T, D?> {
-                    override fun apply(t: T): D? {
+                .map(object : Function<T, Maybe<D?>> {
+                    override fun apply(t: T): Maybe<D?> {
                         try {
                             val model: D? = GsonBuilder()
                                     .serializeNulls()
@@ -132,16 +133,16 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAwait(compone
                                     .setLenient().create().fromJson(json = t.string()?.trim()
                                     ?: "")
                             Debuger.printMsg(this, model ?: "null")
-                            return model
+                            return Maybe.just(model)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
-                        return null
+                        return Maybe.empty()
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
                 .timeout(1000, TimeUnit.MILLISECONDS)
-                .blockingSingle()
+                .blockingSingle().blockingGet()
     } catch (ex: RuntimeException) {
         if (ex.cause is IOException) {
             // handle IOException
@@ -156,8 +157,8 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(com
     try {
         return subscribeOn(Schedulers.newThread())//请求在新的线程中执行
                 .observeOn(Schedulers.io())         //请求完成后在io线程中执行
-                .map(object : Function<T, List<D>?> {
-                    override fun apply(t: T): List<D>? {
+                .map(object : Function<T, Maybe<List<D>?>> {
+                    override fun apply(t: T): Maybe<List<D>?> {
                         try {
                             val model: List<D>? = GsonBuilder()
                                     .serializeNulls()
@@ -165,16 +166,16 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(com
                                     .setLenient().create().fromJsonList(json = t.string()?.trim()
                                     ?: "")
                             Debuger.printMsg(this, model ?: "null")
-                            return model
+                            return Maybe.just(model)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
-                        return null
+                        return Maybe.empty()
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
                 .timeout(1000, TimeUnit.MILLISECONDS)
-                .blockingSingle()
+                .blockingSingle().blockingGet()
     } catch (ex: RuntimeException) {
         if (ex.cause is IOException) {
             // handle IOException
@@ -188,8 +189,8 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAwait(com
 inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context) {
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
             .observeOn(Schedulers.io())         //请求完成后在io线程中执行
-            .map(object : Function<T, List<D>?> {
-                override fun apply(t: T): List<D>? {
+            .map(object : Function<T, Maybe<List<D>?>> {
+                override fun apply(t: T): Maybe<List<D>?> {
                     try {
                         val model: List<D>? = GsonBuilder()
                                 .serializeNulls()
@@ -197,15 +198,15 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(cla
                                 .setLenient().create().fromJsonList(json = t.string()?.trim()
                                 ?: "")
                         Debuger.printMsg(this, model ?: "null")
-                        return model
+                        return Maybe.just(model)
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-                    return null
+                    return Maybe.empty()
                 }
             })
             .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
-            .subscribe(object : Observer<List<D>?> {
+            .subscribe(object : Observer<Maybe<List<D>?>> {
                 override fun onComplete() {
 
                 }
@@ -213,7 +214,7 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(cla
                 override fun onSubscribe(d: Disposable) {
                 }
 
-                override fun onNext(t: List<D>) {
+                override fun onNext(t: Maybe<List<D>?>) {
                     //请求成功
                 }
 
@@ -232,55 +233,58 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderListAsync(cla
  * 异步请求
  */
 inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : ResponseBody> Observable<T1>.senderAsyncMultiple(clazz: KClass<D1>, component: BindingComponent<*, *>, ctx: Context,
-                                                                                                                         clazzB: KClass<D2>, crossinline fun1: ((D1) -> Observable<T2>?),witch:Int?=0) {
+                                                                                                                         clazzB: KClass<D2>, crossinline fun1: ((D1) -> Observable<T2>?), witch: Int? = 0) {
     val ld = LoadingDialog(ctx)
     (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
             .observeOn(Schedulers.io())//在io线程中进行Gson解析
-            .map(object : Function<T1, D1?> {
-                override fun apply(t: T1): D1? {
-                    try {
-                        return GsonBuilder()
-                                .serializeNulls()
-                                .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
-                                .setLenient().create().fromJson<D1?>(json = t.string()?.trim()
-                                ?: "")
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                    return null
-                }
-            })
-            .observeOn(AndroidSchedulers.mainThread())//在主线程拦截嵌套请求
-            .map(Function<D1?, D1?>
-            { t ->
-                if (t == null) return@Function null
-                val flag: Boolean = (component.viewModel as? BaseObservable)?.appendingRequest(ld, t)
-                        ?: true
-                if (flag) t else null
-            })
-            .observeOn(Schedulers.newThread())//然后再到新的线程中执行请求
-            .flatMap(Function<D1?, Observable<T2>?>
-            { t ->
-                if (t == null) return@Function null
-                fun1(t)
-            })
-            .observeOn(Schedulers.io())
-            .map(Function<T2?, D2?>
-            { t ->
+            .map(Function<T1, Maybe<D1?>> { t ->
                 try {
-                    return@Function GsonBuilder()
+                    return@Function Maybe.just(GsonBuilder()
                             .serializeNulls()
                             .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
-                            .setLenient().create().fromJson<D2?>(json = t?.string()?.trim()
-                            ?: "")
+                            .setLenient().create().fromJson(json = t.string()?.trim()
+                            ?: ""))
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                null
+                Maybe.empty()
+            })
+            .observeOn(AndroidSchedulers.mainThread())//在主线程拦截嵌套请求
+            .map(Function<Maybe<D1?>, Maybe<D1?>>
+            { t ->
+                Debuger.printMsg(this, "121212")
+                val block = t.blockingGet() ?: return@Function Maybe.empty()
+                val flag: Boolean = (component.viewModel as? BaseObservable)?.appendingRequest(ld, block)
+                        ?: true
+                if (flag) Maybe.just(block) else Maybe.empty()
+            })
+            .observeOn(Schedulers.newThread())//然后再到新的线程中执行请求
+            .flatMap({ t ->
+                Debuger.printMsg(this, "454545")
+                val block = t.blockingGet()
+                if (block == null) {
+                    throw NullPointerException("")
+                }
+                Observable.just(Maybe.just(fun1(block)))
+            })
+            .observeOn(Schedulers.io())
+            .map(Function<Maybe<Observable<T2>?>, Maybe<D2?>>
+            { t ->
+                Debuger.printMsg(this, "787878" + t.blockingGet()?.blockingSingle()?.string()?.trim())
+                try {
+                    return@Function Maybe.just(GsonBuilder()
+                            .serializeNulls()
+                            .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())//然后用上面一行写的gson来序列化和反序列化实体类type
+                            .setLenient().create().fromJson<D2?>(json = t.blockingGet()?.blockingSingle()?.string()?.trim()
+                            ?: ""))
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                Maybe.empty()
             })
             .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
-            .subscribe(object : Observer<D2?> {
+            .subscribe(object : Observer<Maybe<D2?>> {
                 override fun onComplete() {
 
                 }
@@ -288,16 +292,16 @@ inline fun <reified D1 : Any, reified D2 : Any, T1 : ResponseBody, T2 : Response
                 override fun onSubscribe(d: Disposable) {
                 }
 
-                override fun onNext(t: D2) {
+                override fun onNext(t: Maybe<D2?>) {
                     //请求成功
 //                        //在你代码中合适的位置调用反馈
-                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t, witch)
+                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t.blockingGet(), witch)
                 }
 
                 override fun onError(e: Throwable) {
                     (component.viewModel as? BaseObservable)?.requestFailed(ld, e, witch)
 //                        //请求失败
-                    Debuger.printMsg(this, e.message ?: "null")
+                    Debuger.printMsg(this, "请求啊:" + (e.message ?: "null"))
                 }
 
             })
@@ -338,13 +342,13 @@ open class NullStringToEmptyAdapterFactory : TypeAdapterFactory {
 }
 
 
-inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, refresh: RefreshLayout? = null,witch:Int?=0) {
+inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, refresh: RefreshLayout? = null, witch: Int? = 0) {
     val ld = LoadingDialog(ctx)
     (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
             .observeOn(Schedulers.io())         //请求完成后在io线程中执行
-            .map(object : Function<T, D?> {
-                override fun apply(t: T): D? {
+            .map(object : Function<T, Maybe<D?>> {
+                override fun apply(t: T): Maybe<D?> {
                     try {
                         val model: D? = GsonBuilder()
                                 .serializeNulls()
@@ -352,16 +356,16 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                                 .setLenient().create().fromJson(json = t.string()?.trim()
                                 ?: "")
                         Debuger.printMsg(this, model ?: "null")
-                        return model
+                        return Maybe.just(model)
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-                    return null
+                    return Maybe.empty()
                 }
 
             })
             .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
-            .subscribe(object : Observer<D?> {
+            .subscribe(object : Observer<Maybe<D?>> {
                 override fun onComplete() {
 
                 }
@@ -369,16 +373,16 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                 override fun onSubscribe(d: Disposable) {
                 }
 
-                override fun onNext(t: D) {
+                override fun onNext(t: Maybe<D?>) {
                     refresh?.finishRefresh()
                     //请求成功
                     //在你代码中合适的位置调用反馈
-                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t,witch)
+                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t.blockingGet(), witch)
                 }
 
                 override fun onError(e: Throwable) {
                     refresh?.finishRefresh()
-                    (component.viewModel as? BaseObservable)?.requestFailed(ld, e,witch)
+                    (component.viewModel as? BaseObservable)?.requestFailed(ld, e, witch)
                     //请求失败
                     Debuger.printMsg(this, e.message ?: "null")
                 }

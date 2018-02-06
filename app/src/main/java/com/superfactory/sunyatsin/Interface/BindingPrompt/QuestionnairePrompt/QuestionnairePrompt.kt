@@ -7,7 +7,7 @@ import com.superfactory.sunyatsin.R
 /**
  * Created by vicky on 2018/2/1.
  */
-class QuestionnairePrompt(ctx: Context) : BasePrompt<QuestionPromptViewModel, QuestionnairePrompt>(ctx, R.style.Dialog_FS) {
+class QuestionnairePrompt(ctx: Context) : BasePrompt<QuestionPromptViewModel, QuestionnairePrompt>(ctx, R.style.prompt_style) {
 
     override fun newViewModel() = QuestionPromptViewModel()
 

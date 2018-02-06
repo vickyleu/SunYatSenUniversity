@@ -6,12 +6,9 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.RelativeLayout
 import com.superfactory.library.Bridge.Anko.BindingComponent
-import com.superfactory.library.Bridge.Anko.BindingExtensions.dipValue
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Bridge.Anko.ViewExtensions.getLineDividerItemDecoration
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
@@ -19,14 +16,8 @@ import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
 import com.superfactory.library.Communication.Sender.senderAsync
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Debuger
-import com.superfactory.library.Graphics.KDialog.NSAlert.CircleDialog
-import com.superfactory.library.Graphics.KDialog.callback.ConfigButton
-import com.superfactory.library.Graphics.KDialog.callback.ConfigText
-import com.superfactory.library.Graphics.KDialog.callback.ConfigTitle
-import com.superfactory.library.Graphics.KDialog.callback.Interrupter
-import com.superfactory.library.Graphics.KDialog.params.ButtonParams
-import com.superfactory.library.Graphics.KDialog.params.TextParams
-import com.superfactory.library.Graphics.KDialog.params.TitleParams
+import com.superfactory.library.Graphics.Alert.InputAlert.InputAlert
+import com.superfactory.library.Graphics.Alert.InputAlert.InputAlertViewModel
 import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.Interface.BindingActivity.LoginActivity.LoginActivity
@@ -36,7 +27,6 @@ import com.superfactory.sunyatsin.Struct.Login.LoginStruct
 import com.yayandroid.theactivitymanager.TheActivityManager
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
-import org.jetbrains.anko.recyclerview.v7._RecyclerView
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
@@ -82,62 +72,37 @@ class SettingsActivityComponent(viewModel: SettingsActivityViewModel) : BindingC
                         }.apply {
                                     onItemClickListener = { i, viewModel, _ ->
                                         if (viewModel.index == 1) {
-                                            CircleDialog.Builder(owner)
-                                                    .setCanceledOnTouchOutside(false)
-                                                    .setCancelable(true)
-                                                    .setTitle("验证原密码")
-                                                    .setTitleColor(Color.BLUE)
-                                                    .setText("为保障您的数据安全,修改密码前请填写原密码。")
-                                                    .configTitle(object : ConfigTitle() {
-                                                        override fun onConfig(params: TitleParams) {
-                                                            params.textSize = sp(14)
-                                                            params.textColor = Color.parseColor("#222222")
-                                                        }
-
-                                                    }).configText(object : ConfigText() {
-                                                override fun onConfig(params: TextParams) {
-                                                    params.textSize = sp(10)
-                                                    params.textColor = Color.parseColor("#222222")
+                                            val func0:(InputAlertViewModel)->Unit={
+                                                it.title.value = "验证原密码"
+                                                it.titleSize.value = 15f
+                                                it.msg.value = "为保障您的数据安全,修改密码前请填写原密码。"
+                                                it.msgSize.value = 10f
+                                                it.hint.value = "请输入原密码"
+                                                it.inputSize.value = 14f
+                                                it.positive.value = "确定"
+                                                it.positiveSize.value = 15f
+                                                it.negative.value = "取消"
+                                                it.negativeSize.value = 15f
+                                                it.negativeColor.value = Color.parseColor("#1688ff")
+                                                it.positiveColor.value = Color.parseColor("#1688ff")
+                                                it.negativeClick.value = { _, _, prompt ->
+                                                    prompt.dismiss()
                                                 }
-
-                                            })
-                                                    .setInputHint("请输入原密码")
-                                                    .setInputHeight(dip(20))
-                                                    .setPositive("确定", null, object : Interrupter {
-                                                        override fun dismissMission(text: String?, dialog: CircleDialog, inputView: View?) {
-                                                            if (TextUtils.isEmpty(text)) {
-                                                                if (inputView != null && inputView is EditText) {
-                                                                    inputView.error = "字符长度不足"
-                                                                }
-                                                                return
-                                                            }
-                                                            if (inputView != null && inputView is EditText) {
-                                                                inputView.error = null
-                                                            }
-                                                            dialog.dismiss()
-                                                            val account = ConfigXmlAccessor.restoreValue(context, Const.SignInInfo, Const.SignInAccount, "")
-                                                            takeApi(RetrofitImpl::class)?.login(account!!, text!!, true)?.senderAsync(LoginStruct::class,
-                                                                    this@SettingsActivityComponent,
-                                                                    context)
-                                                        }
+                                                it.positiveClick.value = { _, model, prompt ->
+                                                    if (TextUtils.isEmpty(model.output.value)) {
+                                                        model.error.value = "字符长度不足"
                                                     }
-                                                    )
-                                                    .configPositive(object : ConfigButton() {
-                                                        override fun onConfig(params: ButtonParams) {
-                                                            //取消按钮字体颜色
-                                                            params.textColor = Color.parseColor("#1688ff")
-                                                            params.textSize = 14
-                                                        }
-                                                    })
-                                                    .setNegative("取消", null)
-                                                    .configNegative(object : ConfigButton() {
-                                                        override fun onConfig(params: ButtonParams) {
-                                                            //取消按钮字体颜色
-                                                            params.textColor = Color.parseColor("#1688ff")
-                                                            params.textSize = 14
-                                                        }
-                                                    })
-                                                    .show()
+                                                    model.error.value = ""
+                                                    prompt.dismiss()
+                                                    val account = ConfigXmlAccessor.restoreValue(context, Const.SignInInfo, Const.SignInAccount, "")
+                                                    takeApi(RetrofitImpl::class)?.login(account!!, model.output.value,
+                                                            true)?.senderAsync(LoginStruct::class,
+                                                            this@SettingsActivityComponent,
+                                                            context)
+                                                }
+                                            }
+                                            Debuger.printMsg(this,func0)
+                                            InputAlert(func0,owner) .show()
                                         } else {
                                             this@SettingsActivityComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
                                         }
