@@ -11,6 +11,7 @@ import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Debuger
 import com.superfactory.library.Graphics.Badge.Badge
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.BaseStructImpl
 import com.superfactory.sunyatsin.Struct.Const
 import com.superfactory.sunyatsin.Struct.Login.LoginAfterStruct
 import com.superfactory.sunyatsin.Struct.Message.MessageStruct
@@ -56,6 +57,23 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
                 if (model.success) {
                     ld.close()
                     ownerNotifier?.invoke(102, model)
+                } else {
+                    ld.close()
+                    tips.value = model.msg ?: "未知错误"
+                }
+            } else if (model is BaseStructImpl) {
+                if (witch != null && witch == 5) {
+                    if (model.success) {
+                        ld.close()
+                        avatar.value = avatar.defaultValue
+                    } else {
+                        ld.close()
+                        tips.value = model.msg ?: "未知错误"
+                    }
+                    return
+                }
+                if (model.success) {
+                    ld.close()
                 } else {
                     ld.close()
                     tips.value = model.msg ?: "未知错误"
