@@ -52,7 +52,7 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
                     ld.close()
                     tips.value = model.msg ?: "未知错误"
                 }
-            }else if (model is MessageStruct) {
+            } else if (model is MessageStruct) {
                 if (model.success) {
                     ld.close()
                     ownerNotifier?.invoke(102, model)
@@ -102,7 +102,7 @@ class ProfileFragmentViewModel(bundle: Bundle?) : ToolbarBindingModel() {
             employ.value = data.office.name//部门
             station.value = data.jobTypeName//岗位
             position.value = ""//职务 ignored
-            avatar.value = Const.AvatarPrefix + data.photo
+            avatar.value = "${Const.AvatarPrefix}${data.photo}"
             Debuger.printMsg(this, avatar.value)
         }
     }

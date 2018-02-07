@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.superfactory.sunyatsin.Struct.Base.BaseBody
 import com.superfactory.sunyatsin.Struct.Base.BaseStruct
+import com.superfactory.sunyatsin.Struct.CreateBy
 
 /**
  * Created by vicky on 2018.02.05.
@@ -126,40 +127,7 @@ data class BzMatterInfo(
     }
 }
 
-data class CreateBy(
-        val id: String,
-        val loginFlag: String,
-        val roleNames: String,
-        val admin: Boolean
-) : BaseBody() {
-    constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readByte() != 0.toByte()) {
-    }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(loginFlag)
-        parcel.writeString(roleNames)
-        parcel.writeByte(if (admin) 1 else 0)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<CreateBy> {
-        override fun createFromParcel(parcel: Parcel): CreateBy {
-            return CreateBy(parcel)
-        }
-
-        override fun newArray(size: Int): Array<CreateBy?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
 
 data class UpdateBy(
         val id: String,

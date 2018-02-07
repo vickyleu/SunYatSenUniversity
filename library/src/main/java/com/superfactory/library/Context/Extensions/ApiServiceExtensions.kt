@@ -80,7 +80,29 @@ fun <T : Any> View.takeApi(impl: KClass<T>, url: String): T? {
 fun <T : Any> View.takeApiSafe(impl: KClass<T>, url: String): T {
     return takeApi(impl, url)!!
 }
+fun <T : Any> Context.takeApi(impl: KClass<T>): T? {
+    val delegate = appDelegate()
+    return delegate?.takeApi(impl)
+}
 
+fun <T : Any> Context.takeApiSafe(impl: KClass<T>): T {
+    val delegate = appDelegate()
+    return delegate!!.takeApiSafe(impl)
+}
+
+fun <T : Any> Context.takeApi(impl: KClass<T>, url: String): T? {
+    val delegate = appDelegate()
+    return delegate?.takeApiOnce(impl, url)
+}
+
+fun <T : Any> Context.takeApiSafe(impl: KClass<T>, url: String): T {
+    return takeApi(impl, url)!!
+}
+
+
+fun Context.appDelegate(): BaseApp? {
+    return (this)?.applicationContext as? BaseApp
+}
 
 fun View.appDelegate(): BaseApp? {
     return (this.context)?.applicationContext as? BaseApp

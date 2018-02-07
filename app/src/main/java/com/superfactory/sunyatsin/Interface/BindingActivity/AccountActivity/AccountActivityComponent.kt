@@ -6,6 +6,8 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
+import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -17,7 +19,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.Target
 import com.superfactory.library.Bridge.Anko.BindingComponent
-import com.superfactory.library.Bridge.Anko.DslView.circleImage
 import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Bridge.Anko.ViewExtensions.getLineDividerItemDecoration
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
@@ -50,26 +51,7 @@ class AccountActivityComponent(viewModel: AccountActivityViewModel) :
                     onItemClickListener = { i, viewModel, _ ->
                         this@AccountActivityComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
                     }
-                }.assignment { holder, _, position ->
-                            when (position) {
-                                0 -> {
-                                    Debuger.printMsg(this, "2")
-//                            holder.component.viewModel?.placeHolder = viewModel?.avatar.value ?: ""
-                                }
-                                1 -> {
-                                    Debuger.printMsg(this, "2")
-                                    holder.component.viewModel?.description = viewModel?.name?.value ?: ""
-                                }
-                                2 -> {
-                                    Debuger.printMsg(this, "3")
-                                    holder.component.viewModel?.description = viewModel?.gender?.value ?: ""
-                                }
-                                else -> {
-                                    return@assignment
-                                }
-                            }
-                            holder.component.notifyChanges()
-                        }
+                }
                 bindSelf(AccountActivityViewModel::accountItemsList) { it.accountItemsList.value }
                         .toView(this) { _, value ->
                             bindAdapter.setItemsList(value)
@@ -135,14 +117,89 @@ class AccountActivityItemComponent : BindingComponent<ViewGroup, AccountActivity
             }
 
 
+            verticalLayout {
+                val that = this
+                backgroundResource = R.drawable.circle_stoke_selector
+                padding = dip(0.5f)
+                that.visibility = View.GONE
+                verticalLayout {
+                    backgroundResource = R.drawable.circle_stoke_inner_selector
+                    padding = dip(15)
+                    imageView {
+                        backgroundColor = Color.TRANSPARENT
+                        scaleType = ImageView.ScaleType.FIT_XY
+                        imageResource = R.drawable.camera_icon
+                        bindSelf(AccountActivityItemViewModel::description) {
+                            it.description
+                        }.toView(this) { view, value ->
+                            val index = viewModelSafe.index
+                            if (index == 0) {
+                                that.visibility = View.VISIBLE
+                                var val2 = value
+                                if (TextUtils.isEmpty(value)) {
+                                    val2 = ""
+                                }
+                                Glide.with(view)
+                                        .asBitmap()
+                                        .load(val2)
+                                        .apply(RequestOptions.centerCropTransform()
+                                                .placeholder(R.drawable.camera_icon)
+//                                        .error(R.drawable.camera_icon)
+                                        )
+                                        .listener(object : RequestListener<Bitmap> {
+                                            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+                                                Debuger.printMsg("onLoadFailed = %s", e?.message
+                                                        ?: "null")
+                                                return false
+                                            }
+
+                                            override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?,
+                                                                         isFirstResource: Boolean): Boolean {
+                                                return false
+                                            }
+
+                                        })
+                                        .into(object : BitmapImageViewTarget(view) {
+                                            override fun setResource(resource: Bitmap?) {
+                                                if (resource != null) {
+                                                    val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
+                                                    circularBitmapDrawable.isCircular = true
+                                                    view.setImageDrawable(circularBitmapDrawable)
+                                                }
+                                            }
+                                        })
+                            } else {
+                                that.visibility = View.GONE
+                            }
+                        }
+                    }.lparams {
+                        width = wrapContent
+                        height = wrapContent
+                    }
+                    gravity = Gravity.CENTER
+                }.lparams {
+                    width = wrapContent
+                    height = wrapContent
+                }
+
+            }.lparams {
+                width = dip(50)
+                height = dip(50)
+                rightMargin = dip(10)
+                addRule(RelativeLayout.LEFT_OF, iv.id)
+                centerVertically()
+            }
+
+
             textView {
                 textSize = 14f
                 textColor = Color.parseColor("#222222")
                 bindSelf(AccountActivityItemViewModel::description) {
                     it.description
                 }.toView(this) { view, value ->
+                    val index = viewModelSafe.index
                     if (!TextUtils.isEmpty(value)) {
-                        if (viewModelSafe.index != 0)
+                        if (index != 0)
                             view.text = value
                     }
                 }
@@ -150,60 +207,9 @@ class AccountActivityItemComponent : BindingComponent<ViewGroup, AccountActivity
                 width = wrapContent
                 height = wrapContent
                 addRule(RelativeLayout.LEFT_OF, iv.id)
+                rightMargin = dip(10)
                 centerVertically()
             }
-
-            circleImage {
-//                backgroundColor = Color.TRANSPARENT
-                bindSelf(AccountActivityItemViewModel::description) {
-                    it.description
-                }.toView(this) { view, value ->
-                    if (!TextUtils.isEmpty(value)) {
-                        if (viewModelSafe.index == 0) {
-                            val crop = RequestOptions.centerCropTransform()
-                            if (viewModelSafe.placeHolder != 0)
-                                crop.placeholder(viewModelSafe.placeHolder!!)
-                            Glide.with(view)
-                                    .asBitmap()
-                                    .load(value)
-                                    .apply(crop)
-                                    .listener(object : RequestListener<Bitmap> {
-                                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
-                                            Debuger.printMsg("onLoadFailed = %s", e?.message?.toString()
-                                                    ?: "null")
-                                            return false
-                                        }
-
-                                        override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?,
-                                                                     isFirstResource: Boolean): Boolean {
-                                            return false
-                                        }
-
-                                    })
-                                    .into(object : BitmapImageViewTarget(view) {
-                                        override fun setResource(resource: Bitmap?) {
-                                            if (resource != null) {
-                                                val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(context.resources, resource)
-                                                circularBitmapDrawable.isCircular = true
-                                                view.setImageDrawable(circularBitmapDrawable)
-                                            }
-                                        }
-                                    })
-                        }
-                    }
-                }
-
-                maxWidth = dip(30)
-                maxHeight = dip(30)
-                minimumWidth = dip(30)
-                minimumHeight = dip(30)
-            }.lparams {
-                width = wrapContent
-                height = wrapContent
-                addRule(RelativeLayout.LEFT_OF, iv.id)
-                centerVertically()
-            }
-
 
             lparams {
                 width = matchParent

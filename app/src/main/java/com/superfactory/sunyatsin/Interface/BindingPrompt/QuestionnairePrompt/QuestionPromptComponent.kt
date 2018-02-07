@@ -16,7 +16,7 @@ class QuestionPromptComponent(viewModel: QuestionPromptViewModel) :
         BindingComponent<QuestionnairePrompt, QuestionPromptViewModel>(viewModel) {
     override fun createViewWithBindings(ui: AnkoContext<QuestionnairePrompt>) = with(ui) {
         relativeLayout {
-
+            backgroundColor = Color.TRANSPARENT
             backgroundDrawable= takeRoundRectShape(dip(5))
             val iv = imageView {
                 id = R.id.image

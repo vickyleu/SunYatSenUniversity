@@ -37,6 +37,7 @@ class MattersPromptComponent(viewModel: MattersPromptViewModel) :
         BindingComponent<MattersPrompt, MattersPromptViewModel>(viewModel) {
     override fun createViewWithBindings(ui: AnkoContext<MattersPrompt>) = with(ui) {
         verticalLayout {
+            backgroundColor = Color.TRANSPARENT
             backgroundDrawable = takeRoundRectShape(dip(5))
 
             textView {
@@ -57,6 +58,7 @@ class MattersPromptComponent(viewModel: MattersPromptViewModel) :
                 recyclerView {
                     leftPadding = dip(10)
                     rightPadding = dip(10)
+                    backgroundColor = Color.TRANSPARENT
                     backgroundResource = R.drawable.profile_recycle_shader
                     val bindAdapter = AutoBindAdapter { viewGroup, _ ->
                         AnkoViewHolder(viewGroup, MattersPromptItemComponent())

@@ -30,6 +30,7 @@ class DutyPromptComponent(viewModel: DutyPromptViewModel) :
         BindingComponent<DutyPrompt, DutyPromptViewModel>(viewModel) {
     override fun createViewWithBindings(ui: AnkoContext<DutyPrompt>) = with(ui) {
         verticalLayout {
+            backgroundColor = Color.TRANSPARENT
             backgroundDrawable = takeRoundRectShape(dip(5))
 
             textView {
@@ -50,6 +51,7 @@ class DutyPromptComponent(viewModel: DutyPromptViewModel) :
                 recyclerView {
                     leftPadding = dip(10)
                     rightPadding = dip(10)
+                    backgroundColor = Color.TRANSPARENT
                     backgroundResource=R.drawable.profile_recycle_shader
                     val bindAdapter = AutoBindAdapter { viewGroup, _ ->
                         AnkoViewHolder(viewGroup, DutyPromptItemComponent())

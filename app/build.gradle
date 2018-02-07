@@ -55,7 +55,7 @@ dependencies {
     implementation('cn.qqtheme.framework:WheelPicker:1.5.+') {
         exclude group: 'com.android.support'
     }
-    implementation 'com.aliyun.dpa:oss-android-sdk:2.7.0'
+
 
     implementation ('com.github.LuckSiege.PictureSelector:picture_library:v2.1.9'){
         exclude module: 'glide'

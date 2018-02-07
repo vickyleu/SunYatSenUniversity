@@ -1,6 +1,8 @@
 package com.superfactory.sunyatsin.Interface.BindingActivity.AccountActivity
 
+import android.content.Context
 import android.net.Uri
+import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.PictureSelectorActivity
 import com.luck.picture.lib.R
 import com.luck.picture.lib.config.PictureConfig
@@ -8,11 +10,21 @@ import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.tools.DoubleUtils
 import com.luck.picture.lib.tools.PictureFileUtils
 import com.superfactory.library.Bridge.Adapt.startActivityForResult
+import com.superfactory.library.Communication.Sender.senderAsync
 import com.superfactory.library.Context.BaseToolBarActivity
+import com.superfactory.library.Context.Extensions.takeApi
+import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.library.Utils.FileUtil
+import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.Interface.BindingActivity.CompellationActivity.CompellationActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.GenderActivity.GenderActivity
 import com.superfactory.sunyatsin.Model.PictureSelectorReplace
+import com.superfactory.sunyatsin.Struct.BaseStructImpl
+import com.superfactory.sunyatsin.Struct.Const
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 /**
  * Created by vicky on 2018.01.31.
@@ -60,7 +72,29 @@ class AccountActivity : BaseToolBarActivity<AccountActivityViewModel, AccountAct
                             .outlet()
                     if (!DoubleUtils.isFastDoubleClick()) {
                         startActivityForResult<PictureSelectorActivity>(PictureConfig.CHOOSE_REQUEST, {
+                            val selectList = PictureSelector.obtainMultipleResult(it)
+                            if (selectList != null && selectList.size == 1) {
+                                val media = selectList[0]
+                                var path: String? = null
+                                if (media.isCut) {
+                                    if (media.isCompressed) {
+                                        path = media.compressPath
+                                    } else {
+                                        path = media.cutPath
+                                    }
+                                } else if (media.isCompressed) {
+                                    path = media.compressPath
+                                } else {
+                                    path = media.path
+                                }
 
+                                upload(path)
+                            }
+                            // 例如 LocalMedia 里面返回三种path
+                            // 1.media.getPath(); 为原图path
+                            // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                            // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                            // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
                         })
                         selector!!.getActivity()?.overridePendingTransition(R.anim.a5, 0)
                     }
@@ -72,11 +106,22 @@ class AccountActivity : BaseToolBarActivity<AccountActivityViewModel, AccountAct
                 }
                 2/*性别*/ -> {
                     startActivityForResult<GenderActivity>(101, { intent ->
-//                        val gender=intent?.extras?.getInt("gender")
+                        //                        val gender=intent?.extras?.getInt("gender")
                     })
                 }
             }
         }
     }
 
+    private fun upload(path: String?) {
+        val file = File(path)//filePath 图片地址
+        val builder = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)//表单类型
+        val imageBody = RequestBody.create(MediaType.parse("multipart/form-data"), file)
+        builder.addFormDataPart("file", file.name, imageBody)//imgfile 后台接收图片流的参数名
+        val parts = builder.build().parts()
+        (this as Context).takeApi(RetrofitImpl::class)?.uploadPicture(ConfigXmlAccessor.restoreValue(
+                this, Const.SignInInfo, Const.SignInSession, "")
+                ?: "", parts)?.senderAsync(BaseStructImpl::class, binder!!, this, witch = 5)
+    }
 }

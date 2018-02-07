@@ -200,12 +200,17 @@ class NoteDetailOrAddComponent(viewModel: NoteDetailOrAddViewModel) :
                                 maxLines = 3
                                 ellipsize = TextUtils.TruncateAt.valueOf(TextUtils.TruncateAt.END.name)
                                 textSize = 14f
-//                                minHeight = 0
-                                bindSelf(NoteDetailOrAddViewModel::mattersText) { it.mattersText.value }.toText(this)
+                                bindSelf(NoteDetailOrAddViewModel::mattersText) { it.mattersText.value }.toView(this) { view, value ->
+                                    if (!TextUtils.isEmpty(value)) {
+                                        view.text = value
+                                    } else {
+                                        view.text = "请点击进行选择"
+                                    }
+                                }
+                                gravity=Gravity.END
                             }.lparams {
                                 addRule(RelativeLayout.LEFT_OF, iv2.id)
-                                addRule(RelativeLayout.ALIGN_BOTTOM, iv2.id)
-                                addRule(RelativeLayout.ALIGN_LEFT, tx.id)
+                                addRule(RelativeLayout.RIGHT_OF, tx.id)
                                 addRule(RelativeLayout.BELOW, tx.id)
                                 rightMargin = dip(5)
                                 topMargin = dip(15)

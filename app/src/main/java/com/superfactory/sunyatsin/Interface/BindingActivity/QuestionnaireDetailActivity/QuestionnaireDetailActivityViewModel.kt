@@ -29,7 +29,9 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
         val ctx = getStaticsContextRef()
         toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.back_stack_icon)
         toolbarBindingModel.rightText.value = "提交"
+        toolbarBindingModel.rightTextColor.value = Color.parseColor("#b4b3b3")
     }
+
     override fun requestFailed(ld: LoadingDialog, error: Throwable?, witch: Int?) {
         ld.close()
         if (!TextUtils.isEmpty(error?.message)) {
@@ -57,7 +59,7 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
     val tips = observable("")
 
 
-    var parentId:String?=null
+    var parentId: String? = null
     val questionnaireTitle = observable("")
     val questionnaireAmount = observable("")
 
@@ -69,7 +71,37 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
         questionnaireTitle.setStableValue(struct.body.qNaire.title)
         questionnaireAmount.setStableValue("共${struct.body.questionList.size}小题")
 
-        parentId=struct.body.qNaire.id
+        parentId = struct.body.qNaire.id
+
+
+//        struct.body.questionList.forEachWithIndex {i,it->
+//           val  that=it
+//            val list = ArrayList<Answer>()
+//            it.qOptionsList.forEach {
+//                list.add(Answer("${it.optionName}.${it.content}", it.score, it.sort, it.id))
+//            }
+//            val qu = QuestionnaireDetailActivityItemViewModel(itemList.value.size,
+//                    "${i + 1}.${struct.body.qNaire.title}(${when (that.type.toInt()) {
+//                        1 -> {
+//                            "单选"
+//                        }
+//                        2 -> {
+//                            "双选"
+//                        }
+//                        else -> {
+//                            "多选"
+//                        }
+//                    }
+//                    })",
+//                    that.parentId,
+//                    that.id,
+//                    that.type.toInt(),
+//                    list)
+//            itemList.value.add(qu)
+//        }
+//
+//        itemList.notifyChange()
+//
         RxSorter.sort<Question>(struct.body.questionList, { value1, value2 ->
             value1.sort.compareTo(value2.sort)
         }, {
@@ -77,31 +109,41 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
             it.forEachWithIndex { i, it2 ->
                 val list = ArrayList<Answer>()
                 it2.qOptionsList.forEach {
-                    list.add(Answer("${it.optionName}.${it.content}", it.score, it.sort,it.id))
+                    list.add(Answer("${it.optionName}.${it.content}", it.score, it.sort, it.id))
                 }
                 RxSorter.sort<Answer>(list, { value1, value2 ->
                     value1.sort.compareTo(value2.sort)
                 }, {
+                    val type = that[i].type.toInt()
                     val qu = QuestionnaireDetailActivityItemViewModel(itemList.value.size,
-                            struct.body.qNaire.title,
+                            "${i + 1}.${struct.body.qNaire.title}(${when (type) {
+                                1 -> {
+                                    "单选"
+                                }
+                                2 -> {
+                                    "双选"
+                                }
+                                else -> {
+                                    "多选"
+                                }
+                            }
+                            })",
                             it2.parentId,
                             it2.id,
-                            that[i].type.toInt(),
+                            type,
                             list)
                     itemList.value.add(qu)
                 })
             }
             itemList.notifyChange()
         })
-
-
     }
 
 
 }
 
 
-data class QuestionnaireDetailActivityItemViewModel(val index: Int, val question: String, val parentId: String,val questionId: String, val type: Int, val answerList: List<Answer>?) {
+data class QuestionnaireDetailActivityItemViewModel(val index: Int, val question: String, val parentId: String, val questionId: String, val type: Int, val answerList: List<Answer>?) {
     var selected: Array<AnswerCheckBox?>? = null
 
     init {
@@ -115,4 +157,4 @@ data class QuestionnaireDetailActivityItemViewModel(val index: Int, val question
 data class AnswerCheckBox(val index: Int, var isChecked: Boolean = false)
 
 
-data class Answer(val name: String, val scope: String, val sort: Int, val optionId:String,var checked: Boolean = false)
+data class Answer(val name: String, val scope: String, val sort: Int, val optionId: String, var checked: Boolean = false)

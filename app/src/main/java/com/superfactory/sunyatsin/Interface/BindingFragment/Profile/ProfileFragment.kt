@@ -1,6 +1,7 @@
 package com.superfactory.sunyatsin.Interface.BindingFragment.Profile
 
 import android.net.Uri
+import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.PictureSelectorActivity
 import com.luck.picture.lib.R
 import com.luck.picture.lib.config.PictureConfig
@@ -9,14 +10,24 @@ import com.luck.picture.lib.tools.DoubleUtils
 import com.luck.picture.lib.tools.PictureFileUtils.getPath
 import com.superfactory.library.Bridge.Adapt.startActivity
 import com.superfactory.library.Bridge.Adapt.startActivityForResult
+import com.superfactory.library.Communication.Sender.senderAsync
 import com.superfactory.library.Context.BaseToolbarFragment
+import com.superfactory.library.Context.Extensions.takeApi
+import com.superfactory.library.Debuger
+import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.library.Utils.FileUtil
+import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.Interface.BindingActivity.MessageActivity.MessageActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.SettingsActivity.SettingsActivity
 import com.superfactory.sunyatsin.Model.PictureSelectorReplace
+import com.superfactory.sunyatsin.Struct.BaseStructImpl
+import com.superfactory.sunyatsin.Struct.Const
 import com.superfactory.sunyatsin.Struct.Login.LoginAfterStruct
-import org.jetbrains.anko.support.v4.startActivity
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 
 /**
@@ -28,7 +39,7 @@ import org.jetbrains.anko.support.v4.startActivity
  */
 class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFragment>() {
 
-    override fun newViewModel()=ProfileFragmentViewModel(extra)
+    override fun newViewModel() = ProfileFragmentViewModel(extra)
 
     override fun newComponent(v: ProfileFragmentViewModel) = ProfileFragmentComponent(v).apply {
         viewModelSafe.ownerNotifier = { i, any ->
@@ -70,7 +81,7 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
                             .imageFormat(PictureMimeType.PNG)// 拍照保存图片格式后缀,默认jpeg
                             .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
                             .sizeMultiplier(0.5f)// glide 加载图片大小 0~1之间 如设置 .glideOverride()无效
-                            .setOutputCameraPath("/CustomPath")// 自定义拍照保存路径,可不填
+//                            .setOutputCameraPath("/CustomPath")// 自定义拍照保存路径,可不填
                             .enableCrop(true)// 是否裁剪 true or false
                             .compress(true)// 是否压缩 true or false
                             .withAspectRatio(16, 9)// int 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
@@ -88,7 +99,29 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
                             .outlet()
                     if (!DoubleUtils.isFastDoubleClick()) {
                         startActivityForResult<PictureSelectorActivity>(PictureConfig.CHOOSE_REQUEST, {
+                            val selectList = PictureSelector.obtainMultipleResult(it)
+                            if (selectList != null && selectList.size == 1) {
+                                val media = selectList[0]
+                                var path: String? = null
+                                if (media.isCut) {
+                                    if (media.isCompressed) {
+                                        path = media.compressPath
+                                    } else {
+                                        path = media.cutPath
+                                    }
+                                } else if (media.isCompressed) {
+                                    path = media.compressPath
+                                } else {
+                                    path = media.path
+                                }
 
+                                upload(path)
+                            }
+                            // 例如 LocalMedia 里面返回三种path
+                            // 1.media.getPath(); 为原图path
+                            // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                            // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                            // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
                         })
                         selector!!.getActivity()?.overridePendingTransition(R.anim.a5, 0)
                     }
@@ -96,10 +129,22 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
                 4/*"设置"*/ -> {
                     val loginStruct = extra?.getParcelable<LoginAfterStruct>("data")
                     val data = loginStruct?.body?.data
-                    startActivity<SettingsActivity>(Pair("login",data))
+                    startActivity<SettingsActivity>(Pair("login", data))
                 }
             }
         }
+    }
+
+    private fun upload(path: String?) {
+        val file = File(path)//filePath 图片地址
+        val builder = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)//表单类型
+        val imageBody = RequestBody.create(MediaType.parse("multipart/form-data"), file)
+        builder.addFormDataPart("file", file.name, imageBody)//imgfile 后台接收图片流的参数名
+        val parts = builder.build().parts()
+        takeApi(RetrofitImpl::class)?.uploadPicture(ConfigXmlAccessor.restoreValue(
+                context!!, Const.SignInInfo, Const.SignInSession, "")
+                ?: "", parts)?.senderAsync(BaseStructImpl::class, binder!!, context!!, witch = 5)
     }
 
 }

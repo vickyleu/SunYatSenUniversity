@@ -3,6 +3,7 @@ package com.superfactory.sunyatsin.Communication
 import com.superfactory.sunyatsin.Bean.*
 import com.superfactory.sunyatsin.Bean.BaseBean.NoteStoreBean
 import io.reactivex.Observable
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.http.*
 
@@ -68,4 +69,7 @@ interface RetrofitImpl {
     fun storeNote(@Path("JSESSIONID") JSESSIONID: String,
                   @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body bean: NoteStoreBean): Observable<ResponseBody>
 
+    @Multipart
+    @POST("sys/user/imageUpload;JSESSIONID={JSESSIONID}?__ajax=true")
+    fun uploadPicture(@Path("JSESSIONID") JSESSIONID: String,@Part parts: List<MultipartBody.Part>): Observable<ResponseBody>
 }

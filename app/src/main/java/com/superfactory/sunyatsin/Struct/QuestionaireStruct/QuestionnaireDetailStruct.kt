@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.superfactory.library.Context.Extensions.writeStringNotNull
 import com.superfactory.sunyatsin.Struct.Base.BaseStruct
+import com.superfactory.sunyatsin.Struct.CreateBy
 
 /**
  * Created by vicky on 2018.02.01.
@@ -67,7 +68,7 @@ data class QuestionnaireDetailBody(
 
 data class QNaire(
         val id: String,//
-        val createBy: CreateByIn,
+        val createBy: CreateBy,
         val createDate: String,
         val updateDate: String,
         val title: String,
@@ -79,7 +80,7 @@ data class QNaire(
 ) : BaseStruct() {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
-            parcel.readParcelable(CreateByIn::class.java.classLoader),
+            parcel.readParcelable(CreateBy::class.java.classLoader),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -118,40 +119,7 @@ data class QNaire(
     }
 }
 
-data class CreateByIn(
-        val id: String,
-        val loginFlag: String,
-        val admin: Boolean,
-        val roleNames: String
-) : BaseStruct() {
-    constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readByte() != 0.toByte(),
-            parcel.readString()) {
-    }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeStringNotNull(id)
-        parcel.writeStringNotNull(loginFlag)
-        parcel.writeByte(if (admin) 1 else 0)
-        parcel.writeStringNotNull(roleNames)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<CreateBy> {
-        override fun createFromParcel(parcel: Parcel): CreateBy {
-            return CreateBy(parcel)
-        }
-
-        override fun newArray(size: Int): Array<CreateBy?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
 
 data class Question(
         val id: String,
