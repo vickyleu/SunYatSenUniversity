@@ -58,31 +58,34 @@ class NoteFragmentViewModel : ToolbarBindingModel() {
         if (model is NoteStruct) {
             if (model.success) {
                 ld.close()
-                if (witch != null && witch != 0&&model.body.rows.size>=0) {
-                    val row = model.body.rows[0]
-                    val body1 = TitleBody(R.drawable.date_icon, TimeUtil.takeNowTime("yyyy年MM月dd日",
-                            "yyyy-MM-dd HH:mm:ss",
-                            row.startTime), "1条日志")
-                    val list = arrayListOf<NoteSnapShot>()
-                    row.dutyName = "12121"
-                    row.matterContent = "121212121212111111111111111111111111111111111111111111111111111111133333333333333333332"
-                    list.add(NoteSnapShot(row.id, R.drawable.projection_icon__,
-                            row.dutyName, row.matterContent,
-                            "${TimeUtil.takeNowTime("HH:mm",
-                                    "yyyy-MM-dd HH:mm:ss",
-                                    row.startTime)}-${
-                            TimeUtil.takeNowTime("HH:mm",
-                                    "yyyy-MM-dd HH:mm:ss",
-                                    row.endTime)}", row.startTime, row.endTime,
-                            row.createDate,
-                            TimeUtil.takeNowTime("HH:mm",
-                                    "yyyy-MM-dd HH:mm:ss",
-                                    row.createDate) ?: "")
-                    )
-                    val modelIntent = NoteItemDataViewModel(body1, list)
-                    ownerNotifier?.invoke(104, modelIntent)
-                    return
-                }
+                if (witch != null && witch == 2) {
+                    isEditToday.value = true
+                } else
+                    if (witch != null && witch != 0 && model.body.rows.size >= 0) {
+                        val row = model.body.rows[0]
+                        val body1 = TitleBody(R.drawable.date_icon, TimeUtil.takeNowTime("yyyy年MM月dd日",
+                                "yyyy-MM-dd HH:mm:ss",
+                                row.startTime), "1条日志")
+                        val list = arrayListOf<NoteSnapShot>()
+                        row.dutyName = "12121"
+                        row.matterContent = "121212121212111111111111111111111111111111111111111111111111111111133333333333333333332"
+                        list.add(NoteSnapShot(row.id, R.drawable.projection_icon__,
+                                row.dutyName, row.matterContent,
+                                "${TimeUtil.takeNowTime("HH:mm",
+                                        "yyyy-MM-dd HH:mm:ss",
+                                        row.startTime)}-${
+                                TimeUtil.takeNowTime("HH:mm",
+                                        "yyyy-MM-dd HH:mm:ss",
+                                        row.endTime)}", row.startTime, row.endTime,
+                                row.createDate,
+                                TimeUtil.takeNowTime("HH:mm",
+                                        "yyyy-MM-dd HH:mm:ss",
+                                        row.createDate) ?: "")
+                        )
+                        val modelIntent = NoteItemDataViewModel(body1, list)
+                        ownerNotifier?.invoke(104, modelIntent)
+                        return
+                    }
                 ownerNotifier?.invoke(101, model)
             } else {
                 ld.close()

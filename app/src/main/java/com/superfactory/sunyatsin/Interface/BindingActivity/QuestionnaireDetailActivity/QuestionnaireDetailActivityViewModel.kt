@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.support.v4.content.ContextCompat
 import android.text.TextUtils
 import com.superfactory.library.Bridge.Anko.observable
+import com.superfactory.library.Bridge.Anko.observableNullable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Utils.RxSorter
 import com.superfactory.sunyatsin.R
@@ -13,7 +14,6 @@ import com.superfactory.sunyatsin.Struct.QuestionaireStruct.Question
 import com.superfactory.sunyatsin.Struct.QuestionaireStruct.QuestionnaireDetailStruct
 import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 import org.jetbrains.anko.collections.forEachWithIndex
-import java.util.*
 
 /**
  * Created by vicky on 2018.02.01.
@@ -64,7 +64,7 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
     val questionnaireAmount = observable("")
 
     val amount = observable(0)
-    val itemList = observable(arrayListOf<QuestionnaireDetailActivityItemViewModel>())
+    val itemList = observableNullable<List<QuestionDetailActItemViewModel>?>(null)
 
     init {
         val struct = intent.extras.getParcelable<QuestionnaireDetailStruct>("data")
@@ -73,35 +73,7 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
 
         parentId = struct.body.qNaire.id
 
-
-//        struct.body.questionList.forEachWithIndex {i,it->
-//           val  that=it
-//            val list = ArrayList<Answer>()
-//            it.qOptionsList.forEach {
-//                list.add(Answer("${it.optionName}.${it.content}", it.score, it.sort, it.id))
-//            }
-//            val qu = QuestionnaireDetailActivityItemViewModel(itemList.value.size,
-//                    "${i + 1}.${struct.body.qNaire.title}(${when (that.type.toInt()) {
-//                        1 -> {
-//                            "单选"
-//                        }
-//                        2 -> {
-//                            "双选"
-//                        }
-//                        else -> {
-//                            "多选"
-//                        }
-//                    }
-//                    })",
-//                    that.parentId,
-//                    that.id,
-//                    that.type.toInt(),
-//                    list)
-//            itemList.value.add(qu)
-//        }
-//
-//        itemList.notifyChange()
-//
+        val temp = arrayListOf<QuestionDetailActItemViewModel>()
         RxSorter.sort<Question>(struct.body.questionList, { value1, value2 ->
             value1.sort.compareTo(value2.sort)
         }, {
@@ -115,7 +87,7 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
                     value1.sort.compareTo(value2.sort)
                 }, {
                     val type = that[i].type.toInt()
-                    val qu = QuestionnaireDetailActivityItemViewModel(itemList.value.size,
+                    val qu = QuestionDetailActItemViewModel(temp.size,
                             "${i + 1}.${struct.body.qNaire.title}(${when (type) {
                                 1 -> {
                                     "单选"
@@ -132,10 +104,10 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
                             it2.id,
                             type,
                             list)
-                    itemList.value.add(qu)
+                    temp.add(qu)
                 })
             }
-            itemList.notifyChange()
+            itemList.value = temp
         })
     }
 
@@ -143,7 +115,7 @@ class QuestionnaireDetailActivityViewModel(intent: Intent) : ToolbarBindingModel
 }
 
 
-data class QuestionnaireDetailActivityItemViewModel(val index: Int, val question: String, val parentId: String, val questionId: String, val type: Int, val answerList: List<Answer>?) {
+data class QuestionDetailActItemViewModel(val index: Int, val question: String, val parentId: String, val questionId: String, val type: Int, val answerList: List<Answer>?) {
     var selected: Array<AnswerCheckBox?>? = null
 
     init {

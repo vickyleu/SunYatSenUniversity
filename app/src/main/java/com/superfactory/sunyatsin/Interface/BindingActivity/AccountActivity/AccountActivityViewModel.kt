@@ -81,7 +81,7 @@ class AccountActivityViewModel(intent: Intent) : ToolbarBindingModel() {
     init {
         val data = intent.extras.getParcelable<Data>("login")
         accountItemsList.value = arrayListOf(AccountActivityItemViewModel(0, "头像", R.drawable.right_arrow_icon,
-                description = "${Const.AvatarPrefix}${data.photo}"),
+                description = null/*"${Const.AvatarPrefix}${data.photo}"*/),
                 AccountActivityItemViewModel(1, "姓名", R.drawable.right_arrow_icon,
                         description = data.name),
                 AccountActivityItemViewModel(2, "性别", R.drawable.right_arrow_icon,

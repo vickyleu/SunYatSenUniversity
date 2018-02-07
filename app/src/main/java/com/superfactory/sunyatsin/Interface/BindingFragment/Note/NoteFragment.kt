@@ -59,11 +59,10 @@ class NoteFragment : BaseToolbarFragment<NoteFragmentViewModel, NoteFragment>() 
             when (i) {
                 -1 -> {
                     startActivityForResult<NoteDetailOrAddActivity>(1001, {
-                        viewModel.isEditToday.value=true
                         takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
                                 context!!, Const.SignInInfo, Const.SignInSession, "")
                                 ?: "", true, NoteListBean(TimeUtil.takeNowTime("yyyy-MM-dd")
-                                ?: ""))?.senderAsync(NoteStruct::class, binder!!, context!!)
+                                ?: ""))?.senderAsync(NoteStruct::class, binder!!, context!!,witch = 2)
                     })
                 }
                 else -> {

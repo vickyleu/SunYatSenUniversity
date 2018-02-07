@@ -52,6 +52,7 @@ class QuestionPromptComponent(viewModel: QuestionPromptViewModel) :
             button {
                 text="知道了"
                 onClick {
+                    viewModelSafe.ownerNotifier?.invoke(0,null)
                     owner.dismiss()
                 }
             }

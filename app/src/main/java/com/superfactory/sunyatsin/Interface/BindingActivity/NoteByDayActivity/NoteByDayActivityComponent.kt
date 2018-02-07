@@ -77,7 +77,7 @@ class NoteByDayActivityComponent(viewModel: NoteByDayActivityViewModel) :
                 picker.setTopPadding(ConvertUtils.toPx(context, 10f))
                 picker.setRangeEnd(2111, 1, 11)
                 picker.setRangeStart(2016, 8, 29)
-                picker.setSelectedItem(2050, 10, 14)
+                picker.setSelectedItem(TimeUtil.takeNowYear(), TimeUtil.takeNowMonth(), TimeUtil.takeNowDay())
                 picker.setResetWhileWheel(false)
                 picker.setCancelTextColor(Color.parseColor("#222222"))
                 picker.setAnimationStyle(R.style.Animation_CustomPopup)

@@ -7,6 +7,7 @@ import cn.qqtheme.framework.picker.DateTimePicker.HOUR_24
 import cn.qqtheme.framework.picker.TimePicker
 import cn.qqtheme.framework.util.ConvertUtils
 import com.superfactory.library.Context.BaseToolBarActivity
+import com.superfactory.library.Utils.TimeUtil
 import com.superfactory.sunyatsin.Interface.BindingPrompt.DutyPrompt.DutyPrompt
 import com.superfactory.sunyatsin.Interface.BindingPrompt.MattersPrompt.MattersPrompt
 import com.superfactory.sunyatsin.R
@@ -56,6 +57,7 @@ class NoteDetailOrAddActivity : BaseToolBarActivity<NoteDetailOrAddViewModel, No
                     }
                     2 -> {
                         if (!TextUtils.isEmpty(viewModel.dutyIdentifier) && !TextUtils.isEmpty(viewModel.mattersText.value)) {
+
                             val picker = DatePicker(this)
                             picker.setCanceledOnTouchOutside(false)
                             picker.setUseWeight(false)
@@ -63,7 +65,7 @@ class NoteDetailOrAddActivity : BaseToolBarActivity<NoteDetailOrAddViewModel, No
                             picker.setTopPadding(ConvertUtils.toPx(this, 10f))
                             picker.setRangeEnd(2111, 1, 11)
                             picker.setRangeStart(2016, 8, 29)
-                            picker.setSelectedItem(2050, 10, 14)
+                            picker.setSelectedItem(TimeUtil.takeNowYear(), TimeUtil.takeNowMonth(), TimeUtil.takeNowDay())
                             picker.setResetWhileWheel(false)
                             picker.setCancelTextColor(Color.parseColor("#222222"))
                             picker.setAnimationStyle(R.style.Animation_CustomPopup)

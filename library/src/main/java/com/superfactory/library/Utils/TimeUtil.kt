@@ -34,6 +34,40 @@ object TimeUtil {
         return null
     }
 
+    fun takeNowYear(): Int {
+        try {
+            val calendar = Calendar.getInstance()
+            calendar.time = Date()
+            return calendar.get(Calendar.YEAR)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return 2018
+    }
+
+    fun takeNowMonth(): Int {
+        try {
+            val calendar = Calendar.getInstance()
+            calendar.time = Date()
+            return calendar.get(Calendar.MONTH)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return 1
+    }
+
+    fun takeNowDay(): Int {
+        try {
+            val calendar = Calendar.getInstance()
+            calendar.time = Date()
+            return calendar.get(Calendar.DAY_OF_MONTH)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return 1
+    }
+
+
     fun takeNowTime(format: String, sourceFormat: String, time: String): String? {
         if (!TextUtils.isEmpty(time))
             try {

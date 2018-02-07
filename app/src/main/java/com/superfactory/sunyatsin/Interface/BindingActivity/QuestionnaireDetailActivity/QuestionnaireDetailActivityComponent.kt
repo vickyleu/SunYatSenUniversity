@@ -112,10 +112,6 @@ class QuestionnaireDetailActivityComponent(viewModel: QuestionnaireDetailActivit
                                     viewModelSafe.amount.value = it
                                 }
                             }))
-                        }.apply {
-                            onItemClickListener = { i, viewModel, _ ->
-
-                            }
                         }
                         val color1 = Color.parseColor("#b4b3b3")
                         val color2 = Color.parseColor("#ffffff")
@@ -148,7 +144,7 @@ class QuestionnaireDetailActivityComponent(viewModel: QuestionnaireDetailActivit
 
                         bindSelf(QuestionnaireDetailActivityViewModel::itemList) { it.itemList.value }
                                 .toView(this) { _, value ->
-                                    bindAdapter.setItemsList(value as List<QuestionnaireDetailActivityItemViewModel>)
+                                    bindAdapter.setItemsList(value as List<QuestionDetailActItemViewModel>)
                                 }
                         layoutManager = LinearLayoutManager(context)
 //                        addItemDecoration(getLineDividerItemDecoration(dip(10), ContextCompat.getColor(context, R.color.transparent)))
@@ -174,8 +170,9 @@ class QuestionnaireDetailActivityComponent(viewModel: QuestionnaireDetailActivit
         }
     }
 
-    private fun mustSelectOne(value: ArrayList<QuestionnaireDetailActivityItemViewModel>): Boolean {
+    private fun mustSelectOne(value: List<QuestionDetailActItemViewModel>?): Boolean {
         var flag = false
+        if (value == null) return flag
         value.forEachWithIndex { i, e ->
             val answerList = e.answerList
             if (answerList != null && answerList.isNotEmpty()) {
@@ -195,8 +192,8 @@ class QuestionnaireDetailActivityComponent(viewModel: QuestionnaireDetailActivit
 
     private fun @AnkoViewDslMarker _RecyclerView.doStoreQuestionnaire() {
         val list = arrayListOf<QuestionnaireCommitItem>()
-        for (i in 0 until viewModel!!.itemList.value.size) {
-            val entity = viewModel!!.itemList.value[i]
+        for (i in 0 until (viewModel!!.itemList.value?.size?:0)) {
+            val entity = viewModel!!.itemList.value!![i]
             for (j in 0 until (entity.answerList?.size ?: 0)) {
                 val answer = entity.answerList!![j]
                 list.add(QuestionnaireCommitItem(answer.optionId, "", answer.scope, entity.questionId))
@@ -209,7 +206,7 @@ class QuestionnaireDetailActivityComponent(viewModel: QuestionnaireDetailActivit
     }
 }
 
-class QuestionnaireDetailActivityItemComponent(private val fun0: (Int) -> Unit) : BindingComponent<ViewGroup, QuestionnaireDetailActivityItemViewModel>() {
+class QuestionnaireDetailActivityItemComponent(private val fun0: (Int) -> Unit) : BindingComponent<ViewGroup, QuestionDetailActItemViewModel>() {
     override fun createViewWithBindings(ui: AnkoContext<ViewGroup>) = with(ui) {
         verticalLayout {
             padding = dip(10)
@@ -221,7 +218,7 @@ class QuestionnaireDetailActivityItemComponent(private val fun0: (Int) -> Unit) 
                 textSize = 14f
                 textColor = Color.parseColor("#222222")
                 ellipsize = TextUtils.TruncateAt.valueOf(TextUtils.TruncateAt.END.name)
-                bindSelf(QuestionnaireDetailActivityItemViewModel::question) { it.question }.toView(this) { view, value ->
+                bindSelf(QuestionDetailActItemViewModel::question) { it.question }.toView(this) { view, value ->
                     if (!TextUtils.isEmpty(value)) {
                         view.text = value
                     }
@@ -266,7 +263,7 @@ class QuestionnaireDetailActivityItemComponent(private val fun0: (Int) -> Unit) 
                                 h.component.notifyChanges()
                             }
                         }
-                bindSelf(QuestionnaireDetailActivityItemViewModel::answerList) { it.answerList }
+                bindSelf(QuestionDetailActItemViewModel::answerList) { it.answerList }
                         .toView(this) { _, value ->
                             bindAdapter.setItemsList(value as List<Answer>)
                         }

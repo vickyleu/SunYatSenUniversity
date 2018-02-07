@@ -43,7 +43,7 @@ class MainActivityComponent(viewModel: MainActivityViewModel) : BindingComponent
             weightSum = 1f
             frameLayout {
                 id = R.id.alt_display
-                backgroundColor = Color.YELLOW
+                backgroundColor = Color.BLUE
                 bindSelf {
                     it.fragments
                 }.toFragment(this)
