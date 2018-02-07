@@ -104,13 +104,13 @@ inline fun Fragment.startActivityForResult(resultCodeOrigin: Int, crossinline fu
 }
 
 
-inline fun <reified T : Activity> Activity.startActivityForResult(resultCodeOrigin: Int, crossinline fun0: (Intent?) -> Unit, vararg params: Pair<String, Any?>) {
+inline fun <reified T : Activity> Activity.startActivityForResult(`resultCode`: Int, crossinline fun0: (Intent?) -> Unit, vararg params: Pair<String, Any?>) {
     RxActivityResult.on(this).startIntent(AnkoInternals.createIntent(this, T::class.java, params))
             .subscribe({ result ->
                 val data = result.data()
                 val resultCode = result.resultCode()
                 // the requestCode using which the activity is started can be received here.
-                if (resultCode == resultCodeOrigin) {
+                if (resultCode == `resultCode`) {
                     result.targetUI().apply {
                         fun0(data)
                     }

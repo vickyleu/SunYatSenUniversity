@@ -1,7 +1,7 @@
 package com.superfactory.sunyatsin.Interface.BindingActivity.GenderActivity
 
-import android.content.Intent
 import com.superfactory.library.Context.BaseToolBarActivity
+import org.jetbrains.anko.intentFor
 
 /**
  * Created by vicky on 2018.01.31.
@@ -13,9 +13,7 @@ import com.superfactory.library.Context.BaseToolBarActivity
 class GenderActivity : BaseToolBarActivity<GenderActivityViewModel, GenderActivity>() {
     override fun newViewModel() = GenderActivityViewModel().apply {
         this.ownerNotifier = { i, any ->
-            val result = Intent()
-            result.putExtra("gender", any as Int)
-            setResult(101, result)
+            setResult(101, intentFor<Int>(Pair("gender", any as Int)))
             finish()
         }
     }

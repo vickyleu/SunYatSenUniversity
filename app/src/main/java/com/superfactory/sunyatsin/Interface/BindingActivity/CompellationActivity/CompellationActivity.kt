@@ -1,8 +1,11 @@
 package com.superfactory.sunyatsin.Interface.BindingActivity.CompellationActivity
 
+import android.os.Bundle
 import android.view.View
 import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Context.BaseToolBarActivity
+import org.jetbrains.anko.bundleOf
+import org.jetbrains.anko.intentFor
 
 /**
  * Created by vicky on 2018.01.31.
@@ -13,7 +16,13 @@ import com.superfactory.library.Context.BaseToolBarActivity
  */
 class CompellationActivity : BaseToolBarActivity<CompellationActivityViewModel, CompellationActivity>() {
 
-    override fun newViewModel() = CompellationActivityViewModel()
+    override fun newViewModel() = CompellationActivityViewModel().apply {
+        this.ownerNotifier={
+            i,any->
+            setResult(101, intentFor<String>(Pair("name",any as String)))
+            finish()
+        }
+    }
 
     override fun newComponent(v: CompellationActivityViewModel) = CompellationActivityComponent(v)
     override fun onLoadedModel(viewModel: CompellationActivityViewModel) {

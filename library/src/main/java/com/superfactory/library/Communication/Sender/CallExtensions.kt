@@ -342,7 +342,7 @@ open class NullStringToEmptyAdapterFactory : TypeAdapterFactory {
 }
 
 
-inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, refresh: RefreshLayout? = null, witch: Int? = 0) {
+inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: KClass<D>, component: BindingComponent<*, *>, ctx: Context, refresh: RefreshLayout? = null, witch: Int? = 0, takeParamBack: Any? = null) {
     val ld = LoadingDialog(ctx)
     (component.viewModel as? BaseObservable)?.startRequest(ld)
     this.subscribeOn(Schedulers.newThread())//请求在新的线程中执行
@@ -377,7 +377,11 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
                     refresh?.finishRefresh()
                     //请求成功
                     //在你代码中合适的位置调用反馈
-                    (component.viewModel as? BaseObservable)?.requestSuccess(ld, t.blockingGet(), witch)
+                    if (takeParamBack != null) {
+                        (component.viewModel as? BaseObservable)?.requestSuccess(ld,
+                                TakeParamsBack(t.blockingGet(), takeParamBack), witch)
+                    } else
+                        (component.viewModel as? BaseObservable)?.requestSuccess(ld, t.blockingGet(), witch)
                 }
 
                 override fun onError(e: Throwable) {
@@ -391,3 +395,5 @@ inline fun <reified D : Any, T : ResponseBody> Observable<T>.senderAsync(clazz: 
 
     Debuger.printMsg(this, "开始异步")
 }
+
+data class TakeParamsBack(val any: Any?, val params: Any?)

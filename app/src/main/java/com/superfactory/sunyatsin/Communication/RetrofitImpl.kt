@@ -72,4 +72,8 @@ interface RetrofitImpl {
     @Multipart
     @POST("sys/user/imageUpload;JSESSIONID={JSESSIONID}?__ajax=true")
     fun uploadPicture(@Path("JSESSIONID") JSESSIONID: String,@Part parts: List<MultipartBody.Part>): Observable<ResponseBody>
+
+    @POST("sys/user/infoEdit;JSESSIONID={JSESSIONID}?__ajax=true")
+    fun storeProfile(@Path("JSESSIONID") JSESSIONID: String,
+                       @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body bean: ProfileStoreBean):Observable<ResponseBody>
 }

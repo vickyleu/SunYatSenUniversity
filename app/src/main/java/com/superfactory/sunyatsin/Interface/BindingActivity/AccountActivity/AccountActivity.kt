@@ -1,11 +1,9 @@
 package com.superfactory.sunyatsin.Interface.BindingActivity.AccountActivity
 
-import android.content.Context
 import android.net.Uri
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.PictureSelectorActivity
 import com.luck.picture.lib.R
-import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.tools.DoubleUtils
 import com.luck.picture.lib.tools.PictureFileUtils
@@ -15,6 +13,7 @@ import com.superfactory.library.Context.BaseToolBarActivity
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.library.Utils.FileUtil
+import com.superfactory.sunyatsin.Bean.ProfileStoreBean
 import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.Interface.BindingActivity.CompellationActivity.CompellationActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.GenderActivity.GenderActivity
@@ -42,74 +41,84 @@ class AccountActivity : BaseToolBarActivity<AccountActivityViewModel, AccountAct
         viewModel.onItemClicked = { idx, model ->
             when (idx) {
                 0/*头像*/ -> {
-                    // 进入相册 以下是例子：用不到的api可以不写
-                    val selector = PictureSelectorReplace
-                            .create(this)
-                            .openGallery(PictureMimeType.ofImage())//全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
-                            .maxSelectNum(1)// 最大图片选择数量 int
-                            .minSelectNum(1)// 最小选择数量 int
-                            .imageSpanCount(4)// 每行显示个数 int
-                            .previewImage(true)// 是否可预览图片 true or false
-                            .isCamera(true)// 是否显示拍照按钮 true or false
-                            .imageFormat(PictureMimeType.PNG)// 拍照保存图片格式后缀,默认jpeg
-                            .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
-                            .sizeMultiplier(0.5f)// glide 加载图片大小 0~1之间 如设置 .glideOverride()无效
-                            .setOutputCameraPath("/CustomPath")// 自定义拍照保存路径,可不填
-                            .enableCrop(true)// 是否裁剪 true or false
-                            .compress(true)// 是否压缩 true or false
-                            .withAspectRatio(16, 9)// int 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-//                            .hideBottomControls()// 是否显示uCrop工具栏，默认不显示 true or false
-                            .compressSavePath(PictureFileUtils.getPath(this, Uri.fromFile(FileUtil.createTmpFile(this))))//压缩图片保存地址
-                            .freeStyleCropEnabled(true)// 裁剪框是否可拖拽 true or false
-                            .circleDimmedLayer(true)// 是否圆形裁剪 true or false
-                            .showCropFrame(false)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false   true or false
-                            .showCropGrid(false)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false    true or false
-                            .openClickSound(false)// 是否开启点击声音 true or false
-                            .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中) true or false
-                            .minimumCompressSize(500)// 小于100kb的图片不压缩
-                            .synOrAsy(false)//同步true或异步false 压缩 默认同步
-                            .scaleEnabled(true)// 裁剪是否可放大缩小图片 true or false
-                            .outlet()
-                    if (!DoubleUtils.isFastDoubleClick()) {
-                        startActivityForResult<PictureSelectorActivity>( {
-                            val selectList = PictureSelector.obtainMultipleResult(it)
-                            if (selectList != null && selectList.size == 1) {
-                                val media = selectList[0]
-                                var path: String? = null
-                                if (media.isCut) {
-                                    if (media.isCompressed) {
-                                        path = media.compressPath
-                                    } else {
-                                        path = media.cutPath
-                                    }
-                                } else if (media.isCompressed) {
-                                    path = media.compressPath
-                                } else {
-                                    path = media.path
-                                }
-
-                                upload(path)
-                            }
-                            // 例如 LocalMedia 里面返回三种path
-                            // 1.media.getPath(); 为原图path
-                            // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
-                            // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
-                            // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
-                        })
-                        selector!!.getActivity()?.overridePendingTransition(R.anim.a5, 0)
-                    }
+                    intoPictureSelector()
                 }
                 1/*姓名*/ -> {
                     startActivityForResult<CompellationActivity>(101, { intent ->
-
+                        val name=intent?.extras?.getString("name")
+                        takeApi(RetrofitImpl::class)?.storeProfile(ConfigXmlAccessor.restoreValue(
+                                this, Const.SignInInfo, Const.SignInSession, "")
+                                ?: "",true, ProfileStoreBean(name=name))?.senderAsync(BaseStructImpl::class,binder!!,this,witch = 6,takeParamBack = name)
                     })
                 }
                 2/*性别*/ -> {
                     startActivityForResult<GenderActivity>(101, { intent ->
-                        //                        val gender=intent?.extras?.getInt("gender")
+                        val gender=intent?.extras?.getInt("gender")
+                        takeApi(RetrofitImpl::class)?.storeProfile(ConfigXmlAccessor.restoreValue(
+                                this, Const.SignInInfo, Const.SignInSession, "")
+                                ?: "",true, ProfileStoreBean(gender=gender))?.senderAsync(BaseStructImpl::class,binder!!,this,witch = 7,takeParamBack = gender)
                     })
                 }
             }
+        }
+    }
+
+    private fun intoPictureSelector() {
+        // 进入相册 以下是例子：用不到的api可以不写
+        val selector = PictureSelectorReplace
+                .create(this)
+                .openGallery(PictureMimeType.ofImage())//全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
+                .maxSelectNum(1)// 最大图片选择数量 int
+                .minSelectNum(1)// 最小选择数量 int
+                .imageSpanCount(4)// 每行显示个数 int
+                .previewImage(true)// 是否可预览图片 true or false
+                .isCamera(true)// 是否显示拍照按钮 true or false
+                .imageFormat(PictureMimeType.PNG)// 拍照保存图片格式后缀,默认jpeg
+                .isZoomAnim(true)// 图片列表点击 缩放效果 默认true
+                .sizeMultiplier(0.5f)// glide 加载图片大小 0~1之间 如设置 .glideOverride()无效
+                .setOutputCameraPath("/CustomPath")// 自定义拍照保存路径,可不填
+                .enableCrop(true)// 是否裁剪 true or false
+                .compress(true)// 是否压缩 true or false
+                .withAspectRatio(16, 9)// int 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
+                //                            .hideBottomControls()// 是否显示uCrop工具栏，默认不显示 true or false
+                .compressSavePath(PictureFileUtils.getPath(this, Uri.fromFile(FileUtil.createTmpFile(this))))//压缩图片保存地址
+                .freeStyleCropEnabled(true)// 裁剪框是否可拖拽 true or false
+                .circleDimmedLayer(true)// 是否圆形裁剪 true or false
+                .showCropFrame(false)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false   true or false
+                .showCropGrid(false)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false    true or false
+                .openClickSound(false)// 是否开启点击声音 true or false
+                .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中) true or false
+                .minimumCompressSize(500)// 小于100kb的图片不压缩
+                .synOrAsy(false)//同步true或异步false 压缩 默认同步
+                .scaleEnabled(true)// 裁剪是否可放大缩小图片 true or false
+                .outlet()
+        if (!DoubleUtils.isFastDoubleClick()) {
+            startActivityForResult<PictureSelectorActivity>({
+                val selectList = PictureSelector.obtainMultipleResult(it)
+                if (selectList != null && selectList.size == 1) {
+                    val media = selectList[0]
+                    var path: String? = null
+                    if (media.isCut) {
+                        if (media.isCompressed) {
+                            path = media.compressPath
+                        } else {
+                            path = media.cutPath
+                        }
+                    } else if (media.isCompressed) {
+                        path = media.compressPath
+                    } else {
+                        path = media.path
+                    }
+
+                    upload(path)
+                }
+                // 例如 LocalMedia 里面返回三种path
+                // 1.media.getPath(); 为原图path
+                // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
+            })
+            selector!!.getActivity()?.overridePendingTransition(R.anim.a5, 0)
         }
     }
 
@@ -120,7 +129,7 @@ class AccountActivity : BaseToolBarActivity<AccountActivityViewModel, AccountAct
         val imageBody = RequestBody.create(MediaType.parse("multipart/form-data"), file)
         builder.addFormDataPart("file", file.name, imageBody)//imgfile 后台接收图片流的参数名
         val parts = builder.build().parts()
-        (this as Context).takeApi(RetrofitImpl::class)?.uploadPicture(ConfigXmlAccessor.restoreValue(
+        takeApi(RetrofitImpl::class)?.uploadPicture(ConfigXmlAccessor.restoreValue(
                 this, Const.SignInInfo, Const.SignInSession, "")
                 ?: "", parts)?.senderAsync(BaseStructImpl::class, binder!!, this, witch = 5)
     }

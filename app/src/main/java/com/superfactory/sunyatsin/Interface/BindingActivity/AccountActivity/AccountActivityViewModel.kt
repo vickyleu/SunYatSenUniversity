@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.observableNullable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
+import com.superfactory.library.Communication.Sender.TakeParamsBack
 import com.superfactory.sunyatsin.R
 import com.superfactory.sunyatsin.Struct.BaseStructImpl
 import com.superfactory.sunyatsin.Struct.Const
@@ -29,17 +30,49 @@ class AccountActivityViewModel(intent: Intent) : ToolbarBindingModel() {
 
     var onItemClicked: ((Int, AccountActivityItemViewModel) -> Unit)? = null
 
-//    override fun requestSuccess(ld: LoadingDialog, model: Any?, witch: Int?) {
-//        if (model==null){
-//
-//        }else if (model is BaseStructImpl){
-//            if (witch?:0==5){
-//
-//            }else{
-//
-//            }
-//        }
-//    }
+
+    val tips=observable("")
+    override fun requestSuccess(ld: LoadingDialog, model: Any?, witch: Int?) {
+        if (model==null){
+            ld.close()
+            tips.value = "无法解析数据"
+            return
+        }else if (model is BaseStructImpl||model is TakeParamsBack){
+            when(witch?:0){
+                5->{
+                    if (model is BaseStructImpl) {
+                        if (model.success) {
+                            ld.close()
+                        } else {
+                            ld.close()
+                            tips.value = model.msg ?: "未知错误"
+                        }
+                    }
+                }
+                6->{
+                    val param = (model as? TakeParamsBack)
+                    if ((param?.any as? BaseStructImpl)?.success==true){
+                        ld.close()
+                        accountItemsList.value?.get(1)?.description=param.params as? String
+                    }else{
+                        ld.close()
+                        tips.value = (param?.any as? BaseStructImpl)?.msg ?: "未知错误"
+                    }
+                }
+                7->{
+                    val param = (model as? TakeParamsBack)
+                    if ((param?.any as? BaseStructImpl)?.success==true){
+                        ld.close()
+                        accountItemsList.value?.get(2)?.description=(param.params as? Int).toString()
+                    }else{
+                        ld.close()
+                        tips.value = (param?.any as? BaseStructImpl)?.msg ?: "未知错误"
+                    }
+                }
+            }
+
+        }
+    }
 
     val avatar = observable("")
 
