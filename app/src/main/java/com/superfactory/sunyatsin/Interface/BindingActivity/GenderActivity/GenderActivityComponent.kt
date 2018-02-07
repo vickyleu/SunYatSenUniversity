@@ -10,6 +10,7 @@ import com.superfactory.library.Bridge.Anko.DslView.refresh
 import com.superfactory.library.Bridge.Anko.ViewExtensions.getLineDividerItemDecoration
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
 import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
+import com.superfactory.library.Context.Extensions.ToolbarExtensions.Companion.setRightTextColor
 import com.superfactory.sunyatsin.R
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -29,17 +30,18 @@ class GenderActivityComponent(viewModel: GenderActivityViewModel) :
             recyclerView {
                 backgroundResource = R.drawable.profile_recycle_shader
                 leftPadding = dip(10)
+
                 val bindAdapter = AutoBindAdapter { viewGroup, _ ->
                     AnkoViewHolder(viewGroup, GenderActivityItemComponent())
                 }.apply {
                     onItemClickListener = { i, viewModel, holder ->
                         viewModel.checked = true
+                        viewModelSafe.selected.value = i
                         holder.component.notifyChanges()
                     }
                 }.assignment { holder, _, position ->
                             if (viewModelSafe.selected.value != -1)
                                 holder.component.viewModel?.checked = viewModelSafe.selected.value == position
-                            holder.component.notifyChanges()
                         }
                 bindSelf(GenderActivityViewModel::genderList) { it.genderList }
                         .toView(this) { _, value ->
@@ -53,6 +55,29 @@ class GenderActivityComponent(viewModel: GenderActivityViewModel) :
                 width = matchParent
                 height = wrapContent
             }
+            val color1 = Color.parseColor("#b4b3b3")
+            val color2 = Color.parseColor("#ffffff")
+            bindSelf(GenderActivityViewModel::selected) {
+                it.selected.value
+            }.toView(this) { view, value ->
+                if (value != null) {
+                    if (value == -1) {
+                        if (viewModelSafe.rightTextColor.value != color1) {
+                            viewModelSafe.eraseRight.value = true
+                            doAsync { setRightTextColor(color1, context, viewModel) }
+                        }
+                    } else {
+                        if (viewModelSafe.rightTextColor.value != color2) {
+                            viewModelSafe.eraseRight.value = true
+                            doAsync { setRightTextColor(color2, context, viewModel) }
+
+                        }
+                    }
+                }
+            }
+            viewModelSafe.rightClickable.value = {
+                viewModelSafe.ownerNotifier?.invoke(101, viewModelSafe.selected.value)
+            }
             lparams {
                 width = matchParent
                 height = matchParent
@@ -64,7 +89,7 @@ class GenderActivityComponent(viewModel: GenderActivityViewModel) :
 class GenderActivityItemComponent : BindingComponent<ViewGroup, GenderActivityItemViewModel>() {
     override fun createViewWithBindings(ui: AnkoContext<ViewGroup>) = with(ui) {
         relativeLayout {
-
+            rightPadding = dip(10)
             textView {
                 textSize = 14f
                 textColor = Color.parseColor("#222222")
@@ -102,8 +127,8 @@ class GenderActivityItemComponent : BindingComponent<ViewGroup, GenderActivityIt
             lparams {
                 width = matchParent
                 height = wrapContent
-                bottomPadding = dip(5)
-                topPadding = dip(5)
+                bottomPadding = dip(10)
+                topPadding = dip(10)
             }
         }
     }

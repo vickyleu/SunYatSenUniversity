@@ -10,6 +10,7 @@ import com.superfactory.library.Bridge.Anko.bindSelf
 import com.superfactory.library.Bridge.Anko.bindings.toObservable
 import com.superfactory.library.Bridge.Anko.bindings.toText
 import com.superfactory.library.Context.takeRoundRectShape
+import com.superfactory.library.Graphics.Adapt.SimpleWatcher
 import com.superfactory.library.R
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -38,7 +39,7 @@ class InputAlertComponent(viewModel: InputAlertViewModel) :
                 }
                 bindSelf(InputAlertViewModel::titleSize) { it.titleSize.value }.toView(this) { view, value ->
                     if (value != null && value != 0f) {
-                        view.textSize = dip(value).toFloat()
+                        view.textSize = value
                     }
                 }
                 backgroundColor = Color.TRANSPARENT
@@ -61,7 +62,7 @@ class InputAlertComponent(viewModel: InputAlertViewModel) :
                 }
                 bindSelf(InputAlertViewModel::msgSize) { it.msgSize.value }.toView(this) { view, value ->
                     if (value != null && value != 0f) {
-                        view.textSize = dip(value).toFloat()
+                        view.textSize = value
                     }
                 }
                 backgroundColor = Color.TRANSPARENT
@@ -76,11 +77,21 @@ class InputAlertComponent(viewModel: InputAlertViewModel) :
 
             editText {
                 singleLine = true
-                bindSelf(InputAlertViewModel::hint) { it.msg.value }.toView(this) { view, value ->
+                leftPadding=dip(10)
+                rightPadding=dip(10)
+                bindSelf(InputAlertViewModel::hint) { it.hint.value }.toView(this) { view, value ->
                     if (!TextUtils.isEmpty(value)) {
                         view.hint = value
                     }
                 }
+                addTextChangedListener(object:SimpleWatcher(){
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        if (!TextUtils.isEmpty(s)){
+                            error=null
+                        }
+                    }
+
+                })
                 bindSelf(InputAlertViewModel::inputColor) { it.inputColor.value }.toView(this) { view, value ->
                     if (value != null && value != 0) {
                         view.textColor = value
@@ -88,14 +99,19 @@ class InputAlertComponent(viewModel: InputAlertViewModel) :
                 }
                 bindSelf(InputAlertViewModel::inputSize) { it.inputSize.value }.toView(this) { view, value ->
                     if (value != null && value != 0f) {
-                        view.textSize = dip(value).toFloat()
+                        view.textSize = value
                     }
                 }
                 bindSelf(this).toObservable {
                     it.output
                 }
                 bindSelf(InputAlertViewModel::error) { it.error.value }.toView(this) { view, value ->
-                    view.error = value
+                    if (TextUtils.isEmpty(value)) {
+                        view.error = null
+                    } else {
+                        view.error = value
+                    }
+
                 }
 //                cursorDrawable = Color.parseColor("#1688ff")
                 backgroundDrawable = ContextCompat.getDrawable(context, R.drawable.textfield_frame)
@@ -132,7 +148,7 @@ class InputAlertComponent(viewModel: InputAlertViewModel) :
                     }
                     bindSelf(InputAlertViewModel::negativeSize) { it.negativeSize.value }.toView(this) { view, value ->
                         if (value != null && value != 0f) {
-                            view.textSize = dip(value).toFloat()
+                            view.textSize = value
                         }
                     }
                     onClick {
@@ -147,7 +163,7 @@ class InputAlertComponent(viewModel: InputAlertViewModel) :
                 view {
                     backgroundColor = Color.parseColor("#CCCCCC")
                 }.lparams {
-                    width = px2dip(1).toInt()
+                    width = 1
                     height = matchParent
                 }
                 button {
@@ -163,7 +179,7 @@ class InputAlertComponent(viewModel: InputAlertViewModel) :
                     }
                     bindSelf(InputAlertViewModel::positiveSize) { it.positiveSize.value }.toView(this) { view, value ->
                         if (value != null && value != 0f) {
-                            view.textSize = dip(value).toFloat()
+                            view.textSize = value
                         }
                     }
                     onClick {

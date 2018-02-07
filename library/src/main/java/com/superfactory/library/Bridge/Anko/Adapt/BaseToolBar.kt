@@ -24,8 +24,10 @@ import com.superfactory.library.Bridge.Anko.bindings.toText
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Context.BaseActivity
 import com.superfactory.library.Context.BaseFragment
+import com.superfactory.library.Context.Extensions.ToolbarExtensions
 import com.superfactory.library.Context.Extensions.ToolbarExtensions.Companion.setBackIcon
 import com.superfactory.library.Context.Extensions.ToolbarExtensions.Companion.setRightIcon
+import com.superfactory.library.Context.Extensions.ToolbarExtensions.Companion.setRightTextColor
 import com.superfactory.library.R
 import com.superfactory.library.Utils.StatusBarUtil
 import org.jetbrains.anko.*
@@ -166,8 +168,18 @@ open class BaseToolBar<V, A>(model: V) : BindingComponent<A, V>(model) {
                     (it as ToolbarBindingModel).title.value
                 }.toText(center!!)
 
+//                bindSelf(ToolbarBindingModel::rightTextColor) {
+//                    (it as ToolbarBindingModel).rightTextColor.value
+//                }.toView(this) { _, value ->
+//                    if (value != null && value != 0)
+//                        if (!TextUtils.isEmpty((viewModel as? ToolbarBindingModel)?.rightText?.value)) {
+//                            setRightIcon((viewModel as? ToolbarBindingModel)?.rightText?.value, context, viewModel)
+//                        }
+//                }
+
 
                 if (!TextUtils.isEmpty((viewModel as? ToolbarBindingModel)?.rightText?.value)) {
+//                   setRightTextColor((viewModel as? ToolbarBindingModel)?.rightTextColor?.value, context, viewModel)
                     setRightIcon((viewModel as? ToolbarBindingModel)?.rightText?.value, context, viewModel)
                 }
 

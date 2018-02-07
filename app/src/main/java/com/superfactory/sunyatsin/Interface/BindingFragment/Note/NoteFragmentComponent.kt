@@ -67,7 +67,7 @@ class NoteFragmentComponent(viewModel: NoteFragmentViewModel) : BindingComponent
 
 
             val normalCollapsing = (screenHeight / 2.0).toInt()//默认日志未填写,完全展开的可折叠高度
-            val backgroundCollapsing = (screenHeight / 1.0).toInt()//默认日志未填写,完全展开的可折叠高度
+            val backgroundCollapsing = (screenHeight * 1.1).toInt()//默认日志未填写,完全展开的可折叠高度
 
             val topMarginHidden = -(normalCollapsing * 0.3).toInt()//顶部隐藏的空间,固定值
 

@@ -3,6 +3,7 @@ package com.superfactory.library.Bridge.Anko.ViewExtensions
 import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.TextView
 
@@ -61,4 +62,25 @@ inline fun EditText.getCursorDrawableColor(): Int? {
     } catch (ignored: Throwable) {
     }
     return null
+}
+
+
+fun TextView.getWatcher(): List<TextWatcher>? {
+    try {
+        val mListeners = TextView::class.java.getDeclaredField("mListeners")
+        mListeners.isAccessible = true
+        return mListeners.get(this) as List<TextWatcher>
+    } catch (ignored: Throwable) {
+    }
+    return null
+}
+
+fun TextView.removeWatcher() {
+    try {
+        val watcher = this.getWatcher()
+        if (watcher != null) {
+            (watcher as ArrayList).clear()
+        }
+    } catch (ignored: Throwable) {
+    }
 }

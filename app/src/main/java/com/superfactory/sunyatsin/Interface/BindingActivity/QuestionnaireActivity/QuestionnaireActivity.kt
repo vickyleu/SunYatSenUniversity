@@ -3,6 +3,7 @@ package com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireActivi
 import com.superfactory.library.Bridge.Adapt.startActivityForResult
 import com.superfactory.library.Context.BaseToolBarActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireDetailActivity.QuestionnaireDetailActivity
+import com.superfactory.sunyatsin.Struct.QuestionaireStruct.QuestionnaireDetailStruct
 
 /**
  * Created by vicky on 2018.02.01.
@@ -16,10 +17,14 @@ class QuestionnaireActivity : BaseToolBarActivity<QuestionnaireActivityViewModel
 
     override fun newComponent(v: QuestionnaireActivityViewModel) = QuestionnaireActivityComponent(v).apply {
         viewModelSafe.ownerNotifier = { i, any ->
-            startActivityForResult<QuestionnaireDetailActivity>(0,{
-                intent ->
+            if ((any as? QuestionnaireDetailStruct)?.body != null)
+                startActivityForResult<QuestionnaireDetailActivity>(0, { intent ->
 
-            }, Pair("data",any))
+                }, Pair("data", any))
+            else{
+                viewModelSafe.tips.value="没有问卷信息"
+                viewModelSafe.tips.notifyChange()
+            }
         }
     }
 

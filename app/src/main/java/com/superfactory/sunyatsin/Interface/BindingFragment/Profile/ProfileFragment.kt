@@ -15,6 +15,7 @@ import com.superfactory.sunyatsin.Interface.BindingActivity.MessageActivity.Mess
 import com.superfactory.sunyatsin.Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.SettingsActivity.SettingsActivity
 import com.superfactory.sunyatsin.Model.PictureSelectorReplace
+import com.superfactory.sunyatsin.Struct.Login.LoginAfterStruct
 import org.jetbrains.anko.support.v4.startActivity
 
 
@@ -27,10 +28,7 @@ import org.jetbrains.anko.support.v4.startActivity
  */
 class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFragment>() {
 
-    override fun newViewModel(): ProfileFragmentViewModel {
-        val model = ProfileFragmentViewModel(extra)
-        return model
-    }
+    override fun newViewModel()=ProfileFragmentViewModel(extra)
 
     override fun newComponent(v: ProfileFragmentViewModel) = ProfileFragmentComponent(v).apply {
         viewModelSafe.ownerNotifier = { i, any ->
@@ -96,7 +94,9 @@ class ProfileFragment : BaseToolbarFragment<ProfileFragmentViewModel, ProfileFra
                     }
                 }
                 4/*"设置"*/ -> {
-                    startActivity<SettingsActivity>()
+                    val loginStruct = extra?.getParcelable<LoginAfterStruct>("data")
+                    val data = loginStruct?.body?.data
+                    startActivity<SettingsActivity>(Pair("login",data))
                 }
             }
         }

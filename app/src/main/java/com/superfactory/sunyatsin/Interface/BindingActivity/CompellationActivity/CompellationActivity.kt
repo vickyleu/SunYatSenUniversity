@@ -20,12 +20,4 @@ class CompellationActivity : BaseToolBarActivity<CompellationActivityViewModel, 
 
     }
 
-    override fun performToolbarClickEvent(view: View, event: BaseToolBar.Companion.ToolbarEvent) {
-        super.performToolbarClickEvent(view, event)
-        when (event) {
-            BaseToolBar.Companion.ToolbarEvent.RIGHT -> {
-
-            }
-        }
-    }
 }

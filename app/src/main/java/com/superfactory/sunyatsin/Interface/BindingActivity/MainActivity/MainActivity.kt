@@ -25,12 +25,8 @@ class MainActivity : BaseActivity<MainActivityViewModel, MainActivity>() {
     }
 
 
-    override fun setToolbarAttribution(toolbarBinder: BaseToolBar<MainActivity, MainActivityViewModel>, actionBar: ActionBar?, toolbarView: Toolbar) {
-        super.setToolbarAttribution(toolbarBinder, actionBar, toolbarView)
-//        toolbarView.setTitle("ToolbarDemo");
-//        toolbarView.setSubtitle("the detail of toolbar");
-// 显示导航按钮
-//        toolbarView.setNavigationIcon(R.drawable.icon_back);
+    override fun onBackPressed() {
+//        super.onBackPressed()
     }
 
 }

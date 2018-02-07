@@ -24,6 +24,16 @@ object TimeUtil {
         return null
     }
 
+    fun takeNowDate(format: String, timeFormatter: String): Date? {
+        try {
+            val sdf = SimpleDateFormat(format, Locale.CHINA)
+            return sdf.parse(timeFormatter)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
     fun takeNowTime(format: String, sourceFormat: String, time: String): String? {
         if (!TextUtils.isEmpty(time))
             try {

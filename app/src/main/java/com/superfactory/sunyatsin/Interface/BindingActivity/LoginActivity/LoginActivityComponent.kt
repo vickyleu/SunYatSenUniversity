@@ -211,7 +211,7 @@ class LoginActivityComponent(viewModel: LoginActivityViewModel) : BindingCompone
                                 requestFocus()
                             }
                         })
-                        onClick {
+                        setOnClickListener {
                             requestFocus()
                         }
 //                        inputType = EditorInfo.TYPE_CLASS_PHONE
@@ -281,7 +281,7 @@ class LoginActivityComponent(viewModel: LoginActivityViewModel) : BindingCompone
                                 }
                             }
                         })
-                        onClick {
+                        setOnClickListener {
                             if (account!!.isValidSize(5)) {
 //                            if (account!!.isValidPhoneNumber()) {
                                 account!!.clearFocus()

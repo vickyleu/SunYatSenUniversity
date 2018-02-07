@@ -1,8 +1,9 @@
 package com.superfactory.sunyatsin.Interface.BindingActivity.PasswordActivity
 
-import android.view.View
-import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
 import com.superfactory.library.Context.BaseToolBarActivity
+import com.superfactory.sunyatsin.Interface.BindingActivity.LoginActivity.LoginActivity
+import com.yayandroid.theactivitymanager.TheActivityManager
+import org.jetbrains.anko.startActivity
 
 /**
  * Created by vicky on 2018.01.31.
@@ -12,20 +13,13 @@ import com.superfactory.library.Context.BaseToolBarActivity
  * @ClassName 这里输入你的类名(或用途)
  */
 class PasswordActivity : BaseToolBarActivity<PasswordActivityViewModel, PasswordActivity>() {
-    override fun newViewModel() = PasswordActivityViewModel()
+    override fun newViewModel() = PasswordActivityViewModel().apply {
+        ownerNotifier = { i, any ->
+            TheActivityManager.getInstance().finishAll()
+            startActivity<LoginActivity>()
+        }
+    }
 
     override fun newComponent(v: PasswordActivityViewModel) = PasswordActivityComponent(v)
 
-    override fun performToolbarClickEvent(view: View, event: BaseToolBar.Companion.ToolbarEvent) {
-        super.performToolbarClickEvent(view, event)
-        when (event) {
-            BaseToolBar.Companion.ToolbarEvent.RIGHT -> {
-                val n = viewModel?.newPsw?.value ?: ""
-                val c=viewModel?.confirmPsw?.value?:""
-                if ( n===c&& c != ""){
-
-                }
-            }
-        }
-    }
 }

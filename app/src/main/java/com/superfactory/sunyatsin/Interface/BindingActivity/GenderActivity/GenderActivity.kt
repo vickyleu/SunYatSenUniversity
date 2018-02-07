@@ -1,7 +1,6 @@
 package com.superfactory.sunyatsin.Interface.BindingActivity.GenderActivity
 
-import android.view.View
-import com.superfactory.library.Bridge.Anko.Adapt.BaseToolBar
+import android.content.Intent
 import com.superfactory.library.Context.BaseToolBarActivity
 
 /**
@@ -12,16 +11,15 @@ import com.superfactory.library.Context.BaseToolBarActivity
  * @ClassName 这里输入你的类名(或用途)
  */
 class GenderActivity : BaseToolBarActivity<GenderActivityViewModel, GenderActivity>() {
-    override fun newViewModel() = GenderActivityViewModel()
+    override fun newViewModel() = GenderActivityViewModel().apply {
+        this.ownerNotifier = { i, any ->
+            val result = Intent()
+            result.putExtra("gender", any as Int)
+            setResult(101, result)
+            finish()
+        }
+    }
 
     override fun newComponent(v: GenderActivityViewModel) = GenderActivityComponent(v)
 
-    override fun performToolbarClickEvent(view: View, event: BaseToolBar.Companion.ToolbarEvent) {
-        super.performToolbarClickEvent(view, event)
-        when(event){
-            BaseToolBar.Companion.ToolbarEvent.RIGHT->{
-
-            }
-        }
-    }
 }

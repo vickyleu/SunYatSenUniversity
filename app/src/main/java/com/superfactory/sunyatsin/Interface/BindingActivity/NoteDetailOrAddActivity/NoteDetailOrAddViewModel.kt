@@ -3,12 +3,15 @@ package com.superfactory.sunyatsin.Interface.BindingActivity.NoteDetailOrAddActi
 import android.content.Intent
 import android.graphics.Color
 import android.support.v4.content.ContextCompat
+import android.text.TextUtils
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Anko.observableNullable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Utils.TimeUtil
 import com.superfactory.sunyatsin.Interface.BindingFragment.Note.NoteSnapShot
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.BaseStructImpl
+import com.xiasuhuei321.loadingdialog.view.LoadingDialog
 
 /**
  * Created by vicky on 2018/2/4.
@@ -16,19 +19,44 @@ import com.superfactory.sunyatsin.R
 class NoteDetailOrAddViewModel(val intent: Intent) : ToolbarBindingModel() {
     override fun setToolbar(toolbarBindingModel: ToolbarBindingModel) {
         toolbarBindingModel.title.value = "新建日志"
-        toolbarBindingModel.rightTextColor.value = Color.WHITE
+        toolbarBindingModel.rightTextColor.value = Color.parseColor("#b4b3b3")
         toolbarBindingModel.rightText.value = "提交"
         toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
         val ctx = getStaticsContextRef()
         toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.back_stack_icon)
     }
 
-    val tips=observable("")
+    override fun requestSuccess(ld: LoadingDialog, model: Any?, witch: Int?) {
+        if (model == null) {
+            ld.close()
+            tips.value = "无法解析数据"
+            return
+        }
+        if (model is BaseStructImpl) {
+            if (model.success) {
+                ld.close()
+                ownerNotifier?.invoke(0, model)
+            } else {
+                ld.close()
+                tips.value = model.msg ?: "未知错误"
+            }
+        }
+    }
+
+    override fun requestFailed(ld: LoadingDialog, error: Throwable?, witch: Int?) {
+        ld.close()
+        if (!TextUtils.isEmpty(error?.message)) {
+            tips.value = error?.message!!
+        }
+    }
+
+    val tips = observable("")
     val dutyImage = R.drawable.duty_big_icon
     val rightImage = R.drawable.right_arrow_icon
     val dutyType = observable("职责类型")
     val dutyText = observable("")
-    val dutyID = observable("")
+    var dutyIdentifier = ""
+    var mattersIdentifier = ""
 
     val mattersImage = R.drawable.matters_icon
     val mattersType = observable("事项类型")
@@ -41,18 +69,20 @@ class NoteDetailOrAddViewModel(val intent: Intent) : ToolbarBindingModel() {
     val createDate = observable("")
     val startTime = observable("")
     val endTime = observable("")
+    var flag = false
+    val canCommitData = observable(false)
 
-    val canCommitData=observable(false)
     init {
         var snap: NoteSnapShot? = null
         try {
             snap = intent.extras.getParcelable<NoteSnapShot>("data")
         } catch (e: Throwable) {
         }
-        if (snap!=null){
+        if (snap != null) {
             rightText.setStableValue("")
-            title.value="日志详情"
-            eraseRight.value=true
+            title.value = "日志详情"
+            eraseRight.value = true
+            flag = true
         }
 //        snap?.id
 

@@ -18,6 +18,10 @@ fun TextView.setTextIfNecessary(text: CharSequence?) {
     this.text = text
 }
 
+
+
+
+
 fun haveContentsChanged(str1: CharSequence?, str2: CharSequence?): Boolean {
     if (str1 == null != (str2 == null)) {
         return true

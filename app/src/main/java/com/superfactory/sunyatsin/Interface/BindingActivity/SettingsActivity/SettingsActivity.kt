@@ -5,7 +5,10 @@ import com.superfactory.library.Context.BaseToolBarActivity
 import com.superfactory.library.Debuger
 import com.superfactory.library.Utils.SizeConverter
 import com.superfactory.sunyatsin.Interface.BindingActivity.AccountActivity.AccountActivity
+import com.superfactory.sunyatsin.Interface.BindingActivity.LoginActivity.LoginActivity
 import com.superfactory.sunyatsin.Interface.BindingActivity.PasswordActivity.PasswordActivity
+import com.yayandroid.theactivitymanager.TheActivityManager
+import org.jetbrains.anko.startActivity
 
 
 /**
@@ -25,8 +28,10 @@ class SettingsActivity : BaseToolBarActivity<SettingsActivityViewModel, Settings
             } else {
                 Debuger.printMsg("simpleName", "987654311212121" + any.javaClass.simpleName)
                 startActivityForResult<PasswordActivity>(101, { intent ->
-
-                })
+                    TheActivityManager.getInstance().finishAll()
+                    startActivity<LoginActivity>()
+                    Debuger.printMsg(this, "退出登录")
+                }, Pair("data",any))
             }
         }
     }
@@ -39,7 +44,7 @@ class SettingsActivity : BaseToolBarActivity<SettingsActivityViewModel, Settings
                 0/*个人资料*/ -> {
                     startActivityForResult<AccountActivity>(101, { intent ->
 
-                    })
+                    }, Pair("login",intent.extras.getParcelable("login")))
                 }
                 2/*清除缓存*/ -> {
 

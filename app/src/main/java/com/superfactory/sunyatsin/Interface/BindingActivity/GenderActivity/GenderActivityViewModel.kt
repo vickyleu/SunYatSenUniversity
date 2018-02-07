@@ -19,13 +19,15 @@ class GenderActivityViewModel : ToolbarBindingModel() {
         toolbarBindingModel.backgroundColor.value = Color.parseColor("#1688ff")
         val ctx = getStaticsContextRef()
         toolbarBindingModel.leftIcon.value = ContextCompat.getDrawable(ctx, R.drawable.back_stack_icon)
+        toolbarBindingModel.rightText.value = "保存"
+        toolbarBindingModel.rightTextColor.value = Color.parseColor("#b4b3b3")
     }
 
     var selected=observable(-1)
     val genderList = arrayListOf(
-            GenderActivityItemViewModel("头像"),
-            GenderActivityItemViewModel("头像")
+            GenderActivityItemViewModel(0,"男"),
+            GenderActivityItemViewModel(1,"女")
     )
 }
 
-data class GenderActivityItemViewModel(val gender: String, var checked: Boolean = false)
+data class GenderActivityItemViewModel(val type:Int,val gender: String, var checked: Boolean = false)

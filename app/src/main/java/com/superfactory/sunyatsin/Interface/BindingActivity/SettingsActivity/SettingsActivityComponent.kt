@@ -91,17 +91,17 @@ class SettingsActivityComponent(viewModel: SettingsActivityViewModel) : BindingC
                                                 it.positiveClick.value = { _, model, prompt ->
                                                     if (TextUtils.isEmpty(model.output.value)) {
                                                         model.error.value = "字符长度不足"
+                                                    }else{
+                                                        model.error.value = ""
+                                                        prompt.dismiss()
+                                                        val account = ConfigXmlAccessor.restoreValue(context, Const.SignInInfo, Const.SignInAccount, "")
+                                                        takeApi(RetrofitImpl::class)?.login(account!!, model.output.value,
+                                                                true)?.senderAsync(LoginStruct::class,
+                                                                this@SettingsActivityComponent,
+                                                                context)
                                                     }
-                                                    model.error.value = ""
-                                                    prompt.dismiss()
-                                                    val account = ConfigXmlAccessor.restoreValue(context, Const.SignInInfo, Const.SignInAccount, "")
-                                                    takeApi(RetrofitImpl::class)?.login(account!!, model.output.value,
-                                                            true)?.senderAsync(LoginStruct::class,
-                                                            this@SettingsActivityComponent,
-                                                            context)
                                                 }
                                             }
-                                            Debuger.printMsg(this,func0)
                                             InputAlert(func0,owner) .show()
                                         } else {
                                             this@SettingsActivityComponent.viewModelSafe.onItemClicked?.invoke(i, viewModel)
@@ -118,7 +118,7 @@ class SettingsActivityComponent(viewModel: SettingsActivityViewModel) : BindingC
                     }.lparams {
                         topMargin = dip(10)
                         width = matchParent
-                        height = matchParent
+                        height = wrapContent
                     }
 
                     button {
@@ -149,6 +149,13 @@ class SettingsActivityComponent(viewModel: SettingsActivityViewModel) : BindingC
                     width = matchParent
                     height = matchParent
                 }
+            }.lparams {
+                width = matchParent
+                height = matchParent
+            }
+            lparams {
+                width = matchParent
+                height = matchParent
             }
         }
 
@@ -160,8 +167,8 @@ class SettingsActivityItemComponent : BindingComponent<ViewGroup, SettingsActivi
     override fun createViewWithBindings(ui: AnkoContext<ViewGroup>) = with(ui) {
         relativeLayout {
 
-            topPadding = dip(5)
-            bottomPadding = dip(5)
+            topPadding = dip(10)
+            bottomPadding = dip(10)
             rightPadding = dip(10)
             textView {
                 textSize = 14f
@@ -212,13 +219,12 @@ class SettingsActivityItemComponent : BindingComponent<ViewGroup, SettingsActivi
                 width = wrapContent
                 height = wrapContent
                 addRule(RelativeLayout.LEFT_OF, iv.id)
+                rightMargin=dip(10)
                 centerVertically()
             }
             lparams {
                 width = matchParent
                 height = wrapContent
-                bottomPadding = dip(5)
-                topPadding = dip(5)
             }
         }
     }

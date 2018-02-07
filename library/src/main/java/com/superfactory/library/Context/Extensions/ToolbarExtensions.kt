@@ -58,7 +58,6 @@ class ToolbarExtensions {
             td.text = res
             val vm = (viewModel as ToolbarBindingModel)
             val color = vm.leftTextColor.value
-            if (color > 0)
                 td.setTextColor(color)
             val size = vm.leftTextSize.value
             if (size > 0)
@@ -84,7 +83,7 @@ class ToolbarExtensions {
             if (size == null) return
             setToolbarProperty(ToolbarBindingModel::rightTextSize, size, viewModel)
             if (viewModel != null && !TextUtils.isEmpty((viewModel as ToolbarBindingModel).rightText.value)) {
-                setBackIcon((viewModel as ToolbarBindingModel).rightText.value, context, viewModel)
+                setRightIcon((viewModel as ToolbarBindingModel).rightText.value, context, viewModel)
             }
         }
 
@@ -92,7 +91,7 @@ class ToolbarExtensions {
             if (color == null) return
             setToolbarProperty(ToolbarBindingModel::rightTextColor, color, viewModel)
             if (viewModel != null && !TextUtils.isEmpty((viewModel as ToolbarBindingModel).rightText.value)) {
-                setBackIcon((viewModel as ToolbarBindingModel).rightText.value, context, viewModel)
+                setRightIcon((viewModel as ToolbarBindingModel).rightText.value, context, viewModel)
             }
         }
 
@@ -106,7 +105,6 @@ class ToolbarExtensions {
             td.text = res
             val vm = (viewModel as ToolbarBindingModel)
             val color = vm.rightTextColor.value
-            if (color > 0)
                 td.setTextColor(color)
             val size = vm.rightTextSize.value
             if (size > 0)
@@ -116,14 +114,13 @@ class ToolbarExtensions {
         }
 
 
-        fun <V> BaseToolBar<*,*>.setBackIcon(res: String?, context: Context, viewModel: V) {
+        fun <V> BaseToolBar<*, *>.setBackIcon(res: String?, context: Context, viewModel: V) {
             if (TextUtils.isEmpty(res)) return
             setToolbarProperty(ToolbarBindingModel::leftText, res!!, viewModel)
             val td = TextDrawable(context)
             td.text = res
             val vm = (viewModel as ToolbarBindingModel)
             val color = vm.leftTextColor.value
-            if (color > 0)
                 td.setTextColor(color)
             val size = vm.leftTextSize.value
             if (size > 0)
@@ -132,17 +129,26 @@ class ToolbarExtensions {
             setToolbarProperty(ToolbarBindingModel::leftIcon, td, viewModel)
         }
 
- /**
+
+        fun <V> BaseToolBar<*, *>.setRightTextColor(@ColorInt color: Int?, context: Context, viewModel: V) {
+            if (color == null) return
+            setToolbarProperty(ToolbarBindingModel::rightTextColor, color, viewModel)
+            if (viewModel != null && !TextUtils.isEmpty((viewModel as ToolbarBindingModel).rightText.value)) {
+                setRightIcon((viewModel as ToolbarBindingModel).rightText.value, context, viewModel)
+            }
+        }
+
+
+        /**
          * 设置文字会转化成图形,所以必须在转换之前设置好文字大小和颜色,否则将使用默认颜色和字体大小
          */
-        fun <V> BaseToolBar<*,*>.setRightIcon(res: String?, context: Context, viewModel: V) {
+        fun <V> BaseToolBar<*, *>.setRightIcon(res: String?, context: Context, viewModel: V) {
             if (TextUtils.isEmpty(res)) return
             setToolbarProperty(ToolbarBindingModel::rightText, res!!, viewModel)
             val td = TextDrawable(context)
             td.text = res
             val vm = (viewModel as ToolbarBindingModel)
             val color = vm.rightTextColor.value
-            if (color > 0)
                 td.setTextColor(color)
             val size = vm.rightTextSize.value
             if (size > 0)

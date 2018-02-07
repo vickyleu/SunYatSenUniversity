@@ -14,7 +14,7 @@ import com.superfactory.library.Bridge.Anko.ViewExtensions.getLineDividerItemDec
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
 import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
 import com.superfactory.library.Communication.Sender.senderAsync
-import com.superfactory.library.Context.Extensions.setRightTextColor
+import com.superfactory.library.Context.Extensions.ToolbarExtensions.Companion.setRightTextColor
 import com.superfactory.library.Context.Extensions.takeApi
 import com.superfactory.library.Utils.ConfigXmlAccessor
 import com.superfactory.sunyatsin.Bean.QuestionnaireCommitBean
@@ -113,24 +113,32 @@ class QuestionnaireDetailActivityComponent(viewModel: QuestionnaireDetailActivit
 
                             }
                         }
+                        val color1 = Color.parseColor("#b4b3b3")
+                        val color2 = Color.parseColor("#ffffff")
+                        bindSelf(QuestionnaireDetailActivityViewModel::amount) {
+                            it.amount.value
+                        }.toView(this) { view, value ->
+                            if (value != null) {
+                                if (value > 0) {
+                                    if (viewModelSafe.rightTextColor.value != color1) {
+                                        viewModelSafe.eraseRight.value = true
+                                        doAsync { setRightTextColor(color1, context, viewModel) }
+                                    }
+                                } else {
+                                    if (viewModelSafe.rightTextColor.value != color2) {
+                                        viewModelSafe.eraseRight.value = true
+                                        doAsync { setRightTextColor(color2, context, viewModel) }
 
-                        bindSelf(QuestionnaireDetailActivityViewModel::amount) { it.amount.value }
-                                .toView(this) { view, value ->
-                                    if (value != null) {
-                                        if (value > 0) {
-                                            viewModelSafe.rightClickable.value = {
-                                                val size = viewModel?.itemList?.value?.size ?: 0
-                                                if (size > 0) {
-                                                    doStoreQuestionnaire()
-                                                }
-                                            }
-                                            owner.setRightTextColor(Color.parseColor("#ffffff"))
-                                        } else {
-                                            viewModelSafe.rightClickable.value = null
-                                            owner.setRightTextColor(Color.parseColor("#459ced"))
-                                        }
                                     }
                                 }
+                            }
+                        }
+                        viewModelSafe.rightClickable.value = {
+                            val size = viewModel?.itemList?.value?.size ?: 0
+                            if (size > 0) {
+                                doStoreQuestionnaire()
+                            }
+                        }
 
                         bindSelf(QuestionnaireDetailActivityViewModel::itemList) { it.itemList.value }
                                 .toView(this) { _, value ->

@@ -1,6 +1,7 @@
 package com.superfactory.sunyatsin.Communication
 
 import com.superfactory.sunyatsin.Bean.*
+import com.superfactory.sunyatsin.Bean.BaseBean.NoteStoreBean
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.http.*
@@ -28,7 +29,7 @@ interface RetrofitImpl {
 
     @POST("sys/user/savePwd;JSESSIONID={JSESSIONID}?")
     fun changePsw(@Path("JSESSIONID") JSESSIONID: String,
-                  @Body loginBean: LoginBean,
+                  @Body changeBean: ChangePswStruct,
                   @Query("__ajax=true&mobileLogin") mobileLogin: Boolean): Observable<ResponseBody>
 
     @POST("api/naire/data;JSESSIONID={JSESSIONID}?")
@@ -62,5 +63,9 @@ interface RetrofitImpl {
     @POST("api/workinglog/findBzMatterInfo;JSESSIONID={JSESSIONID}?")
     fun mattersList(@Path("JSESSIONID") JSESSIONID: String,
                     @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body bean: MattersBean): Observable<ResponseBody>
+
+    @POST("api/workinglog/save;JSESSIONID={JSESSIONID}?")
+    fun storeNote(@Path("JSESSIONID") JSESSIONID: String,
+                  @Query("__ajax=true&mobileLogin") mobileLogin: Boolean, @Body bean: NoteStoreBean): Observable<ResponseBody>
 
 }

@@ -17,7 +17,7 @@ import org.jetbrains.anko.wrapContent
  */
 open class InputAlertViewModel : BasePromptParams() {
     override fun setPrompt(promptParams: BasePromptParams) {
-        promptParams.width.value = (promptParams.screenSize.width * 0.6f).toInt()
+        promptParams.width.value = (promptParams.screenSize.width * 0.82f).toInt()
         promptParams.height.value = wrapContent
         promptParams.cancelable.value = false
         promptParams.touchCancelable.value = true

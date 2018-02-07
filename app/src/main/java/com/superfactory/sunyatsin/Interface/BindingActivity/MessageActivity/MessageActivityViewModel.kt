@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Parcel
 import android.os.Parcelable
 import android.support.v4.content.ContextCompat
+import android.text.TextUtils
 import com.superfactory.library.Bridge.Anko.observable
 import com.superfactory.library.Bridge.Model.ToolbarBindingModel
 import com.superfactory.library.Utils.TimeUtil
@@ -61,10 +62,17 @@ open class MessageActivityViewModel(val intent: Intent) : ToolbarBindingModel() 
         }
     }
 
+    override fun requestFailed(ld: LoadingDialog, error: Throwable?, witch: Int?) {
+        ld.close()
+        if (!TextUtils.isEmpty(error?.message)) {
+            tips.value = error?.message!!
+        }
+    }
+
 }
 
 data class MessageItemView(val title: String, val content: String, val date: String,
-                           val image: Int? = R.drawable.message_notification_icon):BaseBody() {
+                           val image: Int? = R.drawable.message_notification_icon) : BaseBody() {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),

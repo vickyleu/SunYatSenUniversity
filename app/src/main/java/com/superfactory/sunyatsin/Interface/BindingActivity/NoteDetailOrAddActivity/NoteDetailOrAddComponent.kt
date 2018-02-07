@@ -15,8 +15,17 @@ import com.superfactory.library.Bridge.Anko.ViewExtensions.getLineDividerItemDec
 import com.superfactory.library.Bridge.Anko.bindings.toText
 import com.superfactory.library.Bridge.Anko.widget.AnkoViewHolder
 import com.superfactory.library.Bridge.Anko.widget.AutoBindAdapter
+import com.superfactory.library.Communication.Sender.senderAsync
+import com.superfactory.library.Context.Extensions.ToolbarExtensions.Companion.setRightTextColor
+import com.superfactory.library.Context.Extensions.takeApi
+import com.superfactory.library.Utils.ConfigXmlAccessor
+import com.superfactory.library.Utils.TimeUtil
+import com.superfactory.sunyatsin.Bean.BaseBean.NoteStoreBean
+import com.superfactory.sunyatsin.Communication.RetrofitImpl
 import com.superfactory.sunyatsin.Interface.BindingFragment.Profile.ProfileFragmentItemViewModel
 import com.superfactory.sunyatsin.R
+import com.superfactory.sunyatsin.Struct.BaseStructImpl
+import com.superfactory.sunyatsin.Struct.Const
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -38,7 +47,13 @@ class NoteDetailOrAddComponent(viewModel: NoteDetailOrAddViewModel) :
                     verticalLayout {
                         backgroundColor = Color.TRANSPARENT
 
-
+                        bindSelf(NoteDetailOrAddViewModel::tips) { it.tips.value }.toView(this) { view, value ->
+                            if (value != null) {
+                                if (!TextUtils.isEmpty(value)) {
+                                    Snackbar.make(view, value, Snackbar.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
                         relativeLayout {
                             backgroundResource = R.drawable.profile_recycle_shader
                             topPadding = dip(10)
@@ -185,7 +200,7 @@ class NoteDetailOrAddComponent(viewModel: NoteDetailOrAddViewModel) :
                                 maxLines = 3
                                 ellipsize = TextUtils.TruncateAt.valueOf(TextUtils.TruncateAt.END.name)
                                 textSize = 14f
-                                minHeight = 0
+//                                minHeight = 0
                                 bindSelf(NoteDetailOrAddViewModel::mattersText) { it.mattersText.value }.toText(this)
                             }.lparams {
                                 addRule(RelativeLayout.LEFT_OF, iv2.id)
@@ -271,28 +286,45 @@ class NoteDetailOrAddComponent(viewModel: NoteDetailOrAddViewModel) :
             }
             viewModelSafe.rightClickable.value = {
                 if (viewModelSafe.canCommitData.value) {
-
+                    val startTime = viewModelSafe.createDate.value + viewModelSafe.startTime
+                    val endTime = viewModelSafe.createDate.value + viewModelSafe.endTime
+                    val time1 = TimeUtil.takeNowDate("yyyy-MM-ddhh:mm", startTime)?.time ?: 0
+                    val time2 = TimeUtil.takeNowDate("yyyy-MM-ddhh:mm", endTime)?.time ?: 0
+                    takeApi(RetrofitImpl::class)?.storeNote(ConfigXmlAccessor.restoreValue(
+                            context, Const.SignInInfo, Const.SignInSession, "")
+                            ?: "", true,
+                            NoteStoreBean(viewModelSafe.dutyIdentifier,
+                                    viewModelSafe.mattersIdentifier,
+                                    time1, time2)
+                    )?.senderAsync(BaseStructImpl::class, this@NoteDetailOrAddComponent, context)
                 }
             }
+
+            val color1 = Color.parseColor("#b4b3b3")
+            val color2 = Color.parseColor("#ffffff")
             bindSelf(NoteDetailOrAddViewModel::canCommitData) {
                 it.canCommitData.value
             }.toView(this) { view, value ->
                 if (value != null) {
-                    if (value) {
-                        viewModelSafe.rightTextColor.value = Color.parseColor("#469ced")
+                    if (!value) {
+                        if (viewModelSafe.rightTextColor.value != color1) {
+                            viewModelSafe.eraseRight.value = true
+                            doAsync {
+                                setRightTextColor(color1, context, viewModel)
+                            }
+
+                        }
                     } else {
-                        viewModelSafe.rightTextColor.value = Color.parseColor("#ffffff")
+                        if (viewModelSafe.rightTextColor.value != color2) {
+                            viewModelSafe.eraseRight.value = true
+                            doAsync {
+                                setRightTextColor(color2, context, viewModel)
+                            }
+                        }
                     }
                 }
             }
 
-            bindSelf(NoteDetailOrAddViewModel::tips) { it.tips.value }.toView(this) { view, value ->
-                if (value != null) {
-                    if(!TextUtils.isEmpty(value)){
-                        Snackbar.make(view, value, Snackbar.LENGTH_SHORT).show()
-                    }
-                }
-            }
 
         }
     }
