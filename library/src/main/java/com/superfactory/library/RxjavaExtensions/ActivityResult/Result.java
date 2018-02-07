@@ -24,7 +24,7 @@ public class Result<T> {
     private final int requestCode;
     private final Intent data;
 
-    public Result(T targetUI, int requestCode, int resultCode, Intent data) {
+    Result(T targetUI, int requestCode, int resultCode, Intent data) {
         this.targetUI = targetUI;
         this.resultCode = resultCode;
         this.requestCode = requestCode;

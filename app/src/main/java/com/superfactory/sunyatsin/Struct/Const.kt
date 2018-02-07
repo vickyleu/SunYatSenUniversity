@@ -12,8 +12,8 @@ open class Const {
         private const val ServerHostInternal: String = "http://192.168.31.237:8080"
         private const val ServerHost: String = "http://120.76.219.199:18080"
 
-        const val RequestPrefix: String = ServerHostInternal + "/jeeplus/a/"
-        const val AvatarPrefix: String = ServerHostInternal
+        const val RequestPrefix: String = ServerHost + "/jeeplus/a/"
+        const val AvatarPrefix: String = ServerHost
         const val SignInInfo: String = "signInInfo"
         const val SignInSession: String = "SignInSession"
         const val SignInAccount: String = "signInAccount"

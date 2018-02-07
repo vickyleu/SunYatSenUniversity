@@ -25,7 +25,7 @@ class Request {
     private OnPreResult onPreResult;
     private OnResult onResult;
 
-    public Request(@Nullable Intent intent) {
+    Request(@Nullable Intent intent) {
         this.intent = intent;
     }
 
@@ -37,11 +37,11 @@ class Request {
         return onPreResult;
     }
 
-    public void setOnResult(OnResult onResult) {
+    void setOnResult(OnResult onResult) {
         this.onResult = onResult;
     }
 
-    public OnResult onResult() {
+    OnResult onResult() {
         return onResult;
     }
 

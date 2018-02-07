@@ -71,7 +71,7 @@ class AccountActivity : BaseToolBarActivity<AccountActivityViewModel, AccountAct
                             .scaleEnabled(true)// 裁剪是否可放大缩小图片 true or false
                             .outlet()
                     if (!DoubleUtils.isFastDoubleClick()) {
-                        startActivityForResult<PictureSelectorActivity>(PictureConfig.CHOOSE_REQUEST, {
+                        startActivityForResult<PictureSelectorActivity>( {
                             val selectList = PictureSelector.obtainMultipleResult(it)
                             if (selectList != null && selectList.size == 1) {
                                 val media = selectList[0]

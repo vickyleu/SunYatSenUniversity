@@ -28,7 +28,7 @@ public class RequestIntentSender extends Request {
     private final int flagsMask, flagsValues, extraFlags;
     private final Bundle options;
 
-    public RequestIntentSender(IntentSender intentSender, @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags, @Nullable Bundle options) {
+    RequestIntentSender(IntentSender intentSender, @Nullable Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags, @Nullable Bundle options) {
         super(null);
         this.intentSender = intentSender;
         this.fillInIntent = fillInIntent;
@@ -38,23 +38,23 @@ public class RequestIntentSender extends Request {
         this.options = options;
     }
 
-    public IntentSender getIntentSender() {
+    IntentSender getIntentSender() {
         return intentSender;
     }
 
-    public Intent getFillInIntent() {
+    Intent getFillInIntent() {
         return fillInIntent;
     }
 
-    public int getFlagsMask() {
+    int getFlagsMask() {
         return flagsMask;
     }
 
-    public int getFlagsValues() {
+    int getFlagsValues() {
         return flagsValues;
     }
 
-    public int getExtraFlags() {
+    int getExtraFlags() {
         return extraFlags;
     }
 

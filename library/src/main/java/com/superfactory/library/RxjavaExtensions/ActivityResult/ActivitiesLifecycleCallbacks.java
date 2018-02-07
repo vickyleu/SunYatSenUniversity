@@ -11,11 +11,11 @@ import io.reactivex.functions.Predicate;
 import java.util.concurrent.TimeUnit;
 
 class ActivitiesLifecycleCallbacks {
-    final Application application;
-    volatile Activity liveActivityOrNull;
-    Application.ActivityLifecycleCallbacks activityLifecycleCallbacks;
+    private final Application application;
+    private volatile Activity liveActivityOrNull;
+    private Application.ActivityLifecycleCallbacks activityLifecycleCallbacks;
 
-    public ActivitiesLifecycleCallbacks(Application application) {
+    ActivitiesLifecycleCallbacks(Application application) {
         this.application = application;
         registerActivityLifeCycle();
     }
@@ -56,7 +56,7 @@ class ActivitiesLifecycleCallbacks {
      * Emits just one time a valid reference to the current activity
      * @return the current activity
      */
-    volatile boolean emitted = false;
+    private volatile boolean emitted = false;
     Observable<Activity> getOLiveActivity() {
         emitted = false;
         return Observable.interval(50, 50, TimeUnit.MILLISECONDS)
