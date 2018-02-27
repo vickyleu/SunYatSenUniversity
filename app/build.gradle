@@ -21,16 +21,26 @@ android {
         }
         vectorDrawables.useSupportLibrary = true
     }
+    signingConfigs {
+        //指定名叫release的一个签名对象 会在下面的脚本中，动态根据配置文件设置属性
+        release {}
+    }
     buildTypes {
         release {
             minifyEnabled false
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (signingConfigs.release != null) {//使用和release相同签名，不需要卸载
+                signingConfig signingConfigs.release
+            }
         }
         debug {
             minifyEnabled false
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (signingConfigs.release != null) {//使用和release相同签名，不需要卸载
+                signingConfig signingConfigs.release
+            }
         }
     }
     externalNativeBuild {
@@ -71,4 +81,48 @@ kotlin {
     experimental {
         coroutines "enable"
     }
+}
+
+
+/*读取签名信息*/
+def Properties props = new Properties()
+def propFile = file('signing.properties')
+if (propFile.canRead()) {
+    props.load(new FileInputStream(propFile))
+    if (props != null
+            && props.containsKey('RELEASE_STORE_DIR_PATH')
+            && props.containsKey('RELEASE_STORE_FILE_PATH')
+            && props.containsKey('RELEASE_STORE_PASSWORD')
+            && props.containsKey('RELEASE_KEY_ALIAS')
+            && props.containsKey('RELEASE_KEY_PASSWORD')) {
+        try {
+            try {
+                file(props['RELEASE_STORE_DIR_PATH']).mkdirs()
+            } catch (Exception ignored) {
+                throw new Exception("签名文件夹创建失败")
+            }
+            if (!file(props['RELEASE_STORE_DIR_PATH'].
+                    toString() + "/" + props['RELEASE_STORE_FILE_PATH']).exists()) {
+                String dir = props['RELEASE_STORE_DIR_PATH'].toString()
+                String signFile = props['RELEASE_STORE_FILE_PATH'].toString()
+                signFile = signFile.replace(dir + "/", "")
+                throw new Exception("app/signFile目录下没有" + signFile + "签名文件")
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage().toString())
+        }
+
+        android.signingConfigs.release.storeFile = file(props['RELEASE_STORE_DIR_PATH'].
+                toString() + "/" + props['RELEASE_STORE_FILE_PATH'])
+        android.signingConfigs.release.storePassword = props['RELEASE_STORE_PASSWORD']
+        android.signingConfigs.release.keyAlias = props['RELEASE_KEY_ALIAS']
+        android.signingConfigs.release.keyPassword = props['RELEASE_KEY_PASSWORD']
+        println "use signing.properties file"
+    } else {
+        android.buildTypes.release.signingConfig = null
+        println "not use signing.properties file"
+    }
+} else {
+    android.buildTypes.release.signingConfig = null
+    println "not find signing.properties file"
 }
