@@ -27,7 +27,7 @@ import java.util.*
 class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : ToolbarBindingModel() {
     override fun setToolbar(toolbarBindingModel: ToolbarBindingModel) {
         toolbarBindingModel.backgroundColor.value = Color.BLUE
-        toolbarBindingModel.title.value = "妈卖批"
+        toolbarBindingModel.title.value = "主标题"
     }
 
     val selected = observable(0)

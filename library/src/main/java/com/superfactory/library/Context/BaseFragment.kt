@@ -111,7 +111,6 @@ abstract class BaseFragment<V : Parcelable, A : BaseFragment<V, A>> : Fragment()
             }
             layout = newComponent(this).apply {
                 if (toolbarAnko != null) {
-//                    Debuger.printMsg(this, "妈卖批")
                     view = createView(
                             AnkoContextImpl(this@BaseFragment.context!!, this@BaseFragment as A, false),
                             toolbarAnko,
