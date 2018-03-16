@@ -22,8 +22,8 @@ class NoteDetailOrAddActivity : BaseToolBarActivity<NoteDetailOrAddViewModel, No
 
     override fun newComponent(v: NoteDetailOrAddViewModel) = NoteDetailOrAddComponent(v).apply {
         viewModel?.ownerNotifier = { i, any ->
-            setResult(1001)
-            finish()
+                setResult(1001)
+                finish()
         }
     }
 
@@ -35,10 +35,10 @@ class NoteDetailOrAddActivity : BaseToolBarActivity<NoteDetailOrAddViewModel, No
                         DutyPrompt(this, { pos, v ->
                             if (v != null && v is BzDutyInfo) {
                                 viewModel.dutyText.value = v.dutyName
-                                viewModel.dutyIdentifier= v.jobTypeId
+                                viewModel.dutyIdentifier = v.jobTypeId
                                 viewModel.canCommitData.value = commitCondition(viewModel)
                             } else {
-                                viewModel.dutyIdentifier= ""
+                                viewModel.dutyIdentifier = ""
                             }
                         }).show()
                     }

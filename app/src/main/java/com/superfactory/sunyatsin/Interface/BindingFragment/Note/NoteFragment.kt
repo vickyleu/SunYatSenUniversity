@@ -59,6 +59,7 @@ class NoteFragment : BaseToolbarFragment<NoteFragmentViewModel, NoteFragment>() 
             when (i) {
                 -1 -> {
                     startActivityForResult<NoteDetailOrAddActivity>(1001, {
+                        if (it==null)return@startActivityForResult
                         takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
                                 context!!, Const.SignInInfo, Const.SignInSession, "")
                                 ?: "", true, NoteListBean(TimeUtil.takeNowTime("yyyy-MM-dd")

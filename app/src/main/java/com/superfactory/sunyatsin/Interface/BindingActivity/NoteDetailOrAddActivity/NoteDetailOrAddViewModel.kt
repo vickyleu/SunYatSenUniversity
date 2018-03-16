@@ -35,7 +35,7 @@ class NoteDetailOrAddViewModel(val intent: Intent) : ToolbarBindingModel() {
         if (model is BaseStructImpl) {
             if (model.success) {
                 ld.close()
-                ownerNotifier?.invoke(0, model)
+                ownerNotifier?.invoke(5, model)
             } else {
                 ld.close()
                 tips.value = model.msg ?: "未知错误"

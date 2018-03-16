@@ -26,6 +26,7 @@ class MainActivity : BaseActivity<MainActivityViewModel, MainActivity>() {
     override fun newComponent(v: MainActivityViewModel) = MainActivityComponent(v).apply {
         viewModel?.ownerNotifier = { i, any ->
             startActivityForResult<NoteDetailOrAddActivity>(1001, {
+                if (it==null)return@startActivityForResult
                 try {
                     val fragment = viewModelSafe.fragments?.value?.fragment as? NoteFragment
                     fragment?.takeApi(RetrofitImpl::class)?.queryNoteList(ConfigXmlAccessor.restoreValue(
