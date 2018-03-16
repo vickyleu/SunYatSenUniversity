@@ -39,8 +39,7 @@ class MainActivityViewModel(val intent: Intent?, manager: FragmentManager?) : To
         when (it.id) {
             R.id.ctrl_button -> {
                 ownerNotifier?.invoke(101,null)
-//                if (selected.value == 2) return@OnClickListener
-//                selected.value = 2
+                return@OnClickListener
             }
             R.id.ctrl_text_left -> {
                 if (selected.value == 0) return@OnClickListener
