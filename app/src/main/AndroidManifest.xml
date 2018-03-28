@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.superfactory.sunyatsin">
+    package="com.superfactory.sunyatsen">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <!--android:icon="@mipmap/ic_launcher"-->
     <application
-        android:name=".Context.App"
+        android:name="com.superfactory.sunyatsen.Context.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_origin"
         android:label="@string/app_name"
@@ -33,25 +33,25 @@
         <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
         <!-- </intent-filter> -->
         <!-- </activity> -->
-        <activity android:name=".Interface.BindingActivity.LoginActivity.LoginActivity">
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.LoginActivity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Interface.BindingActivity.MainActivity.MainActivity" />
-        <activity android:name=".Interface.BindingActivity.SettingsActivity.SettingsActivity" />
-        <activity android:name=".Interface.BindingActivity.AccountActivity.AccountActivity" />
-        <activity android:name=".Interface.BindingActivity.CompellationActivity.CompellationActivity" />
-        <activity android:name=".Interface.BindingActivity.GenderActivity.GenderActivity" />
-        <activity android:name=".Interface.BindingActivity.PasswordActivity.PasswordActivity" />
-        <activity android:name=".Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity" />
-        <activity android:name=".Interface.BindingActivity.QuestionnaireDetailActivity.QuestionnaireDetailActivity" />
-        <activity android:name=".Interface.BindingActivity.MessageActivity.MessageActivity" />
-        <activity android:name=".Interface.BindingActivity.MessageDetailActivity.MessageDetailActivity" />
-        <activity android:name=".Interface.BindingActivity.NoteByDayActivity.NoteByDayActivity" />
-        <activity android:name=".Interface.BindingActivity.NoteDetailOrAddActivity.NoteDetailOrAddActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.MainActivity.MainActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.SettingsActivity.SettingsActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.AccountActivity.AccountActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.CompellationActivity.CompellationActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.GenderActivity.GenderActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.PasswordActivity.PasswordActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.QuestionnaireActivity.QuestionnaireActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.QuestionnaireDetailActivity.QuestionnaireDetailActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.MessageActivity.MessageActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.MessageDetailActivity.MessageDetailActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.NoteByDayActivity.NoteByDayActivity" />
+        <activity android:name="com.superfactory.sunyatsen.Interface.BindingActivity.NoteDetailOrAddActivity.NoteDetailOrAddActivity" />
 
 
 

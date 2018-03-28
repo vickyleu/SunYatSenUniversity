@@ -1,0 +1,13 @@
+package com.superfactory.sunyatsen.Bean
+
+import com.superfactory.sunyatsen.Bean.BaseBean.MultipartBean
+
+/**
+ * Created by vicky on 2018.02.05.
+ *
+ * @Author vicky
+ * @Date 2018年02月05日  19:40:46
+ * @ClassName 这里输入你的类名(或用途)
+ */
+data class Holder(val abc:String?="1212") :MultipartBean(){
+}
