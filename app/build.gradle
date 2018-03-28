@@ -71,7 +71,7 @@ dependencies {
         exclude module: 'rxjava'
         exclude module: 'rxandroid'
     }
-    kapt 'com.android.databinding:compiler:3.2.0-alpha08'
+    kapt 'com.android.databinding:compiler:3.1.0'
 }
 kotlin {
     experimental {

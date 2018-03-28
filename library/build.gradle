@@ -225,7 +225,7 @@ dependencies {
      todo ****************Databinding编译时辅助工具*****************
      不加会死的很惨
      ***********************************************************************/
-    kapt 'com.android.databinding:compiler:3.2.0-alpha08'
+    kapt 'com.android.databinding:compiler:3.1.0'
 }
 
 kotlin {
