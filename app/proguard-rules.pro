@@ -74,6 +74,11 @@
   **[] $VALUES;
   public *;
 }
+-keep public class *extends java.lang.annotation.Annotation {
+**[] $VALUES;
+  public *;
+}
+
 
 # for DexGuard only
 -keepresourcexmlelements manifest/application/meta-data@value=GlideModule

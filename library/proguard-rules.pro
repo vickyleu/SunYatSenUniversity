@@ -42,3 +42,7 @@
 
 -keep class com.soundcloud.android.crop.** { *; }
 -dontwarn com.soundcloud.android.crop.**
+-keep public class *extends java.lang.annotation.Annotation {
+**[] $VALUES;
+  public *;
+}

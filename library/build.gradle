@@ -7,6 +7,7 @@ def build = '27.1.0'
 ext.anko_version = '0.10.4'
 android {
     compileSdkVersion 27
+//    buildToolsVersion "27.0.3"
     compileOptions.encoding = "UTF-8"
     dataBinding {
         enabled = true
@@ -40,7 +41,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '27.0.3'
 }
 
 dependencies {
@@ -140,8 +140,8 @@ dependencies {
     /***********************************************************************
      todo *****************腾讯异常采集*********************
      ***********************************************************************/
-    implementation 'com.tencent.bugly:crashreport:2.6.6'
-    implementation 'com.tencent.bugly:nativecrashreport:3.3.1'
+    implementation 'com.tencent.bugly:crashreport:latest.release'
+    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
 
     /***********************************************************************
      todo *****************Retrofit网络库*********************
@@ -226,9 +226,11 @@ dependencies {
      不加会死的很惨
      ***********************************************************************/
     kapt 'com.android.databinding:compiler:3.1.0'
+
 }
 
 kotlin {
+//    generateStubs = true
     experimental {
         coroutines "enable"
     }
