@@ -43,6 +43,11 @@ android {
     }
 }
 
+tasks.whenTaskAdded { task ->
+    if (task.name.contains('AndroidTest') || task.name.contains('Test')) {
+        task.enabled = false
+    }
+}
 dependencies {
 
     /***********************************************************************
@@ -226,7 +231,7 @@ dependencies {
      不加会死的很惨
      ***********************************************************************/
     kapt 'com.android.databinding:compiler:3.1.0'
-
+//    kapt 'com.android.databinding:compiler:3.2.0-alpha08'
 }
 
 kotlin {
